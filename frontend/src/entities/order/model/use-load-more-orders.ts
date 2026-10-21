@@ -1,7 +1,6 @@
 "use client";
 
 import { getOrderListPage } from "../api/get-order-list-page";
-import { ORDERS_PAGE_SIZE } from "./order-list";
 import { useOrderListContext } from "./order-list-context";
 
 /** Догружает следующую страницу в текущем порядке. */
@@ -9,6 +8,7 @@ export function useLoadMoreOrders() {
   const {
     state,
     dispatch,
+    pageSize,
     listType,
     expertPublicId,
     requestVersionRef,
@@ -29,8 +29,8 @@ export function useLoadMoreOrders() {
     try {
       const page = await getOrderListPage(
         {
-          skip: state.items.length,
-          limit: ORDERS_PAGE_SIZE,
+          skip: state.offset + state.items.length,
+          limit: pageSize,
           sort: state.sort,
         },
         listType,

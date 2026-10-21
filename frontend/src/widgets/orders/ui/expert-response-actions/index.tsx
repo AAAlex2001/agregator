@@ -2,11 +2,11 @@
 
 import type { ResponseItem } from "@/entities/response";
 import { ChangeResponseStatusButton } from "@/features/change-response-status";
-import { EditResponseButton } from "@/features/edit-response";
 import { OpenOrderChatButton } from "@/features/open-order-chat";
 import { RestoreWithdrawnResponseButton } from "@/features/restore-withdrawn-response";
 import { ShareOrderButton } from "@/features/share-order";
 import { WithdrawResponseButton } from "@/features/withdraw-response";
+import { Button } from "@/shared/ui/button";
 import styles from "./style.module.scss";
 
 /** Отклик исполнителя, обновление списка и переход в чат. */
@@ -34,10 +34,13 @@ export function ExpertResponseActions({
   if (response.status === "REVIEW") {
     return (
       <div className={styles.actions}>
-        <EditResponseButton
-          response={response}
-          onSaved={onChanged}
-        />
+        <Button
+          variant="secondary"
+          size="sm"
+          href={`/responses/${response.id}/edit`}
+        >
+          Изменить предложение
+        </Button>
         {share}
         <WithdrawResponseButton
           response={response}

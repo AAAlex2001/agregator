@@ -8,13 +8,14 @@ import { PublicOrders } from "@/widgets/public-orders";
 import { useAuthentication } from "../../../providers/authentication";
 import { forgetOrderToRespond } from "../../../session/order-to-respond";
 
-/** Первая страница заявок, загруженная сервером. */
+/** Страница заявок, загруженная сервером, и её номер. */
 interface OrdersPageContentProps {
   initialPage: OrderListPage;
+  page: number;
 }
 
 /** Подключает список заявок к регистрации и переходам в кабинет текущей роли. */
-export function OrdersPageContent({ initialPage }: OrdersPageContentProps) {
+export function OrdersPageContent({ initialPage, page }: OrdersPageContentProps) {
   const router = useRouter();
   const { user, role, isLoading } = useUser();
   const { openRegistration } = useAuthentication();
@@ -35,7 +36,7 @@ export function OrdersPageContent({ initialPage }: OrdersPageContentProps) {
     }
 
     if (role === "EXPERT") {
-      router.push(`/expert/orders?orderId=${orderId}`);
+      router.push(`/expert/orders/${orderId}`);
       return;
     }
 
@@ -45,6 +46,7 @@ export function OrdersPageContent({ initialPage }: OrdersPageContentProps) {
   return (
     <PublicOrders
       initialPage={initialPage}
+      page={page}
       onOpenOrder={openOrder}
     />
   );

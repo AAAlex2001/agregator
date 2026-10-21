@@ -71,7 +71,7 @@ class SendNewOrderEmailUseCase:
         return NewOrderContext(
             expert_greeting=greeting_for(expert),
             order_title=order.title or f"Заказ #{order.id}",
-            cta_url=CTA_URL,
+            cta_url=f"{CTA_URL}/{order.id}",
             fallback_notice=FALLBACK_NOTICE if fallback_to_all else "",
             order=OrderBrief(
                 company=order.company or "",

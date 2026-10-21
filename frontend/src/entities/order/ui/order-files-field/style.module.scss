@@ -5,14 +5,8 @@
   gap: 16px;
 }
 
-.requirementHint {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--color-orange-primary);
-}
-
 .hint {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--color-text-placeholder);
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
 }

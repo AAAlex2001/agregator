@@ -4,19 +4,25 @@ import type { OrderListItem } from "@/entities/order";
 import { StepActions } from "@/shared/ui/step-actions";
 import { StepProgress } from "@/shared/ui/step-progress";
 import { RESPOND_STEP_TITLES } from "../../config/steps";
-import type { useRespondForm } from "../../model/use-respond-form";
+import type { RespondCallbacks } from "../../model/types";
+import { useRespondForm } from "../../model/use-respond-form";
 import { RespondStepFields } from "../respond-step";
 import styles from "./style.module.scss";
 
-/** Заказ, состояние отклика и возврат к просмотру заказа с первого шага. */
-interface RespondWizardProps {
+/** Заказ, переходы по результату отклика и возврат к заказу с первого шага. */
+interface RespondWizardProps extends RespondCallbacks {
   order: OrderListItem;
-  form: ReturnType<typeof useRespondForm>;
   onCancel: () => void;
 }
 
 /** Отклик по шагам: шкала, поля текущего шага и кнопки перехода. */
-export function RespondWizard({ order, form, onCancel }: RespondWizardProps) {
+export function RespondWizard({
+  order,
+  onCancel,
+  onResponded,
+  onSubscriptionRequired,
+}: RespondWizardProps) {
+  const form = useRespondForm(order, { onResponded, onSubscriptionRequired });
   const titles = form.keys.map((key) => ({ title: RESPOND_STEP_TITLES[key] }));
   const current = titles[form.steps.step].title;
   const next = titles[form.steps.step + 1];
@@ -27,7 +33,7 @@ export function RespondWizard({ order, form, onCancel }: RespondWizardProps) {
       noValidate
       onSubmit={form.submit}
     >
-      <h2 className={styles.title}>Отклик на заказ</h2>
+      <h1 className={styles.title}>Отклик на заказ «{order.title}»</h1>
       <StepProgress
         steps={titles}
         current={form.steps.step}

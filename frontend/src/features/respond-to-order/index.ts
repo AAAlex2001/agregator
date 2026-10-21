@@ -1,1 +1,1 @@
-export { RespondModal } from "./ui/respond-modal";
+export { RespondWizard } from "./ui/respond-wizard";

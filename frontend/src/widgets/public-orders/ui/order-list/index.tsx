@@ -6,11 +6,11 @@ import {
   OrderCardSkeleton,
   OrderDetails,
   useLoadMoreOrders,
+  useNextOrderPage,
   useOrderList,
 } from "@/entities/order";
-import { useInfiniteScroll } from "@/shared/lib/use-infinite-scroll";
 import { EmptyState } from "@/shared/ui/empty-state";
-import { Loader } from "@/shared/ui/loader";
+import { LoadMore } from "@/shared/ui/load-more";
 import styles from "./style.module.scss";
 
 /** Переход из публичной карточки, определяемый страницей приложения. */
@@ -18,15 +18,11 @@ interface OrderListProps {
   onOpenOrder: (orderId: number) => void;
 }
 
-/** Отображает текущую страницу заказов и добавляет следующую при прокрутке. */
+/** Заказы страницы и «Загрузить ещё»: ссылка для поисковиков, у людей — догрузка на месте. */
 export function OrderList({ onOpenOrder }: OrderListProps) {
   const { items, hasMore, operation } = useOrderList();
   const loadMoreOrders = useLoadMoreOrders();
-  const sentinelRef = useInfiniteScroll({
-    hasMore,
-    isLoading: operation !== "idle",
-    onLoadMore: loadMoreOrders,
-  });
+  const nextPage = useNextOrderPage();
 
   if (operation === "loading") {
     return (
@@ -54,7 +50,7 @@ export function OrderList({ onOpenOrder }: OrderListProps) {
   }
 
   return (
-    <>
+    <div className={styles.content}>
       <ul className={styles.list}>
         {items.map((order) => (
           <li key={order.id}>
@@ -66,18 +62,13 @@ export function OrderList({ onOpenOrder }: OrderListProps) {
           </li>
         ))}
       </ul>
-      {operation === "loading-more" && (
-        <div className={styles.loadMore}>
-          <Loader
-            label=""
-            size="md"
-          />
-        </div>
+      {hasMore && (
+        <LoadMore
+          href={nextPage ? `/orders?page=${nextPage}` : undefined}
+          isLoading={operation === "loading-more"}
+          onLoadMore={() => void loadMoreOrders()}
+        />
       )}
-      <div
-        ref={sentinelRef}
-        aria-hidden="true"
-      />
-    </>
+    </div>
   );
 }

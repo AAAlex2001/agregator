@@ -3,12 +3,12 @@
 import {
   ArchivedOrderCardSkeleton,
   useLoadMoreOrders,
+  useNextOrderPage,
   useOrderList,
 } from "@/entities/order";
 import type { OrderListItem } from "@/entities/order";
-import { useInfiniteScroll } from "@/shared/lib/use-infinite-scroll";
 import { EmptyState } from "@/shared/ui/empty-state";
-import { Loader } from "@/shared/ui/loader";
+import { LoadMore } from "@/shared/ui/load-more";
 import { ArchiveOrderItem } from "../archive-order-item";
 import styles from "./style.module.scss";
 
@@ -17,15 +17,11 @@ interface ArchiveOrdersListProps {
   onLeaveReview: (order: OrderListItem) => void;
 }
 
-/** Показывает общий архив и догружает завершённые заказы при прокрутке. */
+/** Общий архив по страницам: «Загрузить ещё» — ссылка на следующую страницу и догрузка на месте. */
 export function ArchiveOrdersList({ onLeaveReview }: ArchiveOrdersListProps) {
   const list = useOrderList();
   const loadMoreOrders = useLoadMoreOrders();
-  const sentinelRef = useInfiniteScroll({
-    hasMore: list.hasMore,
-    isLoading: list.operation !== "idle",
-    onLoadMore: loadMoreOrders,
-  });
+  const nextPage = useNextOrderPage();
 
   if (list.operation === "loading") {
     return (
@@ -67,18 +63,13 @@ export function ArchiveOrdersList({ onLeaveReview }: ArchiveOrdersListProps) {
           onLeaveReview={onLeaveReview}
         />
       ))}
-      {list.operation === "loading-more" && (
-        <div className={styles.loadMore}>
-          <Loader
-            label=""
-            size="md"
-          />
-        </div>
+      {list.hasMore && (
+        <LoadMore
+          href={nextPage ? `/archive?page=${nextPage}` : undefined}
+          isLoading={list.operation === "loading-more"}
+          onLoadMore={() => void loadMoreOrders()}
+        />
       )}
-      <div
-        ref={sentinelRef}
-        aria-hidden="true"
-      />
     </div>
   );
 }

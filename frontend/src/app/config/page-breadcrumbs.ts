@@ -138,16 +138,21 @@ const CABINET_PAGES: PageTitle[] = [
 /** Страницы без цепочки: главные и настройки профиля. */
 const ROOT_PAGES = ["/", "/landing", "/settings"];
 
-/** Разделы Блиц-эксперта и Блиц-аудита в цепочке. */
+/** Разделы Блиц-эксперта, Блиц-аудита, заказов и откликов в цепочке. */
 const BLITZ_EXPERT = { label: "Блиц-эксперт", href: "/blitz" };
 const BLITZ_AUDIT = { label: "Блиц-аудит", href: "/blitz-audit" };
+const EXPERT_ORDERS = { label: "Все заказы", href: "/expert/orders" };
+const RESPONSES = { label: "Мои отклики", href: "/responses" };
 
-/** Вложенные страницы сервисов: раздел и последнее звено. */
-const BLITZ_PAGES = [
+/** Вложенные страницы разделов: раздел и последнее звено. */
+const NESTED_PAGES = [
   { pattern: /^\/blitz\/new$/, section: BLITZ_EXPERT, label: "Новая заявка" },
   { pattern: /^\/blitz\/orders\/[^/]+$/, section: BLITZ_EXPERT, label: "Заявка" },
   { pattern: /^\/blitz-audit\/new$/, section: BLITZ_AUDIT, label: "Новый аудит" },
   { pattern: /^\/blitz-audit\/orders\/[^/]+$/, section: BLITZ_AUDIT, label: "Заявка" },
+  { pattern: /^\/expert\/orders\/[^/]+$/, section: EXPERT_ORDERS, label: "Заказ" },
+  { pattern: /^\/expert\/orders\/[^/]+\/respond$/, section: EXPERT_ORDERS, label: "Отклик" },
+  { pattern: /^\/responses\/[^/]+\/edit$/, section: RESPONSES, label: "Изменение предложения" },
 ];
 
 /** Страницы, которые выводят цепочку внутри своего содержимого. */
@@ -208,14 +213,14 @@ export function getPageBreadcrumbs(pathname: string): BreadcrumbItem[] | null {
     ];
   }
 
-  const blitzPage = BLITZ_PAGES.find((page) => page.pattern.test(path));
+  const nestedPage = NESTED_PAGES.find((page) => page.pattern.test(path));
 
-  if (blitzPage) {
+  if (nestedPage) {
     return [
       PROFILE,
-      blitzPage.section,
+      nestedPage.section,
       {
-        label: blitzPage.label,
+        label: nestedPage.label,
       },
     ];
   }

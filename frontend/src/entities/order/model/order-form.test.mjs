@@ -265,6 +265,7 @@ test("expertise asks for executor or license and keeps the attestation step", ()
     "experts",
     "documents",
     "comment",
+    "preview",
   ]);
 });
 

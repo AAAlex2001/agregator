@@ -1,1 +1,1 @@
-export { EditResponseButton } from "./ui/edit-response-button";
+export { EditResponseForm } from "./ui/edit-response-form";

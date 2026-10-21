@@ -1,13 +1,17 @@
-.dialog {
-  border: 2px solid var(--color-orange-primary);
-  gap: 20px;
-}
-
 .wizard {
   display: flex;
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  max-width: 1200px;
+  padding: 20px 16px;
+  border: 2px solid var(--color-orange-primary);
+  border-radius: 16px;
+  background: var(--color-surface);
+
+  @media (min-width: 768px) {
+    padding: 24px;
+  }
 }
 
 .headerRow {
@@ -56,10 +60,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: flex-start;
   padding: 8px 10px;
   border-radius: 8px;
   font-size: 14px;
   line-height: 17px;
   font-weight: 500;
   white-space: nowrap;
+
+  @media (min-width: 768px) {
+    align-self: auto;
+  }
 }

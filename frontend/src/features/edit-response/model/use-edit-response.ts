@@ -43,7 +43,7 @@ export function useEditResponse(response: ResponseItem, onSaved: () => void) {
   const [keepFiles, setKeepFiles] = useState(response.response_files);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const attachments = useResponseFiles();
-  const steps = useSteps(EDIT_RESPONSE_STEPS.length, "dialog");
+  const steps = useSteps(EDIT_RESPONSE_STEPS.length);
   const { showError } = useNotifications();
   const bounds = { startDate: response.order_start_date, deadline: response.order_date, budget: 0 };
 

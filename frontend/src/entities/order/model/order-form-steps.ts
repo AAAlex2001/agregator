@@ -3,7 +3,14 @@ import { countOrderFormFiles } from "./order-form-files";
 import type { OrderFormValues } from "./order-form-types";
 
 /** Шаг формы заказа. Шаг сведений есть, только если у направления свои поля. */
-export type OrderFormStep = "work" | "main" | "details" | "experts" | "documents" | "comment";
+export type OrderFormStep =
+  | "work"
+  | "main"
+  | "details"
+  | "experts"
+  | "documents"
+  | "comment"
+  | "preview";
 
 /** Ошибка шага и сам шаг, где её исправить. */
 export interface OrderFormProblem {
@@ -19,6 +26,7 @@ const STEP_TITLES = {
   experts: "Исполнители",
   documents: "Документы",
   comment: "Комментарий",
+  preview: "Проверка",
 };
 
 /** Есть ли у заказа шаг сведений: области аттестации у ЭПБ или поля направления. */
@@ -28,7 +36,15 @@ function hasDetailsStep(values: OrderFormValues): boolean {
 
 /** Шаги формы по порядку для выбранного вида работ. */
 export function getOrderFormSteps(values: OrderFormValues): OrderFormStep[] {
-  const steps: OrderFormStep[] = ["work", "main", "details", "experts", "documents", "comment"];
+  const steps: OrderFormStep[] = [
+    "work",
+    "main",
+    "details",
+    "experts",
+    "documents",
+    "comment",
+    "preview",
+  ];
 
   return hasDetailsStep(values) ? steps : steps.filter((step) => step !== "details");
 }
@@ -66,6 +82,7 @@ export function getOrderStepError(step: OrderFormStep, values: OrderFormValues):
     case "details":
     case "experts":
     case "comment":
+    case "preview":
       return "";
   }
 }

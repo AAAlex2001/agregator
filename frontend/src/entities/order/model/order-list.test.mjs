@@ -49,6 +49,8 @@ function createList(page = initialPage, hasServerPage = true, listType = "orders
       return state;
     },
     initialPage: hasServerPage ? page : undefined,
+    initialOffset: 0,
+    pageSize: 50,
     listType,
     requestVersionRef: { current: 0 },
     dispatch(action) {
@@ -227,4 +229,32 @@ test("archive pagination stays on the archive endpoint and uses loaded count", a
   assert.equal(requests[0].options.credentials, "include");
   assert.deepEqual(list.state.items, [{ id: 1 }, { id: 2 }, { id: 3 }]);
   assert.equal(list.state.hasMore, false);
+});
+
+test("catalog page starts from its offset and loads the next ten after it", async (context) => {
+  const urls = [];
+  context.mock.method(globalThis, "fetch", async (url) => {
+    urls.push(String(url));
+    return Response.json({ items: [{ id: 21 }], has_more: false });
+  });
+  let state = createOrderListState(initialPage, 20);
+  globalThis.orderListTestContext = {
+    get state() {
+      return state;
+    },
+    initialPage,
+    initialOffset: 20,
+    pageSize: 10,
+    listType: "orders",
+    requestVersionRef: { current: 0 },
+    dispatch(action) {
+      state = orderListReducer(state, action);
+    },
+  };
+
+  await useLoadMoreOrders()();
+
+  assert.match(urls[0], /skip=22&limit=10/);
+  assert.deepEqual(state.items.map((item) => item.id), [1, 2, 21]);
+  assert.equal(state.offset, 20);
 });

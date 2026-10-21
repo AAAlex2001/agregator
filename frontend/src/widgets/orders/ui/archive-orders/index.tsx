@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { OrderListProvider } from "@/entities/order";
-import type { OrderListItem } from "@/entities/order";
+import { CATALOG_PAGE_SIZE, OrderListProvider } from "@/entities/order";
+import type { OrderListItem, OrderListPage } from "@/entities/order";
 import { LeaveReviewModal } from "@/features/leave-review";
 import { ArchiveOrdersList } from "../archive-orders-list";
 import styles from "./style.module.scss";
 
+/** Страница архива с сервера, если она загрузилась, и её номер. */
+interface ArchiveOrdersProps {
+  initialPage?: OrderListPage;
+  page: number;
+}
+
 /** Архив завершённых заказов и отзыв заказчика о выбранном исполнителе. */
-export function ArchiveOrders() {
+export function ArchiveOrders({ initialPage, page }: ArchiveOrdersProps) {
   const [selectedOrder, setSelectedOrder] = useState<OrderListItem | null>(null);
   const [listVersion, setListVersion] = useState(0);
 
@@ -28,6 +34,9 @@ export function ArchiveOrders() {
       <OrderListProvider
         key={listVersion}
         listType="archive"
+        initialPage={listVersion === 0 ? initialPage : undefined}
+        initialOffset={(page - 1) * CATALOG_PAGE_SIZE}
+        pageSize={CATALOG_PAGE_SIZE}
       >
         <ArchiveOrdersList onLeaveReview={setSelectedOrder} />
       </OrderListProvider>

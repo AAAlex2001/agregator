@@ -28,23 +28,20 @@ export function OrderLivePreview({ customerInn, badges }: OrderLivePreviewProps)
   const hasDetails = Boolean(values.details || comment || hasDocuments);
 
   return (
-    <aside className={styles.wrap}>
-      <span className={styles.heading}>Как увидят исполнители:</span>
-      <OrderCard
-        order={getOrderPreviewCard(values, customerInn, badges)}
-        details={hasDetails ? (
-          <>
-            <OrderDirectionDetails order={getOrderFormDirection(values)} />
-            {comment && (
-              <div className={styles.comment}>
-                <span className={styles.commentLabel}>Комментарий заказчика:</span>
-                <p className={styles.commentText}>{comment}</p>
-              </div>
-            )}
-            {hasDocuments && <OrderDocuments documents={documents} />}
-          </>
-        ) : undefined}
-      />
-    </aside>
+    <OrderCard
+      order={getOrderPreviewCard(values, customerInn, badges)}
+      details={hasDetails ? (
+        <>
+          <OrderDirectionDetails order={getOrderFormDirection(values)} />
+          {comment && (
+            <div className={styles.comment}>
+              <span className={styles.commentLabel}>Комментарий заказчика:</span>
+              <p className={styles.commentText}>{comment}</p>
+            </div>
+          )}
+          {hasDocuments && <OrderDocuments documents={documents} />}
+        </>
+      ) : undefined}
+    />
   );
 }

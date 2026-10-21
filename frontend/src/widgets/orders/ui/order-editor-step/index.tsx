@@ -9,12 +9,12 @@ import {
   useOrderForm,
   useOrderFormSteps,
 } from "@/entities/order";
+import { FormSection } from "@/shared/ui/form-section";
 import { OrderBadgesField } from "../order-badges-field";
 import { OrderCopyOffer } from "../order-copy-offer";
 import { OrderDirectionFields } from "../order-direction-fields";
 import { OrderEditorPreview } from "../order-editor-preview";
 import { OrderExpertsMap } from "../order-experts-map";
-import styles from "./style.module.scss";
 
 /** Направления заказчика, справка по кодам и копирование заявки. */
 interface OrderEditorStepProps {
@@ -23,7 +23,7 @@ interface OrderEditorStepProps {
   onCopy: () => void;
 }
 
-/** Поля текущего шага заказа. */
+/** Разделы текущего шага заказа. */
 export function OrderEditorStep({ directions, onShowHelp, onCopy }: OrderEditorStepProps) {
   const { values } = useOrderForm();
   const steps = useOrderFormSteps();
@@ -47,13 +47,15 @@ export function OrderEditorStep({ directions, onShowHelp, onCopy }: OrderEditorS
     case "documents":
       return <OrderFilesField />;
     case "comment":
+      return <OrderCommentField />;
+    case "preview":
       return (
-        <>
-          <OrderCommentField />
-          <div className={styles.previewInline}>
-            <OrderEditorPreview />
-          </div>
-        </>
+        <FormSection
+          title="Как увидят исполнители"
+          hint="Так заказ будет выглядеть в ленте. Если что-то не так — вернитесь к нужному шагу"
+        >
+          <OrderEditorPreview />
+        </FormSection>
       );
   }
 }

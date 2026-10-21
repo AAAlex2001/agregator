@@ -1,13 +1,12 @@
 "use client";
 
 import { getOrderListPage } from "../api/get-order-list-page";
-import { ORDERS_PAGE_SIZE } from "./order-list";
 import type { OrderSort } from "./order-list";
 import { useOrderListContext } from "./order-list-context";
 
 /** Загружает первую страницу выбранного порядка вместо прежнего списка. */
 export function useLoadOrders() {
-  const { dispatch, listType, requestVersionRef } = useOrderListContext();
+  const { dispatch, pageSize, listType, requestVersionRef } = useOrderListContext();
 
   /** Применяет ответ, только если пользователь ещё не выбрал другую сортировку. */
   async function loadOrders(sort: OrderSort) {
@@ -22,7 +21,7 @@ export function useLoadOrders() {
       const page = await getOrderListPage(
         {
           skip: 0,
-          limit: ORDERS_PAGE_SIZE,
+          limit: pageSize,
           sort,
         },
         listType,

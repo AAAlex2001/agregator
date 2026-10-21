@@ -13,21 +13,27 @@ import {
 } from "@/shared/ui/icons";
 import type { SidebarItem, SidebarSection } from "../model/types";
 
+/** Плашка недавно появившихся разделов. */
+const NEW_TAG = "Новое";
+
 /** Сервисы платформы в разделе работы: экспертиза, аудит СУПБ и конкурсный отбор экспертов. */
 const SERVICE_ITEMS: SidebarItem[] = [
   {
     href: "/blitz",
     label: "Блиц-эксперт",
+    tag: NEW_TAG,
     icon: TabBlitzExpertIcon,
   },
   {
     href: "/blitz-audit",
     label: "Блиц-аудит",
+    tag: NEW_TAG,
     icon: TabBlitzAuditIcon,
   },
   {
     href: "/commission",
     label: "Конкурсная комиссия",
+    tag: NEW_TAG,
     icon: TabCommissionIcon,
   },
 ];
@@ -39,6 +45,7 @@ const COMMUNICATION_SECTION: SidebarSection = {
     {
       href: "/posts",
       label: "Публикации",
+      tag: NEW_TAG,
       icon: NewspaperIcon,
     },
     {
@@ -131,6 +138,7 @@ const LICENSE_HOLDER_SECTIONS: SidebarSection[] = [
       {
         href: "/posts",
         label: "Публикации",
+      tag: NEW_TAG,
         icon: NewspaperIcon,
       },
       {

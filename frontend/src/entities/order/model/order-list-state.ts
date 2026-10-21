@@ -1,9 +1,10 @@
 import type { OrderListItem } from "./order-list-item";
 import type { OrderListPage, OrderSort } from "./order-list";
 
-/** Загруженные заказы, выбранный порядок и одна текущая операция списка. */
+/** Загруженные заказы с позиции offset, выбранный порядок и одна текущая операция списка. */
 export interface OrderListState {
   items: OrderListItem[];
+  offset: number;
   hasMore: boolean;
   sort: OrderSort;
   operation: "idle" | "loading" | "loading-more";
@@ -18,12 +19,13 @@ export type OrderListAction =
   | { type: "more/loaded"; page: OrderListPage }
   | { type: "request/failed"; error: string }
   | { type: "order/removed"; orderId: number }
-  | { type: "sort/reset"; page: OrderListPage };
+  | { type: "sort/reset"; page: OrderListPage; offset: number };
 
-/** Использует серверную страницу либо показывает загрузку клиентского списка. */
-export function createOrderListState(page?: OrderListPage): OrderListState {
+/** Использует серверную страницу с её позицией либо показывает загрузку клиентского списка. */
+export function createOrderListState(page?: OrderListPage, offset = 0): OrderListState {
   return {
     items: page?.items ?? [],
+    offset,
     hasMore: page?.has_more ?? false,
     sort: {
       field: null,
@@ -43,6 +45,7 @@ export function orderListReducer(
     case "page/started":
       return {
         items: [],
+        offset: 0,
         hasMore: false,
         sort: action.sort,
         operation: "loading",
@@ -77,7 +80,7 @@ export function orderListReducer(
         error: action.error,
       };
     case "sort/reset":
-      return createOrderListState(action.page);
+      return createOrderListState(action.page, action.offset);
     case "order/removed":
       return {
         ...state,

@@ -61,6 +61,21 @@
   min-width: 0;
 }
 
+.tag {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.tabActive .tag {
+  background: var(--color-surface);
+}
+
 .badge {
   display: inline-flex;
   align-items: center;

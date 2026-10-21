@@ -7,6 +7,9 @@ export type OrderListType = "orders" | "archive" | "reports";
 export const ORDERS_PAGE_SIZE = 50;
 
 /** Количество заказов в странице истории исполнителя. */
+/** Страница каталога и архива: по 10 заказов, следующая — ссылкой ?page=N для поисковиков. */
+export const CATALOG_PAGE_SIZE = 10;
+
 export const EXPERT_HISTORY_PAGE_SIZE = 20;
 
 /** Поля сортировки списка, поддерживаемые API заказов. */

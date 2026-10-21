@@ -1,10 +1,11 @@
 import type { ComponentType } from "react";
 
-/** Ссылка меню и маршруты, на которых она остаётся выделенной. */
+/** Ссылка меню, маршруты, на которых она остаётся выделенной, и плашка вроде «Новое». */
 export interface SidebarItem {
   href: string;
   activePaths?: string[];
   label: string;
+  tag?: string;
   icon: ComponentType<{ className?: string }>;
 }
 

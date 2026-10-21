@@ -3,30 +3,24 @@
 import { useRouter } from "next/navigation";
 import { ExpertOrders } from "@/widgets/orders";
 
-/** Заказ из ссылки, который открывается после загрузки ленты. */
-interface ExpertOrdersPageContentProps {
-  openOrderId: number | null;
-}
-
-/** Подключает ленту исполнителя к его откликам и выбору подписки. */
-export function ExpertOrdersPageContent({ openOrderId }: ExpertOrdersPageContentProps) {
+/** Подключает ленту исполнителя к страницам заказа и отклика. */
+export function ExpertOrdersPageContent() {
   const router = useRouter();
 
-  /** Открывает свои отклики после отправки предложения. */
-  function openResponses() {
-    router.push("/responses");
+  /** Открывает страницу заказа. */
+  function openOrder(orderId: number) {
+    router.push(`/expert/orders/${orderId}`);
   }
 
-  /** Открывает выбор подписки, без которой отклик недоступен. */
-  function openSubscription() {
-    router.push("/settings?section=subscription");
+  /** Открывает отклик на заказ. */
+  function respond(orderId: number) {
+    router.push(`/expert/orders/${orderId}/respond`);
   }
 
   return (
     <ExpertOrders
-      openOrderId={openOrderId}
-      onResponded={openResponses}
-      onSubscriptionRequired={openSubscription}
+      onOpenOrder={openOrder}
+      onRespond={respond}
     />
   );
 }

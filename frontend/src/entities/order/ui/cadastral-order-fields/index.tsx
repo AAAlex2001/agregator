@@ -123,7 +123,7 @@ export function CadastralOrderFields({
           placeholder="30 дней"
         />
       </Field>
-      <FieldNote>Техническое задание приложите в файлах заявки ниже.</FieldNote>
+      <FieldNote>Техническое задание приложите на шаге «Документы».</FieldNote>
     </FieldStack>
   );
 }

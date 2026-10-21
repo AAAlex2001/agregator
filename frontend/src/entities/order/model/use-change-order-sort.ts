@@ -6,7 +6,7 @@ import { useLoadOrders } from "./use-load-orders";
 
 /** Меняет порядок заказов или восстанавливает исходную страницу сервера. */
 export function useChangeOrderSort() {
-  const { state, dispatch, initialPage, requestVersionRef } = useOrderListContext();
+  const { state, dispatch, initialPage, initialOffset, requestVersionRef } = useOrderListContext();
   const loadOrders = useLoadOrders();
 
   /** Сбрасывает порядок к серверной странице либо заново загружает клиентский список. */
@@ -24,6 +24,7 @@ export function useChangeOrderSort() {
       dispatch({
         type: "sort/reset",
         page: initialPage,
+        offset: initialOffset,
       });
       return;
     }

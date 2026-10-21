@@ -33,7 +33,7 @@ export function OrderPageContent({ uuid }: OrderPageContentProps) {
     }
 
     forgetOrderToRespond();
-    router.replace(`/expert/orders?orderId=${order.id}`);
+    router.replace(`/expert/orders/${order.id}`);
   }, [order, role, router]);
 
   /** Открывает обычную регистрацию из публичного заказа. */

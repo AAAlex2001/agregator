@@ -40,6 +40,7 @@ export function SidebarLink({
         <Icon />
       </span>
       <span className={styles.tabLabel}>{item.label}</span>
+      {item.tag && <span className={styles.tag}>{item.tag}</span>}
       {badge > 0 && (
         <span className={styles.badge}>{badge > 99 ? "99+" : badge}</span>
       )}

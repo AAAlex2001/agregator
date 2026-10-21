@@ -30,6 +30,6 @@ class SendQuestionAnsweredEmailUseCase:
             order_title=question.order.title or "Заявка",
             question_text=question.question or "",
             answer_text=question.answer or "",
-            cta_url=CTA_URL_TEMPLATE,
+            cta_url=f"{CTA_URL_TEMPLATE}/{question.order.id}",
         )
         self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)

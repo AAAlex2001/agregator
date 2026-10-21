@@ -5,11 +5,13 @@ import type { Dispatch, RefObject } from "react";
 import type { OrderListPage, OrderListType } from "./order-list";
 import type { OrderListAction, OrderListState } from "./order-list-state";
 
-/** Данные списка и версия запроса, защищающая его от ответов старой сортировки. */
+/** Данные списка, размер страницы, позиция серверной страницы и версия запроса. */
 interface OrderListContextValue {
   state: OrderListState;
   dispatch: Dispatch<OrderListAction>;
   initialPage?: OrderListPage;
+  initialOffset: number;
+  pageSize: number;
   listType: OrderListType;
   expertPublicId?: string;
   requestVersionRef: RefObject<number>;

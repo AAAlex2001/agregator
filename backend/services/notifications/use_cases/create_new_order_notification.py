@@ -47,7 +47,7 @@ class CreateNewOrderNotificationUseCase:
                 user_id=expert.id,
                 type=NotificationType.NEW_ORDER,
                 payload=payload_dump,
-                action_url=ACTION_URL,
+                action_url=f"{ACTION_URL}/{order.id}",
             )
             await self.repo.add(notification)
             await self.repo.increment_unread(expert.id)

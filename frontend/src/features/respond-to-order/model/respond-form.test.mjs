@@ -66,6 +66,8 @@ registerHooks({
   },
 });
 
+globalThis.window = { scrollTo() {} };
+
 const { useRespondForm } = await import("./use-respond-form.ts");
 const { getResponseTermsError, EMPTY_RESPONSE_OFFER } = await import(offerModel.href);
 const order = {

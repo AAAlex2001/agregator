@@ -8,9 +8,9 @@
   list-style: none;
 }
 
-.loadMore {
+.content {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 60px;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }

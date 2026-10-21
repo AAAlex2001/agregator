@@ -44,7 +44,7 @@ class SendOrderUpdatedEmailUseCase:
         return OrderUpdatedContext(
             expert_greeting=greeting_for(expert),
             order_title=order.title or f"Заказ #{order.id}",
-            cta_url=CTA_URL,
+            cta_url=f"{CTA_URL}/{order.id}",
             order=OrderBrief(
                 company=order.company or "",
                 sum_amount=order.sum_amount,

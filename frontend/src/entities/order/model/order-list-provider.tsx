@@ -8,9 +8,11 @@ import { createOrderListState, orderListReducer } from "./order-list-state";
 import { ORDERS_PAGE_SIZE } from "./order-list";
 import type { OrderListPage, OrderListType } from "./order-list";
 
-/** Вид списка, исполнитель для его истории, серверная страница и отображение. */
+/** Вид списка, исполнитель для его истории, серверная страница с её позицией и размер страницы. */
 interface OrderListProviderProps {
   initialPage?: OrderListPage;
+  initialOffset?: number;
+  pageSize?: number;
   listType?: OrderListType;
   expertPublicId?: string;
   children: ReactNode;
@@ -19,6 +21,8 @@ interface OrderListProviderProps {
 /** Хранит список текущей сессии; при смене аккаунта или вида списка нужен новый key. */
 export function OrderListProvider({
   initialPage,
+  initialOffset = 0,
+  pageSize = ORDERS_PAGE_SIZE,
   listType = "orders",
   expertPublicId,
   children,
@@ -26,7 +30,7 @@ export function OrderListProvider({
   const [state, dispatch] = useReducer(
     orderListReducer,
     initialPage,
-    createOrderListState,
+    (page) => createOrderListState(page, initialOffset),
   );
   const requestVersionRef = useRef(0);
 
@@ -42,8 +46,8 @@ export function OrderListProvider({
       try {
         const page = await getOrderListPage(
           {
-            skip: 0,
-            limit: ORDERS_PAGE_SIZE,
+            skip: initialOffset,
+            limit: pageSize,
             sort: {
               field: null,
               direction: null,
@@ -76,7 +80,7 @@ export function OrderListProvider({
     return () => {
       requestVersionRef.current += 1;
     };
-  }, [initialPage, listType, expertPublicId]);
+  }, [initialPage, initialOffset, pageSize, listType, expertPublicId]);
 
   return (
     <OrderListContext.Provider
@@ -84,6 +88,8 @@ export function OrderListProvider({
         state,
         dispatch,
         initialPage,
+        initialOffset,
+        pageSize,
         listType,
         expertPublicId,
         requestVersionRef,

@@ -48,7 +48,7 @@ class AnswerQuestionUseCase:
                     expert_id=question.expert_id,
                     order_title=question.order.title or "",
                     answer_text=text,
-                    action_url=EXPERT_QUESTION_URL,
+                    action_url=f"{EXPERT_QUESTION_URL}/{question.order.id}",
                 )
             if self.send_email is not None:
                 await self.send_email.execute(question.id)

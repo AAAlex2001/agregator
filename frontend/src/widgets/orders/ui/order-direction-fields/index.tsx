@@ -12,7 +12,6 @@ import {
   ForensicOrderFields,
   getOrderFormDirection,
   LaboratoryOrderFields,
-  OrderFormSection,
   ResearchOrderFields,
   SurveyOrderFields,
   TechDiagOrderFields,
@@ -24,6 +23,7 @@ import type {
   OrderListItem,
 } from "@/entities/order";
 import { toSurveyKindSelectOptions, useSurveyOptions } from "@/entities/survey";
+import { FormSection } from "@/shared/ui/form-section";
 
 /** Соединяет поля выбранного направления с его справочниками и черновиком заказа. */
 export function OrderDirectionFields() {
@@ -138,8 +138,11 @@ export function OrderDirectionFields() {
   }
 
   return (
-    <OrderFormSection>
+    <FormSection
+      title="Сведения о заявке"
+      hint="Подробности по направлению: их увидят исполнители в карточке заказа"
+    >
       {renderDirectionFields()}
-    </OrderFormSection>
+    </FormSection>
   );
 }

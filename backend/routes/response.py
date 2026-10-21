@@ -2,7 +2,17 @@ import json as json_lib
 from datetime import date as date_type
 from typing import Literal
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -194,6 +204,21 @@ async def update_response_status(
         response_id=response_id, actor_id=user_id, new_status=new_status, reason=rejection_reason
     )
     return to_item(updated)
+
+
+@router.get("/responses/{response_id}", response_model=ExpertResponseItem)
+async def get_my_response(
+    response_id: int,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> ExpertResponseItem:
+    "Отклик эксперта для страницы изменения предложения. Чужой отклик выглядит как несуществующий."
+    response = await GetResponseByIdUseCase(build_repo(db)).execute(response_id)
+
+    if response.expert_id != user_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Отклик не найден")
+
+    return to_item(response)
 
 
 @router.put("/responses/{response_id}", response_model=ExpertResponseItem)

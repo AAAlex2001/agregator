@@ -1,5 +1,6 @@
 "use client";
 
+import { FormSection } from "@/shared/ui/form-section";
 import {
   MAX_ORDER_DOCUMENTS,
   MAX_ORDER_FILES_TOTAL_BYTES,
@@ -13,9 +14,12 @@ import {
 import { useOrderForm } from "../../model/order-form-provider";
 import { useOrderFormFiles } from "../../model/use-order-form-files";
 import { OrderDocumentSlot } from "../order-document-slot";
-import { OrderFormSection } from "../order-form-section";
 import { OrderSingleDocumentField } from "../order-single-document-field";
 import styles from "./style.module.scss";
+
+/** Подсказка проектирования: без задания исполнитель не оценит работу. */
+const DESIGN_HINT = "Обязательно приложите задание на проектирование. Можно добавить "
+  + "инженерные изыскания, эскизный проект и другие исходные данные";
 
 /** Размер новых вложений в мегабайтах для подсказки формы. */
 const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);
@@ -37,14 +41,10 @@ export function OrderFilesField() {
   const filesSize = getOrderFormFilesSize(values);
 
   return (
-    <OrderFormSection label="Документы заказа">
-      {values.workType === "DESIGN" && (
-        <span className={styles.requirementHint}>
-          Обязательно приложите задание на проектирование. Также можно приложить
-          инженерные изыскания, эскизный проект и другие исходные данные.
-        </span>
-      )}
-
+    <FormSection
+      title="Документы"
+      hint={values.workType === "DESIGN" ? DESIGN_HINT : "Необязательно. Документы увидят исполнители"}
+    >
       <div className={styles.row}>
         {SINGLE_ORDER_DOCUMENT_CATEGORIES.map((category) => (
           <OrderSingleDocumentField
@@ -52,7 +52,6 @@ export function OrderFilesField() {
             category={category}
           />
         ))}
-
         <OrderDocumentSlot
           label={ORDER_DOCUMENT_LABELS.other}
           existing={values.documents.other}
@@ -64,12 +63,11 @@ export function OrderFilesField() {
           onRemoveFile={removeFile}
         />
       </div>
-
       <span className={styles.hint}>
         PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX, ZIP, RAR, 7Z.
         Всего не более {MAX_ORDER_DOCUMENTS} файлов (загружено {filesCount}).
         Суммарный размер новых файлов до {MAX_TOTAL_MB} МБ (сейчас {formatBytes(filesSize)}).
       </span>
-    </OrderFormSection>
+    </FormSection>
   );
 }

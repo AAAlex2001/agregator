@@ -4,8 +4,9 @@ import { useState } from "react";
 import { ExpertiseCodesGuide } from "@/entities/expertise";
 import { CreateOrderForm } from "@/features/create-order";
 import { EditOrderForm } from "@/features/edit-order";
-import { OrderEditorFields } from "../order-editor-fields";
-import { OrderEditorPreview } from "../order-editor-preview";
+import { Title } from "@/shared/ui/title";
+import { OrderEditorProgress } from "../order-editor-progress";
+import { OrderEditorStep } from "../order-editor-step";
 import styles from "./style.module.scss";
 
 /** Сохраняемый заказ, направления заказчика и переходы редактора. */
@@ -18,7 +19,7 @@ interface OrderEditorContentProps {
   onSaved: () => void;
 }
 
-/** Показывает форму с предпросмотром; справка скрывает форму, не размонтируя её. */
+/** Шкала шагов и карточка текущего шага; справка скрывает форму, не размонтируя её. */
 export function OrderEditorContent({
   orderId,
   directions,
@@ -29,35 +30,30 @@ export function OrderEditorContent({
 }: OrderEditorContentProps) {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const isEditing = orderId !== undefined;
-  const title = isEditing ? "Редактирование заказа" : "Создание заказа";
 
-  /** Открывает таблицу обозначений поверх скрытой формы. */
-  function showHelp() {
-    setIsHelpOpen(true);
-  }
-
-  /** Возвращает заполненную форму после просмотра обозначений. */
-  function hideHelp() {
-    setIsHelpOpen(false);
-  }
-
-  const fields = (
-    <OrderEditorFields
+  const step = (
+    <OrderEditorStep
       directions={directions}
-      title={showHeading ? title : undefined}
-      onShowHelp={showHelp}
+      onShowHelp={() => setIsHelpOpen(true)}
       onCopy={onCopy}
     />
   );
 
   return (
-    <div className={isHelpOpen ? styles.shellWide : styles.shellWithPreview}>
+    <div className={styles.editor}>
       {isHelpOpen && (
         <div className={styles.form}>
-          <ExpertiseCodesGuide onBack={hideHelp} />
+          <ExpertiseCodesGuide onBack={() => setIsHelpOpen(false)} />
         </div>
       )}
-      <div className={isHelpOpen ? styles.hidden : styles.layout}>
+      <div className={isHelpOpen ? styles.hidden : styles.wizard}>
+        {showHeading && (
+          <Title
+            as="h1"
+            text={isEditing ? "Редактирование заказа" : "Создание заказа"}
+          />
+        )}
+        <OrderEditorProgress />
         {isEditing ? (
           <EditOrderForm
             orderId={orderId}
@@ -65,7 +61,7 @@ export function OrderEditorContent({
             onCancel={onCancel}
             onSaved={onSaved}
           >
-            {fields}
+            {step}
           </EditOrderForm>
         ) : (
           <CreateOrderForm
@@ -73,12 +69,9 @@ export function OrderEditorContent({
             onCancel={onCancel}
             onSaved={onSaved}
           >
-            {fields}
+            {step}
           </CreateOrderForm>
         )}
-        <div className={styles.previewSide}>
-          <OrderEditorPreview />
-        </div>
       </div>
     </div>
   );

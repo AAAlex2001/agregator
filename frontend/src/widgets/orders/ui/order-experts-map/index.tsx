@@ -1,13 +1,17 @@
 "use client";
 
-import { OrderFormSection, useOrderForm } from "@/entities/order";
+import { useOrderForm } from "@/entities/order";
 import {
   DesignSpecialistsMap,
   DirectionExpertsMap,
   ExpertiseExpertsMap,
   SurveySpecialistsMap,
 } from "@/features/filter-experts-map";
-import styles from "./style.module.scss";
+import { FormSection } from "@/shared/ui/form-section";
+
+/** Зачем заказчику карта исполнителей. */
+const MAP_HINT = "Посмотрите, где находятся исполнители площадки, — это поможет выбрать "
+  + "исполнителя ближе к объекту. Нажмите на маркер, чтобы увидеть исполнителя";
 
 /** Показывает карту и фильтры исполнителей для текущего направления заказа. */
 export function OrderExpertsMap() {
@@ -18,11 +22,10 @@ export function OrderExpertsMap() {
     && workType !== "SURVEY";
 
   return (
-    <OrderFormSection label="Исполнители на карте">
-      <p className={styles.hint}>
-        Посмотрите, где находятся исполнители площадки, — это поможет выбрать исполнителя
-        ближе к объекту. Точки кластеризуются; нажмите на маркер, чтобы увидеть исполнителя.
-      </p>
+    <FormSection
+      title="Исполнители на карте"
+      hint={MAP_HINT}
+    >
       {workType === "EXPERTISE" && (
         <ExpertiseExpertsMap
           height={420}
@@ -32,6 +35,6 @@ export function OrderExpertsMap() {
       {workType === "DESIGN" && <DesignSpecialistsMap />}
       {workType === "SURVEY" && <SurveySpecialistsMap />}
       {isOtherDirection && <DirectionExpertsMap direction={workType} />}
-    </OrderFormSection>
+    </FormSection>
   );
 }

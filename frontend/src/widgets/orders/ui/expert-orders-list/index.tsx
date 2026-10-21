@@ -1,29 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
 import {
   OrderCardSkeleton,
   useLoadMoreOrders,
   useOrderList,
 } from "@/entities/order";
-import type { OrderListItem } from "@/entities/order";
 import { useInfiniteScroll } from "@/shared/lib/use-infinite-scroll";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { Loader } from "@/shared/ui/loader";
 import { ExpertOrderCard } from "../expert-order-card";
 import styles from "./style.module.scss";
 
-/** Заказ из адресной строки и открытие выбранной карточки. */
+/** Переходы на страницу заказа и к отклику. */
 interface ExpertOrdersListProps {
-  openOrderId: number | null;
-  onOpen: (order: OrderListItem) => void;
+  onOpenOrder: (orderId: number) => void;
+  onRespond: (orderId: number) => void;
 }
 
-/** Показывает доступные заказы, догружает ленту и открывает заказ из ссылки. */
-export function ExpertOrdersList({
-  openOrderId,
-  onOpen,
-}: ExpertOrdersListProps) {
+/** Показывает доступные заказы и догружает ленту при прокрутке. */
+export function ExpertOrdersList({ onOpenOrder, onRespond }: ExpertOrdersListProps) {
   const list = useOrderList();
   const loadMoreOrders = useLoadMoreOrders();
   const sentinelRef = useInfiniteScroll({
@@ -31,13 +26,6 @@ export function ExpertOrdersList({
     isLoading: list.operation !== "idle",
     onLoadMore: loadMoreOrders,
   });
-  const requestedOrder = list.items.find((order) => order.id === openOrderId);
-
-  useEffect(() => {
-    if (requestedOrder) {
-      onOpen(requestedOrder);
-    }
-  }, [requestedOrder, onOpen]);
 
   if (list.operation === "loading") {
     return (
@@ -79,7 +67,8 @@ export function ExpertOrdersList({
         <ExpertOrderCard
           key={order.id}
           order={order}
-          onOpen={onOpen}
+          onOpen={onOpenOrder}
+          onRespond={onRespond}
         />
       ))}
 

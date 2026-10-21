@@ -143,7 +143,7 @@ export function ForensicOrderFields({ value, onChange }: ForensicOrderFieldsProp
           placeholder="30 дней"
         />
       </Field>
-      <FieldNote>Вопросы эксперту приложите в файлах заявки ниже.</FieldNote>
+      <FieldNote>Вопросы эксперту приложите на шаге «Документы».</FieldNote>
     </FieldStack>
   );
 }

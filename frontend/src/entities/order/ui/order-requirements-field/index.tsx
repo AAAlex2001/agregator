@@ -1,8 +1,8 @@
 "use client";
 
 import { Checkbox } from "@/shared/ui/checkbox";
+import { FormSection } from "@/shared/ui/form-section";
 import { useOrderForm } from "../../model/order-form-provider";
-import { OrderFormSection } from "../order-form-section";
 import styles from "./style.module.scss";
 
 /** Позволяет запросить исполнителя, лицензию или оба варианта для экспертизы. */
@@ -11,23 +11,18 @@ export function OrderRequirementsField() {
 
   /** Обновляет необходимость исполнителя в заказе. */
   function changeExpertRequirement(isRequired: boolean) {
-    dispatch({
-      type: "expert/changed",
-      isRequired,
-    });
+    dispatch({ type: "expert/changed", isRequired });
   }
 
   /** Обновляет необходимость лицензии в заказе. */
   function changeLicenseRequirement(isRequired: boolean) {
-    dispatch({
-      type: "license/changed",
-      isRequired,
-    });
+    dispatch({ type: "license/changed", isRequired });
   }
 
   return (
-    <OrderFormSection
-      label={<span className={styles.title}>Требования к исполнителю</span>}
+    <FormSection
+      title="Требования к исполнителю"
+      hint="Отметьте хотя бы один вариант, можно оба"
     >
       <div className={styles.options}>
         <Checkbox
@@ -35,17 +30,16 @@ export function OrderRequirementsField() {
           checked={values.requiresExpert}
           onChange={changeExpertRequirement}
         >
-          Требуется исполнитель?
+          Требуется исполнитель
         </Checkbox>
-
         <Checkbox
           id="order-requires-license"
           checked={values.requiresLicense}
           onChange={changeLicenseRequirement}
         >
-          Требуется лицензия?
+          Требуется лицензия
         </Checkbox>
       </div>
-    </OrderFormSection>
+    </FormSection>
   );
 }

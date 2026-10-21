@@ -2,20 +2,14 @@
 
 import { useState } from "react";
 
-/** Где показан мастер: на странице переход прокручивает её к началу, в окне — нет. */
-type StepsPlace = "page" | "dialog";
-
 /** Шаги формы: текущий номер, переходы и возврат к пройденным. */
-export function useSteps(count: number, place: StepsPlace = "page") {
+export function useSteps(count: number) {
   const [step, setStep] = useState(0);
 
-  /** Открывает шаг; на странице прокручивает её к началу шага. */
+  /** Открывает шаг и прокручивает страницу к его началу. */
   function open(next: number) {
     setStep(Math.min(Math.max(next, 0), count - 1));
-
-    if (place === "page") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   /** Возвращает к уже пройденному шагу; будущие шаги так не открываются. */

@@ -1,5 +1,18 @@
 import type { Metadata } from "next";
 
+/** Метаданные страницы списка: со второй страницы — номер в заголовке и свой канонический адрес. */
+export function createOrderListMetadata(page: number): Metadata {
+  if (page === 1) {
+    return ORDER_LIST_METADATA;
+  }
+
+  return {
+    ...ORDER_LIST_METADATA,
+    title: `Тендеры на экспертизу промышленной безопасности — страница ${page}`,
+    alternates: { canonical: `/orders?page=${page}` },
+  };
+}
+
 /** Поисковые метаданные и карточка ссылки публичного списка заявок. */
 export const ORDER_LIST_METADATA: Metadata = {
   title: "Тендеры на экспертизу промышленной безопасности — открытые заявки",

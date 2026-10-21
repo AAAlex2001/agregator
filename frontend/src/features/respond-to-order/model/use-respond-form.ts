@@ -39,7 +39,7 @@ export function useRespondForm(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const attachments = useResponseFiles();
   const keys = getRespondSteps(order);
-  const steps = useSteps(keys.length, "dialog");
+  const steps = useSteps(keys.length);
   const { showError } = useNotifications();
   const bounds = {
     startDate: order.start_date,

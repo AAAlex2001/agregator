@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { readSessionRole } from "../../../../session/read-session-role";
 import { ExpertOrdersPageContent } from "../../../../ui/pages/expert-orders-page-content";
 
-/** Заказ, который нужно открыть сразу, из ссылки ?orderId=. */
+/** Старые ссылки вида ?orderId= на заказ из ленты. */
 interface ExpertOrdersPageProps {
   searchParams: Promise<{ orderId?: string | string[] }>;
 }
@@ -16,7 +16,11 @@ export default async function ExpertOrdersPage({ searchParams }: ExpertOrdersPag
   }
 
   const params = await searchParams;
-  const openOrderId = Number(params.orderId) || null;
+  const orderId = Number(params.orderId);
 
-  return <ExpertOrdersPageContent openOrderId={openOrderId} />;
+  if (Number.isSafeInteger(orderId) && orderId > 0) {
+    redirect(`/expert/orders/${orderId}`);
+  }
+
+  return <ExpertOrdersPageContent />;
 }

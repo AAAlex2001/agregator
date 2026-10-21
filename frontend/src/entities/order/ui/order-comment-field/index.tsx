@@ -1,31 +1,31 @@
 "use client";
 
-import type { ChangeEvent } from "react";
+import { Field } from "@/shared/ui/field";
+import { FormSection } from "@/shared/ui/form-section";
+import { TextArea } from "@/shared/ui/text-area";
 import { useOrderForm } from "../../model/order-form-provider";
-import { OrderFormSection } from "../order-form-section";
-import styles from "./style.module.scss";
 
-/** Добавляет свободное пояснение заказчика к условиям работ. */
+/** Свободное пояснение заказчика к условиям работ. */
 export function OrderCommentField() {
   const { values, dispatch } = useOrderForm();
 
-  /** Обновляет текст комментария в черновике заказа. */
-  function changeComment(event: ChangeEvent<HTMLTextAreaElement>) {
-    dispatch({
-      type: "field/changed",
-      field: "comment",
-      value: event.target.value,
-    });
-  }
-
   return (
-    <OrderFormSection label="Комментарий к заказу">
-      <textarea
-        className={styles.textarea}
-        placeholder="Опишите детали заказа..."
-        value={values.comment}
-        onChange={changeComment}
-      />
-    </OrderFormSection>
+    <FormSection
+      title="Комментарий"
+      hint="Необязательно. Комментарий увидят исполнители в карточке заказа"
+    >
+      <Field label="Что важно знать исполнителю">
+        <TextArea
+          value={values.comment}
+          rows={5}
+          placeholder="Особенности объекта, порядок работ, на что обратить внимание"
+          onChange={(event) => dispatch({
+            type: "field/changed",
+            field: "comment",
+            value: event.target.value,
+          })}
+        />
+      </Field>
+    </FormSection>
   );
 }

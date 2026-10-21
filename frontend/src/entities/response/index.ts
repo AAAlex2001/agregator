@@ -7,6 +7,7 @@ export { deleteRejectedResponse } from "./api/delete-rejected-response";
 export { deleteRejectedResponses } from "./api/delete-rejected-responses";
 export { CUSTOMER_RESPONSE_TABS, EXPERT_RESPONSE_TABS } from "./config/tabs";
 export { useResponses } from "./model/use-responses";
+export { useResponse } from "./model/use-response";
 export { useResponseFiles } from "./model/use-response-files";
 export {
   EMPTY_RESPONSE_OFFER,

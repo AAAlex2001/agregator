@@ -1,8 +1,13 @@
 "use client";
 
 import { ExpertiseCodesPicker } from "@/entities/expertise";
-import { OrderFormSection, useOrderForm } from "@/entities/order";
+import { useOrderForm } from "@/entities/order";
+import { FormSection } from "@/shared/ui/form-section";
 import styles from "./style.module.scss";
+
+/** Что выбирает заказчик на шаге. */
+const BADGES_HINT = "Буквенно-цифровые обозначения областей аттестации исполнителей "
+  + "в области промышленной безопасности";
 
 /** Переход к справке по кодам, которые заказчик требует от исполнителя. */
 interface OrderBadgesFieldProps {
@@ -13,32 +18,23 @@ interface OrderBadgesFieldProps {
 export function OrderBadgesField({ onShowHelp }: OrderBadgesFieldProps) {
   const { values, dispatch } = useOrderForm();
 
-  /** Сохраняет выбранные коды аттестации исполнителей. */
-  function changeBadges(codes: string[]) {
-    dispatch({
-      type: "badges/changed",
-      codes,
-    });
-  }
-
   return (
-    <OrderFormSection>
-      <h3 className={styles.title}>
-        Буквенно-цифровые обозначения областей аттестации исполнителей
-        в области промышленной безопасности{" "}
-        <button
-          type="button"
-          className={styles.helpTrigger}
-          onClick={onShowHelp}
-        >
-          (Что это?)
-        </button>
-      </h3>
+    <FormSection
+      title="Области аттестации"
+      hint={BADGES_HINT}
+    >
+      <button
+        type="button"
+        className={styles.helpTrigger}
+        onClick={onShowHelp}
+      >
+        Что означают обозначения?
+      </button>
       <ExpertiseCodesPicker
         value={values.badgeCodes}
-        onChange={changeBadges}
+        onChange={(codes) => dispatch({ type: "badges/changed", codes })}
         resultLabel="Будут добавлены к заказу"
       />
-    </OrderFormSection>
+    </FormSection>
   );
 }
