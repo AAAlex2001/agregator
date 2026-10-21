@@ -1,0 +1,22 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  > button {
+    align-self: flex-start;
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hint {
+  font-size: 13px;
+  line-height: 18px;
+
+  color: var(--text-secondary);
+}

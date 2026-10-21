@@ -23,6 +23,7 @@ class NotificationType(str, PyEnum):
     CONTACT_ACCESS = "CONTACT_ACCESS"
     LABOR_RESPONSE = "LABOR_RESPONSE"
     POST_ACTIVITY = "POST_ACTIVITY"
+    BLITZ_ORDER = "BLITZ_ORDER"
 
 
 class Notification(Base):

@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.blitz.payments.dependencies import get_apply_webhook_payment_usecase
+from app.blitz.payments.services.usecases.apply_webhook_payment import ApplyWebhookPaymentUseCase
 from database.database import get_db
 from services.payment import PaymentWebhookService
 
@@ -16,7 +18,9 @@ class WebhookAck(BaseModel):
 
 @router.post("/webhook", response_model=WebhookAck)
 async def payment_webhook(
-    request: Request, db: AsyncSession = Depends(get_db)
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    blitz_payments: ApplyWebhookPaymentUseCase = Depends(get_apply_webhook_payment_usecase),
 ) -> WebhookAck:
     "Вебхук YooKassa: обновляет статус платежа. Активация подписки идёт через SubscriptionAccess."
     body = await request.json()
@@ -31,6 +35,6 @@ async def payment_webhook(
             detail="Невалидный вебхук",
         )
 
-    service = PaymentWebhookService(db)
+    service = PaymentWebhookService(db, blitz_payments.execute)
     await service.handle_webhook(yookassa_id)
     return WebhookAck(status="ok")

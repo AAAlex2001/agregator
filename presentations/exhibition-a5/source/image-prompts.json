@@ -1,0 +1,13 @@
+{
+  "tool": "image_gen (встроенный инструмент)",
+  "images": [
+    {
+      "file": "assets/opo-anime.png",
+      "prompt": "Use case: ads-marketing. Create an original beautiful anime background illustration for an elegant printed industrial engineering brochure. Wide landscape 2.4:1. A meticulously drawn modern industrial plant in a quiet mountain valley, silver cylindrical process towers, graceful pipe racks, orderly concrete and steel architecture, amber safety rails, no people. Hand-painted Japanese animation background aesthetic: delicate clean linework, beautiful layered watercolor-like sky, subtle painterly surface textures, sophisticated restrained shading, cinematic atmospheric perspective, warm late-afternoon sunlight against soft cool blue shadows. The facility must feel grounded and mechanically plausible. High visual craftsmanship, evocative peaceful light, refined architectural detail, not photorealistic and not plastic 3D. Cool slate blue, warm ivory and small muted amber accents suitable for NPI Nedra and Resurs Plus branding. Frame the buildings across center and right with airy sky above; landscape fills entire canvas. No text, no lettering, no logos, no people, no mascot, no robots, no neon, no holograms, no fantasy technology, no smoke pollution, no borders. This is an illustrative fictional industrial facility."
+    },
+    {
+      "file": "assets/design-anime.png",
+      "prompt": "Use case: ads-marketing. Original beautiful anime background painting for a professional industrial engineering design brochure. Wide landscape 2.4:1. A tranquil sunlit architectural design studio: a carefully crafted small scale model of a modern steel-framed industrial building with an orderly pipe rack on a spacious ivory drafting table, crisp architectural drawings laid flat below, one dark pencil and a slim steel ruler. In background tall windows show soft green mountains and beautiful pale blue sky. No people. Fine hand-painted Japanese animation background art, precise delicate linework, watercolor and gouache textures, cinematic natural light, airy restrained sophisticated composition. Warm sunlight from upper left creates long subtle shadows across paper; muted slate blue structure, off-white model and small amber structural accents. Main model slightly right of center, visually plausible structural detail, uncluttered. Premium editorial illustration, not photorealistic or 3D, no readable text, no numbers, no logos, no screens, no holograms, no robots, no futuristic floating objects, no border. Image made for a real corporate print brochure, quiet and beautifully crafted."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{{ title }}
+
+{{ message }}
+
+Открыть заявку: {{ cta_url }}
+
+—
+Ресурс-Плюс · plus-resurs.com

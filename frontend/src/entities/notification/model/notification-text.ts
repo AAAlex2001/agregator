@@ -270,5 +270,11 @@ export function getNotificationText(item: NotificationItem): NotificationText {
       };
     case "POST_ACTIVITY":
       return getPostActivityText(item.payload);
+    case "BLITZ_ORDER":
+      return {
+        title: item.payload.title,
+        message: item.payload.message,
+        actionLabel: "Открыть заявку",
+      };
   }
 }

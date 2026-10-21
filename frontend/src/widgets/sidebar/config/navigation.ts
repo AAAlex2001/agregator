@@ -2,6 +2,7 @@ import type { UserRole } from "@/entities/user";
 import {
   NewspaperIcon,
   ReviewIcon,
+  SafetyIcon,
   TabChatIcon,
   TabNotificationIcon,
   TabOrdersIcon,
@@ -9,6 +10,13 @@ import {
   TabSupportIcon,
 } from "@/shared/ui/icons";
 import type { SidebarSection } from "../model/types";
+
+/** Блиц-эксперт: заявки на экспертизу с договором и оплатой на платформе. */
+const BLITZ_ITEM = {
+  href: "/blitz",
+  label: "Блиц-эксперт",
+  icon: SafetyIcon,
+};
 
 /** Разделы общения для исполнителя и заказчика. */
 const COMMUNICATION_SECTION: SidebarSection = {
@@ -61,6 +69,7 @@ const EXPERT_SECTIONS: SidebarSection[] = [
         icon: TabOrdersIcon,
         activePaths: ["/expert/orders", "/responses", "/archive"],
       },
+      BLITZ_ITEM,
     ],
   },
   COMMUNICATION_SECTION,
@@ -83,6 +92,7 @@ const CUSTOMER_SECTIONS: SidebarSection[] = [
           "/customer/reports",
         ],
       },
+      BLITZ_ITEM,
     ],
   },
   COMMUNICATION_SECTION,

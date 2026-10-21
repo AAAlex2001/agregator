@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Подключения к базе, ИИ-модели и Telegram-боту, токен админки."""
+    """Подключения к базе, ИИ-модели, Telegram-боту и ЮKassa, токен админки, адрес сайта."""
 
     model_config = SettingsConfigDict(env_file=find_dotenv(), extra="ignore")
 
@@ -29,6 +29,20 @@ class Settings(BaseSettings):
     ai_base_url: str = "https://api.proxyapi.ru/v1"
     ai_model: str = "deepseek/deepseek-v3.2"
     ai_requests_per_hour: int = Field(30, ge=1)
+
+    public_base_url: str = "https://plus-resurs.com"
+    admin_notify_emails: str = ""
+
+    yookassa_shop_id: str = ""
+    yookassa_secret_key: str = ""
+    yookassa_vat_code: int = 1
+    company_vat_rate: int = Field(0, ge=0, le=20)
+
+    @property
+    def admin_emails(self) -> list[str]:
+        """Почты администраторов из ADMIN_NOTIFY_EMAILS через запятую."""
+
+        return [email.strip() for email in self.admin_notify_emails.split(",") if email.strip()]
 
 
 @lru_cache

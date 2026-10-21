@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import Response
 
+from app.blitz.internal_routes import router as blitz_internal_router
+from app.blitz.routes import router as blitz_router
 from app.core.errors import AppError, app_error_handler
 from app.poster.channels.routes import router as poster_channels_router
 from app.poster.delivery.routes import router as poster_delivery_router
@@ -153,6 +155,8 @@ app.include_router(poster_channels_router, prefix="/api")
 app.include_router(poster_delivery_router, prefix="/api")
 app.include_router(poster_templates_router, prefix="/api")
 app.include_router(telegram_link_router, prefix="/api")
+app.include_router(blitz_router, prefix="/api")
+app.include_router(blitz_internal_router, prefix="/api")
 app.include_router(referral.router, prefix="/api")
 app.include_router(review.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")

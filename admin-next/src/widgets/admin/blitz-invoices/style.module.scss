@@ -1,0 +1,62 @@
+.number,
+.payer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.number {
+  flex: none;
+
+  font-weight: 600;
+}
+
+.payer {
+  flex: 1 1 100%;
+}
+
+.meta {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.amount {
+  flex: none;
+
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.state {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .number {
+    width: 130px;
+  }
+
+  .payer {
+    flex: 1 1 0;
+  }
+
+  .amount {
+    width: 110px;
+
+    text-align: right;
+  }
+
+  .state {
+    justify-content: flex-end;
+    width: 320px;
+  }
+}

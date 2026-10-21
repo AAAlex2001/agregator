@@ -1,0 +1,27 @@
+.notes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.tariff {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-orange-primary);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.advance {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}

@@ -110,6 +110,10 @@ const CABINET_PAGES: PageTitle[] = [
     label: "Поддержка",
   },
   {
+    path: "/blitz",
+    label: "Блиц-эксперт",
+  },
+  {
     path: "/notifications",
     label: "Уведомления",
   },
@@ -176,6 +180,19 @@ export function getPageBreadcrumbs(pathname: string): BreadcrumbItem[] | null {
       },
       {
         label: "Создать заказ",
+      },
+    ];
+  }
+
+  if (path === "/blitz/new" || /^\/blitz\/orders\/[^/]+$/.test(path)) {
+    return [
+      PROFILE,
+      {
+        label: "Блиц-эксперт",
+        href: "/blitz",
+      },
+      {
+        label: path === "/blitz/new" ? "Новая заявка" : "Заявка",
       },
     ];
   }

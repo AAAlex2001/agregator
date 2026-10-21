@@ -48,3 +48,12 @@ export const postPath = (id: number) => `${POSTS_PATH}/${id}`;
 
 /** Публикации и черновики выбранного пользователя. */
 export const accountPostsPath = (id: number) => `${ACCOUNTS_PATH}/${id}/posts`;
+
+export const BLITZ_PATH = "/blitz";
+
+export const BLITZ_INVOICES_PATH = "/blitz/invoices";
+
+export const BLITZ_TARIFFS_PATH = "/blitz/tariffs";
+
+/** Адрес заявки Блиц-эксперта. */
+export const blitzOrderPath = (id: number) => `${BLITZ_PATH}/${id}`;

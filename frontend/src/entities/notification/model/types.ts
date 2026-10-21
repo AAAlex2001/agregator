@@ -87,6 +87,13 @@ export interface PostActivityPayload {
   comment_id: number | null;
 }
 
+/** Событие по заявке Блиц-эксперта. */
+export interface BlitzOrderPayload {
+  order_id: number;
+  title: string;
+  message: string;
+}
+
 /** Общие поля любого уведомления. */
 interface NotificationBase {
   id: number;
@@ -109,6 +116,7 @@ export type NotificationItem = NotificationBase & (
   | { type: "CONTACT_ACCESS"; payload: ContactAccessPayload }
   | { type: "LABOR_RESPONSE"; payload: LaborResponsePayload }
   | { type: "POST_ACTIVITY"; payload: PostActivityPayload }
+  | { type: "BLITZ_ORDER"; payload: BlitzOrderPayload }
 );
 
 /** Страница уведомлений, признак следующей страницы и число непрочитанных. */

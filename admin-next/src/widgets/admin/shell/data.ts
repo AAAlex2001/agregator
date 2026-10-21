@@ -1,6 +1,9 @@
 import {
   ACCOUNTS_PATH,
   ARTICLES_PATH,
+  BLITZ_INVOICES_PATH,
+  BLITZ_PATH,
+  BLITZ_TARIFFS_PATH,
   CONTACT_DEALS_PATH,
   DASHBOARD_PATH,
   LEADS_PATH,
@@ -48,6 +51,14 @@ export const ADMIN_NAV = [
       { href: RTN_PATH, label: "Разъяснения", Icon: FileTextIcon },
       { href: RTN_QUESTIONS_PATH, label: "Вопросы посетителей", Icon: HelpCircleIcon },
       { href: RTN_CHANGE_REPORTS_PATH, label: "Сообщения об изменениях", Icon: BellIcon },
+    ],
+  },
+  {
+    title: "Блиц-эксперт",
+    items: [
+      { href: BLITZ_PATH, label: "Заявки", Icon: ClipboardIcon },
+      { href: BLITZ_INVOICES_PATH, label: "Счета", Icon: FileTextIcon },
+      { href: BLITZ_TARIFFS_PATH, label: "Тарифы", Icon: TagIcon },
     ],
   },
   {

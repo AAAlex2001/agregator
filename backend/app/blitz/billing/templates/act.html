@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Акт {{ number }}{% endblock %}
+
+{% block content %}
+<h1>Акт № {{ number }} от {{ signed_at.strftime("%d.%m.%Y") }} сдачи-приёмки выполненных работ</h1>
+
+<table class="requisites">
+  <tr><td class="label">Исполнитель</td><td>{{ company.name }}, ИНН {{ company.inn }}, {{ company.address }}</td></tr>
+  <tr><td class="label">Заказчик</td><td>{{ payer.details }}</td></tr>
+  <tr><td class="label">Адрес заказчика</td><td>{{ payer.address }}</td></tr>
+</table>
+
+<table class="items" style="margin-top: 12px;">
+  <tr><th>№</th><th>Наименование работ</th><th>Кол-во</th><th>Ед.</th><th>Цена</th><th>Сумма</th></tr>
+  <tr>
+    <td>1</td>
+    <td>{{ subject }}</td>
+    <td class="number">1</td>
+    <td>усл.</td>
+    <td class="number">{{ totals.amount | amount }}</td>
+    <td class="number">{{ totals.amount | amount }}</td>
+  </tr>
+</table>
+
+<table class="totals" style="margin-top: 6px;">
+  <tr><td class="strong">Итого:</td><td class="value strong">{{ totals.amount | amount }}</td></tr>
+  {% if totals.vat_rate %}
+  <tr><td>В том числе НДС {{ totals.vat_rate }} %:</td><td class="value">{{ totals.vat | amount }}</td></tr>
+  {% else %}
+  <tr><td>НДС:</td><td class="value">без НДС</td></tr>
+  {% endif %}
+</table>
+
+<p>Всего оказано услуг на сумму {{ totals.words }}.
+  {% if totals.vat_rate %}В том числе НДС {{ totals.vat_rate }} % — {{ totals.vat | amount }}.{% else %}Без НДС.{% endif %}</p>
+<p>Вышеперечисленные работы выполнены полностью и в срок. Заказчик претензий по объёму, качеству и срокам оказания услуг не имеет.</p>
+
+<table class="signature">
+  <tr><td>Исполнитель</td><td class="line"></td><td class="name">{{ company.director }}</td></tr>
+</table>
+<table class="signature">
+  <tr><td>Заказчик</td><td class="line"></td><td class="name">{{ payer.name }}</td></tr>
+</table>
+
+<p class="small" style="margin-top: 14px;">Акт составлен в электронном виде на основании приёмки работы заказчиком
+  в личном кабинете сервиса «Блиц-эксперт».</p>
+{% endblock %}

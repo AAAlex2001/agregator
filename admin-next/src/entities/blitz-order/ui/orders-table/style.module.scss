@@ -1,0 +1,67 @@
+.number {
+  flex: none;
+
+  font-weight: 600;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.subject {
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.meta,
+.date {
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.price {
+  flex: none;
+
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status,
+.date {
+  flex: none;
+}
+
+@media (min-width: 768px) {
+  .number {
+    width: 70px;
+  }
+
+  .subject {
+    flex: 1 1 0;
+  }
+
+  .price {
+    width: 110px;
+
+    text-align: right;
+  }
+
+  .status {
+    width: 220px;
+  }
+
+  .date {
+    width: 120px;
+
+    text-align: right;
+  }
+}

@@ -1,0 +1,32 @@
+.invoice {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-orange-primary);
+}
+
+.reported {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-success-text);
+}

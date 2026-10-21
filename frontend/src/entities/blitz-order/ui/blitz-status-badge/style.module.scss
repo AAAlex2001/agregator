@@ -1,0 +1,34 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.wait {
+  background: var(--color-bg-card-soft);
+  color: var(--color-text-secondary);
+}
+
+.action {
+  background: var(--color-orange-bg-soft);
+  color: var(--color-warning-text);
+}
+
+.work {
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
+}
+
+.done {
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
+}
+
+.canceled {
+  background: var(--color-error-badge-surface);
+  color: var(--color-error);
+}

@@ -1,0 +1,23 @@
+.papers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paper {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-orange-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

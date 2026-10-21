@@ -1,6 +1,7 @@
 "Сервисный модуль: payment."
 import logging
 import os
+from collections.abc import Awaitable, Callable
 
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,10 +30,15 @@ TERMINAL_PAYMENT_STATUSES = {PaymentStatus.SUCCEEDED, PaymentStatus.CANCELED}
 
 
 class PaymentWebhookService:
-    "Приводит запись платежа в соответствие с событием YooKassa и активирует подписку."
+    "Приводит запись платежа в соответствие с событием YooKassa, активирует подписку или оплату заявки."
 
-    def __init__(self, db: AsyncSession) -> None:
+    def __init__(
+        self,
+        db: AsyncSession,
+        on_succeeded: Callable[[Payment], Awaitable[None]] | None = None,
+    ) -> None:
         self.db = db
+        self.on_succeeded = on_succeeded
 
     async def handle_webhook(self, yookassa_id: str) -> None:
         "Публичный метод сервисного слоя."
@@ -58,6 +64,8 @@ class PaymentWebhookService:
             return
 
         if verified_status == PaymentStatus.SUCCEEDED:
+            if self.on_succeeded is not None:
+                await self.on_succeeded(payment)
             await self.mark(payment, PaymentStatus.SUCCEEDED)
             await self.activate_subscription_for(payment)
         elif verified_status == PaymentStatus.WAITING_FOR_CAPTURE:

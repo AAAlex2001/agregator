@@ -1,6 +1,12 @@
 """Реестр моделей app/: импорт собирает все таблицы для alembic и строковых связей."""
 
 from app.auth.sessions import models as sessions
+from app.blitz.billing import models as blitz_billing
+from app.blitz.documents import models as blitz_documents
+from app.blitz.orders import models as blitz_orders
+from app.blitz.payments import models as blitz_payments
+from app.blitz.pricing import models as blitz_pricing
+from app.blitz.work import models as blitz_work
 from app.poster.ai import models as poster_ai
 from app.poster.channels import models as poster_channels
 from app.poster.comments import models as poster_comments
@@ -15,6 +21,12 @@ from app.support import models as support
 from app.telegram.link import models as telegram_link
 
 __all__ = [
+    "blitz_billing",
+    "blitz_documents",
+    "blitz_orders",
+    "blitz_payments",
+    "blitz_pricing",
+    "blitz_work",
     "poster_ai",
     "poster_channels",
     "poster_comments",

@@ -175,6 +175,18 @@ class PostActivityNotificationItemResponse(NotificationItemBaseResponse):
     payload: PostActivityNotificationPayload
 
 
+class BlitzOrderNotificationPayload(NotificationPayloadModel):
+    """Событие по заявке Блиц-эксперта: номер заявки и что произошло."""
+    order_id: int
+    title: str
+    message: str
+
+
+class BlitzOrderNotificationItemResponse(NotificationItemBaseResponse):
+    type: Literal[NotificationType.BLITZ_ORDER]
+    payload: BlitzOrderNotificationPayload
+
+
 NotificationItemResponse = Annotated[
     ResponseUpdatedNotificationItemResponse
     | ResponseStatusChangedNotificationItemResponse
@@ -186,7 +198,8 @@ NotificationItemResponse = Annotated[
     | ContactAccessNotificationItemResponse
     | LaborResponseNotificationItemResponse
     | SupportReplyNotificationItemResponse
-    | PostActivityNotificationItemResponse,
+    | PostActivityNotificationItemResponse
+    | BlitzOrderNotificationItemResponse,
     Field(discriminator="type"),
 ]
 
