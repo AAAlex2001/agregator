@@ -1,16 +1,21 @@
 .wizard {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
-  max-width: 1200px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
   padding: 20px 16px;
-  border: 2px solid var(--color-orange-primary);
+  border: 1px solid var(--color-border-soft);
   border-radius: 16px;
   background: var(--color-surface);
 
   @media (min-width: 768px) {
-    padding: 24px;
+    padding: 28px;
   }
 }
 

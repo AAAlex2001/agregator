@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
-import { ExpertOrder } from "@/widgets/orders";
 import { createPrivateMetadata } from "../../../../../seo/private-page";
 import { readSessionRole } from "../../../../../session/read-session-role";
+import { ExpertOrderPageContent } from "../../../../../ui/pages/expert-order-page-content";
 
 export const metadata = createPrivateMetadata("Заказ");
 
@@ -10,7 +10,7 @@ interface ExpertOrderPageProps {
   params: Promise<{ id: string }>;
 }
 
-/** Заказ для исполнителя; остальных ролей отправляет в настройки. */
+/** Заказ и отклик на него для исполнителя; остальных ролей отправляет в настройки. */
 export default async function ExpertOrderPage({ params }: ExpertOrderPageProps) {
   const role = await readSessionRole();
 
@@ -25,5 +25,5 @@ export default async function ExpertOrderPage({ params }: ExpertOrderPageProps) 
     notFound();
   }
 
-  return <ExpertOrder orderId={orderId} />;
+  return <ExpertOrderPageContent orderId={orderId} />;
 }

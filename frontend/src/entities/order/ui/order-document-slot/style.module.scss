@@ -1,13 +1,11 @@
 .slot {
-  flex-direction: column-reverse;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .caption {
-  max-width: 96px;
-  text-align: center;
-  font-size: 12px;
-  line-height: 14px;
-  color: var(--color-text-file-caption);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--color-text-primary);
 }

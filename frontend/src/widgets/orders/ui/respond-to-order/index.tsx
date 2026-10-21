@@ -2,8 +2,8 @@
 
 import { isResponsesClosed, useOrder } from "@/entities/order";
 import { RespondWizard } from "@/features/respond-to-order";
-import { EmptyState } from "@/shared/ui/empty-state";
 import { OrderPageFrame } from "../order-page-frame";
+import { OrderQuestions } from "../order-questions";
 
 /** Заказ из адреса и переходы по результату отклика. */
 interface RespondToOrderProps {
@@ -13,7 +13,7 @@ interface RespondToOrderProps {
   onSubscriptionRequired: () => void;
 }
 
-/** Страница отклика: мастер по шагам, пока заказ принимает предложения. */
+/** Страница заказа: первый шаг — сводка заявки, дальше отклик по шагам. */
 export function RespondToOrder({
   orderId,
   onCancel,
@@ -21,7 +21,6 @@ export function RespondToOrder({
   onSubscriptionRequired,
 }: RespondToOrderProps) {
   const { order, error, isLoading } = useOrder(orderId);
-  const orderHref = `/expert/orders/${orderId}`;
 
   return (
     <OrderPageFrame
@@ -30,17 +29,16 @@ export function RespondToOrder({
       backHref="/expert/orders"
       backLabel="К заказам"
     >
-      {order && isResponsesClosed(order.responses_deadline) && (
-        <EmptyState
-          title="Приём откликов закончился"
-          subtitle="На этот заказ больше нельзя откликнуться"
-          actionLabel="К заказу"
-          actionHref={orderHref}
-        />
-      )}
-      {order && !isResponsesClosed(order.responses_deadline) && (
+      {order && (
         <RespondWizard
           order={order}
+          questions={
+            <OrderQuestions
+              orderId={order.id}
+              customerId={order.customer_id}
+              canAsk={!isResponsesClosed(order.responses_deadline)}
+            />
+          }
           onCancel={onCancel}
           onResponded={onResponded}
           onSubscriptionRequired={onSubscriptionRequired}

@@ -27,7 +27,7 @@ export function SavePostButton({ post, onLogin }: SavePostButtonProps) {
       label={label}
       pressed={saved}
       disabled={isSending}
-      className={cn({ [styles.saved]: saved })}
+      className={cn(styles.save, { [styles.saved]: saved })}
       onClick={toggleSave}
     >
       <BookmarkIcon />

@@ -11,14 +11,13 @@ import { Loader } from "@/shared/ui/loader";
 import { ExpertOrderCard } from "../expert-order-card";
 import styles from "./style.module.scss";
 
-/** Переходы на страницу заказа и к отклику. */
+/** Переход на страницу заказа с откликом на него. */
 interface ExpertOrdersListProps {
   onOpenOrder: (orderId: number) => void;
-  onRespond: (orderId: number) => void;
 }
 
 /** Показывает доступные заказы и догружает ленту при прокрутке. */
-export function ExpertOrdersList({ onOpenOrder, onRespond }: ExpertOrdersListProps) {
+export function ExpertOrdersList({ onOpenOrder }: ExpertOrdersListProps) {
   const list = useOrderList();
   const loadMoreOrders = useLoadMoreOrders();
   const sentinelRef = useInfiniteScroll({
@@ -68,7 +67,6 @@ export function ExpertOrdersList({ onOpenOrder, onRespond }: ExpertOrdersListPro
           key={order.id}
           order={order}
           onOpen={onOpenOrder}
-          onRespond={onRespond}
         />
       ))}
 

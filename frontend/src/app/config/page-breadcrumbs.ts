@@ -151,7 +151,6 @@ const NESTED_PAGES = [
   { pattern: /^\/blitz-audit\/new$/, section: BLITZ_AUDIT, label: "Новый аудит" },
   { pattern: /^\/blitz-audit\/orders\/[^/]+$/, section: BLITZ_AUDIT, label: "Заявка" },
   { pattern: /^\/expert\/orders\/[^/]+$/, section: EXPERT_ORDERS, label: "Заказ" },
-  { pattern: /^\/expert\/orders\/[^/]+\/respond$/, section: EXPERT_ORDERS, label: "Отклик" },
   { pattern: /^\/responses\/[^/]+\/edit$/, section: RESPONSES, label: "Изменение предложения" },
 ];
 

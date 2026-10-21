@@ -3,18 +3,18 @@
 import { useRouter } from "next/navigation";
 import { RespondToOrder } from "@/widgets/orders";
 
-/** Заказ, на который откликается исполнитель. */
-interface RespondPageContentProps {
+/** Заказ, который открыл исполнитель. */
+interface ExpertOrderPageContentProps {
   orderId: number;
 }
 
-/** Подключает отклик к странице заказа, своим откликам и выбору подписки. */
-export function RespondPageContent({ orderId }: RespondPageContentProps) {
+/** Подключает заказ к ленте, своим откликам и выбору подписки. */
+export function ExpertOrderPageContent({ orderId }: ExpertOrderPageContentProps) {
   const router = useRouter();
 
-  /** Возвращает к заказу без отправки отклика. */
-  function returnToOrder() {
-    router.push(`/expert/orders/${orderId}`);
+  /** Возвращает к ленте заказов без отклика. */
+  function returnToOrders() {
+    router.push("/expert/orders");
   }
 
   /** Открывает свои отклики после отправки предложения. */
@@ -30,7 +30,7 @@ export function RespondPageContent({ orderId }: RespondPageContentProps) {
   return (
     <RespondToOrder
       orderId={orderId}
-      onCancel={returnToOrder}
+      onCancel={returnToOrders}
       onResponded={openResponses}
       onSubscriptionRequired={openSubscription}
     />

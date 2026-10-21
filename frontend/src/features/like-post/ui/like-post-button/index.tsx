@@ -28,7 +28,7 @@ export function LikePostButton({ post, onLogin }: LikePostButtonProps) {
       label={label}
       pressed={liked}
       disabled={isSending}
-      className={cn({ [styles.liked]: liked })}
+      className={cn(styles.like, { [styles.liked]: liked })}
       onClick={toggleLike}
     >
       <HeartIcon />

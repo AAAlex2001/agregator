@@ -29,7 +29,8 @@
   min-width: 0;
 }
 
-.files {
+.group .files {
+  flex: none;
   width: auto;
 }
 

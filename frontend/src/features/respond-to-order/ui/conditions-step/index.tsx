@@ -2,7 +2,8 @@
 
 import classNames from "classnames";
 import { useState } from "react";
-import { OrderSummaryPanel } from "@/entities/order";
+import type { ReactNode } from "react";
+import { isResponsesClosed, OrderBrief, OrderDocumentsGallery } from "@/entities/order";
 import type { OrderListItem } from "@/entities/order";
 import { ChevronIcon } from "@/shared/ui/icons";
 import styles from "./style.module.scss";
@@ -14,29 +15,33 @@ const RESPONSE_TERMS = [
   "Если заказчик выберет вас, детали можно будет согласовать напрямую.",
 ];
 
-/** Заказ, на который откликается исполнитель. */
+/** Заказ и обсуждение его условий с заказчиком. */
 interface ConditionsStepProps {
   order: OrderListItem;
+  questions: ReactNode;
 }
 
-/** Даёт сверить заказ и объясняет, что произойдёт после отклика. */
-export function ConditionsStep({ order }: ConditionsStepProps) {
+/** Сводка заявки: условия, документы, вопросы и что будет после отклика. */
+export function ConditionsStep({ order, questions }: ConditionsStepProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className={styles.step}>
-      <OrderSummaryPanel order={order} />
-      <div className={styles.infoCard}>
-        <span className={styles.accentText}>
-          Проверьте условия заказа — дальше заполните предложение.
+      <OrderBrief order={order} />
+      <OrderDocumentsGallery documents={order.documents} />
+      {questions}
+      {isResponsesClosed(order.responses_deadline) ? (
+        <span className={styles.closedText}>
+          Приём откликов закончился — на заказ больше нельзя откликнуться
         </span>
+      ) : (
         <div className={styles.guaranteesCard}>
           <button
             type="button"
             className={styles.guaranteesToggle}
             onClick={() => setIsOpen(!isOpen)}
           >
-            <span className={styles.guaranteesTitle}>Что будет дальше</span>
+            <span className={styles.guaranteesTitle}>Что будет после отклика</span>
             <ChevronIcon
               className={classNames(styles.guaranteesChevron, {
                 [styles.guaranteesChevronOpen]: isOpen,
@@ -63,7 +68,7 @@ export function ConditionsStep({ order }: ConditionsStepProps) {
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

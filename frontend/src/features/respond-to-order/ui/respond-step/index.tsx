@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { OrderSummaryPanel } from "@/entities/order";
 import type { OrderListItem } from "@/entities/order";
 import { ResponseCommentFields, ResponseTermsFields } from "@/entities/response";
@@ -8,17 +9,23 @@ import { CompanyStep } from "../company-step";
 import { ConditionsStep } from "../conditions-step";
 import styles from "./style.module.scss";
 
-/** Заказ и состояние отклика. */
+/** Заказ, обсуждение его условий и состояние отклика. */
 interface RespondStepProps {
   order: OrderListItem;
+  questions: ReactNode;
   form: ReturnType<typeof useRespondForm>;
 }
 
 /** Поля текущего шага отклика. */
-export function RespondStepFields({ order, form }: RespondStepProps) {
+export function RespondStepFields({ order, questions, form }: RespondStepProps) {
   switch (form.keys[form.steps.step]) {
     case "conditions":
-      return <ConditionsStep order={order} />;
+      return (
+        <ConditionsStep
+          order={order}
+          questions={questions}
+        />
+      );
     case "terms":
       return (
         <div className={styles.terms}>

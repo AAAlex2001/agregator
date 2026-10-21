@@ -5,17 +5,11 @@
   width: 100%;
 }
 
-.infoCard {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.accentText {
+.closedText {
   font-size: 14px;
   line-height: 17px;
   font-weight: 500;
-  color: var(--color-orange-primary);
+  color: var(--color-error-code);
 
   @media (min-width: 768px) {
     font-size: 16px;

@@ -12,11 +12,19 @@
   font: inherit;
   font-size: 13px;
   text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
 }
 
 .tool:hover {
-  background: var(--color-orange-bg-faint);
-  color: var(--color-orange-primary);
+  background: var(--color-surface-selected);
+  color: var(--color-text-primary);
+}
+
+.tool:active {
+  transform: scale(0.94);
 }
 
 .tool:focus-visible {

@@ -7,6 +7,7 @@ const sourceRoot = new URL("../../../", import.meta.url);
 const responseApi = new URL("entities/response/api/respond-to-order.ts", sourceRoot);
 const offerModel = new URL("entities/response/model/offer.ts", sourceRoot);
 const innModule = new URL("entities/company/model/is-valid-inn.ts", sourceRoot);
+const deadlineModule = new URL("entities/order/model/response-deadline.ts", sourceRoot);
 const reactModule = `data:text/javascript,${encodeURIComponent(`
   function slot(create) {
     const runtime = globalThis.respondFormTest;
@@ -33,6 +34,9 @@ const responseModule = `data:text/javascript,${encodeURIComponent(`
 const companyModule = `data:text/javascript,${encodeURIComponent(`
   export { isValidInn } from ${JSON.stringify(innModule.href)};
 `)}`;
+const orderModule = `data:text/javascript,${encodeURIComponent(`
+  export { isResponsesClosed } from ${JSON.stringify(deadlineModule.href)};
+`)}`;
 const notificationsModule = `data:text/javascript,${encodeURIComponent(`
   export function useNotifications() {
     return { showError: message => globalThis.respondFormTest.errors.push(message) };
@@ -45,6 +49,7 @@ registerHooks({
       react: reactModule,
       "@/entities/response": responseModule,
       "@/entities/company": companyModule,
+      "@/entities/order": orderModule,
       "@/shared/ui/notifications": notificationsModule,
     }[specifier];
 

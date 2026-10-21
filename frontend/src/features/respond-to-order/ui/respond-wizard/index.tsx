@@ -1,23 +1,27 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type { OrderListItem } from "@/entities/order";
 import { StepActions } from "@/shared/ui/step-actions";
 import { StepProgress } from "@/shared/ui/step-progress";
+import { Title } from "@/shared/ui/title";
 import { RESPOND_STEP_TITLES } from "../../config/steps";
 import type { RespondCallbacks } from "../../model/types";
 import { useRespondForm } from "../../model/use-respond-form";
 import { RespondStepFields } from "../respond-step";
 import styles from "./style.module.scss";
 
-/** Заказ, переходы по результату отклика и возврат к заказу с первого шага. */
+/** Заказ, обсуждение его условий, переходы по результату отклика и выход с первого шага. */
 interface RespondWizardProps extends RespondCallbacks {
   order: OrderListItem;
+  questions: ReactNode;
   onCancel: () => void;
 }
 
-/** Отклик по шагам: шкала, поля текущего шага и кнопки перехода. */
+/** Заказ и отклик по шагам: сначала сводка заявки, затем предложение. */
 export function RespondWizard({
   order,
+  questions,
   onCancel,
   onResponded,
   onSubscriptionRequired,
@@ -28,12 +32,12 @@ export function RespondWizard({
   const next = titles[form.steps.step + 1];
 
   return (
-    <form
-      className={styles.wizard}
-      noValidate
-      onSubmit={form.submit}
-    >
-      <h1 className={styles.title}>Отклик на заказ «{order.title}»</h1>
+    <div className={styles.wizard}>
+      <Title
+        as="h1"
+        className={styles.title}
+        text={order.title}
+      />
       <StepProgress
         steps={titles}
         current={form.steps.step}
@@ -42,18 +46,25 @@ export function RespondWizard({
         listTitle="Шаги отклика"
         onSelect={form.steps.goTo}
       />
-      <RespondStepFields
-        order={order}
-        form={form}
-      />
-      <StepActions
-        isFirst={form.steps.isFirst}
-        isLast={form.steps.isLast}
-        isSubmitting={form.isSubmitting}
-        submitLabel="Отправить отклик"
-        onCancel={onCancel}
-        onBack={form.steps.back}
-      />
-    </form>
+      <form
+        className={styles.form}
+        noValidate
+        onSubmit={form.submit}
+      >
+        <RespondStepFields
+          order={order}
+          questions={questions}
+          form={form}
+        />
+        <StepActions
+          isFirst={form.steps.isFirst}
+          isLast={form.steps.isLast}
+          isSubmitting={form.isSubmitting}
+          submitLabel="Отправить отклик"
+          onCancel={onCancel}
+          onBack={form.steps.back}
+        />
+      </form>
+    </div>
   );
 }

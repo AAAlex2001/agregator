@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ExpertOrders } from "@/widgets/orders";
 
-/** Подключает ленту исполнителя к страницам заказа и отклика. */
+/** Подключает ленту исполнителя к страницам заказов. */
 export function ExpertOrdersPageContent() {
   const router = useRouter();
 
@@ -12,15 +12,7 @@ export function ExpertOrdersPageContent() {
     router.push(`/expert/orders/${orderId}`);
   }
 
-  /** Открывает отклик на заказ. */
-  function respond(orderId: number) {
-    router.push(`/expert/orders/${orderId}/respond`);
-  }
-
   return (
-    <ExpertOrders
-      onOpenOrder={openOrder}
-      onRespond={respond}
-    />
+    <ExpertOrders onOpenOrder={openOrder} />
   );
 }

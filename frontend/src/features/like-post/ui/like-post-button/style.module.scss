@@ -1,4 +1,8 @@
+.like:hover svg,
 .liked svg {
   color: var(--color-post-like);
+}
+
+.liked svg {
   fill: var(--color-post-like);
 }

@@ -10,24 +10,23 @@ import { ShareOrderButton } from "@/features/share-order";
 import { Button } from "@/shared/ui/button";
 import styles from "./style.module.scss";
 
-/** Заказ из ленты исполнителя, переход на его страницу и сразу к отклику. */
+/** Заказ из ленты исполнителя и переход на его страницу. */
 interface ExpertOrderCardProps {
   order: OrderListItem;
   onOpen: (orderId: number) => void;
-  onRespond: (orderId: number) => void;
 }
 
 /** Собирает карточку с публичной ссылкой и переходом к отклику. */
-export function ExpertOrderCard({ order, onOpen, onRespond }: ExpertOrderCardProps) {
+export function ExpertOrderCard({ order, onOpen }: ExpertOrderCardProps) {
   /** Открывает страницу заказа. */
   function openOrder() {
     onOpen(order.id);
   }
 
-  /** Открывает отклик, не повторяя нажатие на родительскую карточку. */
+  /** Открывает заказ с откликом, не повторяя нажатие на родительскую карточку. */
   function respond(event: MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
-    onRespond(order.id);
+    onOpen(order.id);
   }
 
   return (

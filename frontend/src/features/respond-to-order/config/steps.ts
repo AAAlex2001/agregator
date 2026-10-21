@@ -5,7 +5,7 @@ export type RespondStep = "conditions" | "terms" | "company" | "comment";
 
 /** Названия шагов отклика. */
 export const RESPOND_STEP_TITLES = {
-  conditions: "Условия отклика",
+  conditions: "Условия заказа",
   terms: "Сроки и стоимость",
   company: "Организация",
   comment: "Комментарий и файлы",

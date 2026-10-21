@@ -1,8 +1,18 @@
 .row {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: flex-start;
   gap: 16px;
+
+  > * {
+    width: auto;
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px 32px;
+  }
 }
 
 .hint {

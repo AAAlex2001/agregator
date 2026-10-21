@@ -2,17 +2,35 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 6px 10px;
   border: 0;
+  border-radius: 8px;
   background: none;
-  padding: 4px;
   color: var(--color-text-secondary);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.like:hover {
+  background: var(--color-surface-selected);
+  color: var(--color-text-primary);
+}
+
+.like:active {
+  transform: scale(0.94);
+}
+
+.like:hover svg,
+.liked svg {
+  color: var(--color-post-like);
 }
 
 .liked svg {
-  color: var(--color-post-like);
   fill: var(--color-post-like);
 }
 

@@ -1,7 +1,6 @@
 export { CustomerOrders } from "./ui/customer-orders";
 export { CreateOrder } from "./ui/create-order";
 export { ExpertOrders } from "./ui/expert-orders";
-export { ExpertOrder } from "./ui/expert-order";
 export { RespondToOrder } from "./ui/respond-to-order";
 export { EditResponse } from "./ui/edit-response";
 export { ArchiveOrders } from "./ui/archive-orders";

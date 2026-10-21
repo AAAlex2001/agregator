@@ -30,11 +30,7 @@ export function EditResponseForm({ response, onCancel, onSaved }: EditResponseFo
   const step = EDIT_RESPONSE_STEPS[form.steps.step];
 
   return (
-    <form
-      className={styles.wizard}
-      noValidate
-      onSubmit={form.submit}
-    >
+    <div className={styles.wizard}>
       <div className={styles.headerRow}>
         <h1 className={styles.headerTitle}>Изменение предложения</h1>
         <div className={styles.statusRow}>
@@ -57,41 +53,47 @@ export function EditResponseForm({ response, onCancel, onSaved }: EditResponseFo
         listTitle="Шаги изменения"
         onSelect={form.steps.goTo}
       />
-      {step.key === "terms" ? (
-        <>
-          <OrderSummaryPanel
-            order={{
-              title: response.order_title,
-              company: response.customer_company,
-              customer_name: response.customer_name,
-              customer_inn: response.customer_inn,
-              start_date: response.order_start_date,
-              date: response.order_date,
-              sum: response.order_sum || response.proposed_sum,
-              badges: response.badges,
-            }}
-          />
-          <ResponseTermsFields
-            offer={form.offer}
+      <form
+        className={styles.form}
+        noValidate
+        onSubmit={form.submit}
+      >
+        {step.key === "terms" ? (
+          <>
+            <OrderSummaryPanel
+              order={{
+                title: response.order_title,
+                company: response.customer_company,
+                customer_name: response.customer_name,
+                customer_inn: response.customer_inn,
+                start_date: response.order_start_date,
+                date: response.order_date,
+                sum: response.order_sum || response.proposed_sum,
+                badges: response.badges,
+              }}
+            />
+            <ResponseTermsFields
+              offer={form.offer}
+              dispatch={form.dispatch}
+            />
+          </>
+        ) : (
+          <ResponseCommentFields
+            comment={form.offer.comment}
+            files={form.files}
             dispatch={form.dispatch}
+            onAddFiles={form.addFiles}
           />
-        </>
-      ) : (
-        <ResponseCommentFields
-          comment={form.offer.comment}
-          files={form.files}
-          dispatch={form.dispatch}
-          onAddFiles={form.addFiles}
+        )}
+        <StepActions
+          isFirst={form.steps.isFirst}
+          isLast={form.steps.isLast}
+          isSubmitting={form.isSubmitting}
+          submitLabel="Сохранить"
+          onCancel={onCancel}
+          onBack={form.steps.back}
         />
-      )}
-      <StepActions
-        isFirst={form.steps.isFirst}
-        isLast={form.steps.isLast}
-        isSubmitting={form.isSubmitting}
-        submitLabel="Сохранить"
-        onCancel={onCancel}
-        onBack={form.steps.back}
-      />
-    </form>
+      </form>
+    </div>
   );
 }

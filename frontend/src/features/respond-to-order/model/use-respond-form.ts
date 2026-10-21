@@ -4,6 +4,7 @@ import { useReducer, useState } from "react";
 import type { FormEvent } from "react";
 import { isValidInn } from "@/entities/company";
 import type { CompanySuggestion } from "@/entities/company";
+import { isResponsesClosed } from "@/entities/order";
 import type { OrderListItem } from "@/entities/order";
 import {
   EMPTY_RESPONSE_OFFER,
@@ -52,9 +53,12 @@ export function useRespondForm(
     switch (step) {
       case "terms":
         return getResponseTermsError(offer, bounds);
+      case "conditions":
+        return isResponsesClosed(order.responses_deadline)
+          ? "Приём откликов по этому заказу закончился"
+          : "";
       case "company":
         return isValidInn(choice.company?.data.inn) ? "" : "Выберите вашу компанию из списка";
-      case "conditions":
       case "comment":
         return "";
     }

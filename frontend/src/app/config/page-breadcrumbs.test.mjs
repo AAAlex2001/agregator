@@ -89,12 +89,11 @@ test("Диалог ведёт обратно к списку чатов", () => 
   ]);
 });
 
-test("Заказ, отклик и изменение предложения ведут обратно к своему списку", () => {
+test("Заказ и изменение предложения ведут обратно к своему списку", () => {
   assert.deepEqual(getPageBreadcrumbs("/expert/orders/42")[1], {
     label: "Все заказы",
     href: "/expert/orders",
   });
-  assert.equal(getPageBreadcrumbs("/expert/orders/42/respond")[2].label, "Отклик");
   assert.deepEqual(getPageBreadcrumbs("/responses/7/edit")[1], {
     label: "Мои отклики",
     href: "/responses",
