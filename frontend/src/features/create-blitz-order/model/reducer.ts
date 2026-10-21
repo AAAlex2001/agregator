@@ -22,6 +22,7 @@ export const INITIAL_CREATE_BLITZ_ORDER_STATE: CreateBlitzOrderState = {
     address: "",
   },
   comment: "",
+  step: 0,
   isSubmitting: false,
 };
 
@@ -79,6 +80,11 @@ export function createBlitzOrderReducer(
         customerType: action.requisites.customer_type ?? state.customerType,
         company: action.requisites.company ?? state.company,
         individual: action.requisites.individual ?? state.individual,
+      };
+    case "step/go":
+      return {
+        ...state,
+        step: action.step,
       };
     case "submit/start":
       return {

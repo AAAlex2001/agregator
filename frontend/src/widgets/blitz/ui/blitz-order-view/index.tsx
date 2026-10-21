@@ -79,8 +79,8 @@ export function BlitzOrderView({ orderId, service, afterPayment }: BlitzOrderVie
         <h1 className={styles.title}>{order.object_name}</h1>
         <span className={styles.price}>{blitzPriceLabel(order.price)}</span>
         <BlitzProgress
-          status={order.status}
-          service={order.service}
+          order={order}
+          isExpert={isExpert}
         />
       </header>
 

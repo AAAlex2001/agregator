@@ -7,23 +7,6 @@ function numberOrNull(value: string): number | null {
   return value ? Number(value) : null;
 }
 
-/** Что ещё не заполнено, или null, если заявку можно отправить. */
-export function blitzOrderProblem(state: CreateBlitzOrderState, filesCount: number): string | null {
-  if (state.objectName.trim().length < 3) {
-    return "Укажите наименование документации";
-  }
-
-  if (!(parseBlitzPrice(state.price) > 0)) {
-    return "Укажите цену за экспертизу";
-  }
-
-  if (filesCount === 0) {
-    return "Приложите документацию";
-  }
-
-  return null;
-}
-
 /** Данные заявки для API. */
 export function toBlitzOrderPayload(state: CreateBlitzOrderState): BlitzOrderPayload {
   const isIndividual = state.customerType === "individual";

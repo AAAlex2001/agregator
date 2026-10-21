@@ -1,42 +1,44 @@
-import cn from "classnames";
-import { BLITZ_STEP_LABELS } from "../../config/labels";
-import { blitzStepIndex, blitzSteps } from "../../model/status";
-import type { BlitzService, BlitzStatus } from "../../model/types";
-import styles from "./style.module.scss";
+import { formatDateRu } from "@/shared/lib/format-date";
+import { StepProgress } from "@/shared/ui/step-progress";
+import {
+  blitzStatusLabel,
+  blitzStepIndex,
+  blitzStepReachedAt,
+  blitzSteps,
+} from "../../model/status";
+import type { BlitzOrder } from "../../model/types";
 
-/** Текущий статус заявки и сервис: у аудита есть шаг Плана. */
+/** Заявка и кто смотрит: подписи статусов у заказчика и исполнителя разные. */
 interface BlitzProgressProps {
-  status: BlitzStatus;
-  service: BlitzService;
+  order: BlitzOrder;
+  isExpert: boolean;
 }
 
-/** Шаги заявки полосой: пройденные, текущий и будущие. У отменённой заявки полосы нет. */
-export function BlitzProgress({ status, service }: BlitzProgressProps) {
-  if (status === "canceled") {
+/** Этапы заявки полосой и списком с датами. У отменённой заявки полосы нет — причина в истории. */
+export function BlitzProgress({ order, isExpert }: BlitzProgressProps) {
+  if (order.status === "canceled") {
     return null;
   }
 
-  const steps = blitzSteps(service);
-  const current = blitzStepIndex(status, service);
+  const steps = blitzSteps(order.service);
+  const current = blitzStepIndex(order.status, order.service);
+  const since = blitzStepReachedAt(order, steps[current]);
+  const progressSteps = steps.map((step, index) => {
+    const reachedAt = index <= current ? blitzStepReachedAt(order, step) : null;
+
+    return {
+      title: blitzStatusLabel(step, isExpert, order.service),
+      note: reachedAt ? formatDateRu(reachedAt) : undefined,
+    };
+  });
 
   return (
-    <ol
-      className={styles.steps}
-      aria-label={`Шаг ${current + 1} из ${steps.length}`}
-    >
-      {steps.map((step, index) => (
-        <li
-          key={step}
-          className={cn(styles.step, {
-            [styles.passed]: index < current,
-            [styles.current]: index === current,
-          })}
-          aria-current={index === current ? "step" : undefined}
-        >
-          <span className={styles.bar} />
-          <span className={styles.label}>{BLITZ_STEP_LABELS[step]}</span>
-        </li>
-      ))}
-    </ol>
+    <StepProgress
+      steps={progressSteps}
+      current={current}
+      title={blitzStatusLabel(order.status, isExpert, order.service)}
+      caption={`Шаг ${current + 1} из ${steps.length}${since ? ` · с ${formatDateRu(since)}` : ""}`}
+      listTitle="Этапы заявки"
+    />
   );
 }

@@ -47,6 +47,13 @@ export function blitzSteps(service: BlitzService): BlitzStatus[] {
   return service === "audit" ? BLITZ_AUDIT_STEPS : BLITZ_STEPS;
 }
 
+/** Когда заявка последний раз пришла на шаг прогресса, или null. */
+export function blitzStepReachedAt(order: BlitzOrder, step: BlitzStatus): string | null {
+  const changes = order.history.filter((change) => STEP_OF_STATUS[change.status] === step);
+
+  return changes.length > 0 ? changes[changes.length - 1].created_at : null;
+}
+
 /** Номер текущего шага прогресса. */
 export function blitzStepIndex(status: BlitzStatus, service: BlitzService): number {
   return blitzSteps(service).findIndex((step) => step === STEP_OF_STATUS[status]);

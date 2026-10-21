@@ -15,7 +15,7 @@ interface FieldProps {
   className?: string;
 }
 
-/** Подпись поля, подсказка и ссылка на внешний источник. */
+/** Подпись над полем, подсказка под ним и ссылка на внешний источник. */
 export function Field({ label, children, htmlFor, hint, link, className }: FieldProps) {
   return (
     <div className={cn(styles.field, className)}>
@@ -30,9 +30,9 @@ export function Field({ label, children, htmlFor, hint, link, className }: Field
         <span className={styles.label}>{label}</span>
       )}
 
-      {hint && <span className={styles.hint}>{hint}</span>}
-
       {children}
+
+      {hint && <span className={styles.hint}>{hint}</span>}
 
       {link && (
         <a

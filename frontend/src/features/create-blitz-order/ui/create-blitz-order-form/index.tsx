@@ -1,22 +1,24 @@
 "use client";
 
-import { BlitzFilePicker } from "@/entities/blitz-order";
 import { Button } from "@/shared/ui/button";
-import { Field } from "@/shared/ui/field";
-import { FormSection } from "@/shared/ui/form-section";
 import { Loader } from "@/shared/ui/loader";
-import { TextArea } from "@/shared/ui/text-area";
+import { StepProgress } from "@/shared/ui/step-progress";
+import { ORDER_STEPS } from "../../config/steps";
 import { useCreateBlitzOrder } from "../../model/use-create-blitz-order";
-import { CustomerSection } from "../customer-section";
-import { PriceSection } from "../price-section";
-import { SubjectSection } from "../subject-section";
+import { OrderStep } from "../order-step";
 import styles from "./style.module.scss";
 
-/** Кто что видит в заявке. */
-const DOCUMENTS_HINT = "Эксперты видят документацию до того, как взять заявку. "
-  + "Реквизиты — только тот, кто взял";
+/** Шаги для полосы прогресса и списка. */
+const PROGRESS_STEPS = ORDER_STEPS.map((step) => ({ title: step.title }));
 
-/** Новая заявка: что проверить, цена, заказчик, документация и комментарий. */
+/** Что подписать под полосой: следующий шаг или что он последний. */
+function nextCaption(step: number): string {
+  const next = ORDER_STEPS[step + 1];
+
+  return next ? `Далее: ${next.title}` : "Последний шаг: проверьте и отправьте заявку";
+}
+
+/** Заявка на экспертизу по шагам: что проверить, цена, документация, заказчик и комментарий. */
 export function CreateBlitzOrderForm() {
   const form = useCreateBlitzOrder();
   const { state, catalog } = form;
@@ -37,69 +39,51 @@ export function CreateBlitzOrderForm() {
   }
 
   return (
-    <form
-      className={styles.form}
-      onSubmit={form.submit}
-    >
-      <SubjectSection
-        state={state}
-        catalog={catalog}
-        onObjectChange={form.changeObject}
-        onAreaChange={form.changeArea}
-        onRequirementChange={form.changeRequirement}
-        onFieldChange={form.changeField}
-        onDeadlineChange={form.changeDeadline}
+    <div className={styles.wizard}>
+      <StepProgress
+        steps={PROGRESS_STEPS}
+        current={state.step}
+        title={`Шаг ${state.step + 1} из ${PROGRESS_STEPS.length}`}
+        caption={nextCaption(state.step)}
+        listTitle="Шаги заявки"
+        onSelect={form.goTo}
       />
-      <PriceSection
-        price={state.price}
-        tariff={form.tariff}
-        onChange={(value) => form.changeField("price", value)}
-      />
-      <FormSection
-        title="Документация"
-        hint={DOCUMENTS_HINT}
+      <form
+        className={styles.form}
+        noValidate
+        onSubmit={form.submit}
       >
-        <BlitzFilePicker
-          label="Файлы документации"
-          items={form.documentation.items}
-          isFull={form.documentation.isFull}
-          onAdd={form.documentation.addFiles}
+        <OrderStep
+          form={form}
+          catalog={catalog}
         />
-        <Field label="Комментарий (необязательно)">
-          <TextArea
-            value={state.comment}
-            rows={4}
-            maxLength={4000}
-            placeholder="Что важно знать эксперту"
-            onChange={(event) => form.changeField("comment", event.target.value)}
-          />
-        </Field>
-      </FormSection>
-      <CustomerSection
-        state={state}
-        cardItems={form.companyCard.items}
-        isCardChosen={form.companyCard.isFull}
-        onTypeChange={form.changeCustomerType}
-        onCompanyChange={form.changeCompany}
-        onIndividualChange={form.changeIndividual}
-        onCardAdd={form.companyCard.addFiles}
-      />
-      <div className={styles.actions}>
-        <Button
-          variant="outline"
-          size="field"
-          href="/blitz"
-        >
-          Отмена
-        </Button>
-        <Button
-          type="submit"
-          size="field"
-          isLoading={state.isSubmitting}
-        >
-          Отправить заявку
-        </Button>
-      </div>
-    </form>
+        <div className={styles.actions}>
+          {state.step === 0 ? (
+            <Button
+              variant="outline"
+              size="field"
+              href="/blitz"
+            >
+              Отмена
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="field"
+              onClick={form.back}
+            >
+              Назад
+            </Button>
+          )}
+          <Button
+            type="submit"
+            size="field"
+            isLoading={state.isSubmitting}
+          >
+            {form.isLastStep ? "Отправить заявку" : "Далее"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

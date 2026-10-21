@@ -120,25 +120,6 @@ export const BLITZ_AUDIT_STEPS: BlitzStatus[] = [
   "accepted",
 ];
 
-/** Короткие названия шагов прогресса. */
-export const BLITZ_STEP_LABELS = {
-  new: "Заявка",
-  consultation: "Заявка",
-  offer: "Цена",
-  counter: "Цена",
-  expert_ready: "Исполнитель",
-  contract: "Договор",
-  plan: "План",
-  plan_review: "План",
-  in_progress: "Работа",
-  remarks: "Работа",
-  conclusion_ready: "Результат",
-  paid: "Оплата",
-  sent: "Отправлено",
-  accepted: "Принято",
-  canceled: "Отменена",
-};
-
 /** Кто заказчик. */
 export const BLITZ_CUSTOMER_TYPE_LABELS = {
   legal: "Организация",

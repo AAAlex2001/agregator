@@ -12,11 +12,13 @@ import {
 } from "@/entities/blitz-order";
 import type { BlitzCustomerType, BlitzDeadline, BlitzTariff } from "@/entities/blitz-order";
 import { useNotifications } from "@/shared/ui/notifications";
-import { blitzOrderProblem, toBlitzOrderPayload } from "./payload";
+import { ORDER_STEPS } from "../config/steps";
+import { toBlitzOrderPayload } from "./payload";
 import { createBlitzOrderReducer, INITIAL_CREATE_BLITZ_ORDER_STATE } from "./reducer";
+import { firstOrderProblem, orderStepProblem } from "./steps";
 import type { CompanyField, ExpertRequirement, IndividualField, OrderTextField } from "./types";
 
-/** Черновик заявки, справочник, тарифы, файлы и отправка. */
+/** Черновик заявки по шагам, справочник, тарифы, файлы и отправка. */
 export function useCreateBlitzOrder() {
   const [state, dispatch] = useReducer(createBlitzOrderReducer, INITIAL_CREATE_BLITZ_ORDER_STATE);
   const [tariffs, setTariffs] = useState<BlitzTariff[]>([]);
@@ -101,12 +103,52 @@ export function useCreateBlitzOrder() {
   }
 
   /** Отправляет заявку и открывает её. */
+  const isLastStep = state.step === ORDER_STEPS.length - 1;
+
+  /** Открывает шаг и показывает его с начала страницы. */
+  function openStep(step: number) {
+    dispatch({ type: "step/go", step });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /** Возвращает к уже пройденному шагу. */
+  function goTo(step: number) {
+    if (step < state.step) {
+      openStep(step);
+    }
+  }
+
+  /** Шаг назад. */
+  function back() {
+    goTo(state.step - 1);
+  }
+
+  /** Проверяет текущий шаг и открывает следующий. */
+  function next() {
+    const step = ORDER_STEPS[state.step].key;
+    const problem = orderStepProblem(step, state, documentation.files.length);
+
+    if (problem) {
+      showError(problem);
+      return;
+    }
+
+    openStep(state.step + 1);
+  }
+
+  /** На последнем шаге отправляет заявку, на остальных — переходит дальше. */
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const problem = blitzOrderProblem(state, documentation.files.length);
-    if (problem) {
-      showError(problem);
+    if (!isLastStep) {
+      next();
+      return;
+    }
+
+    const failure = firstOrderProblem(state, documentation.files.length);
+    if (failure) {
+      showError(failure.problem);
+      openStep(failure.step);
       return;
     }
 
@@ -139,6 +181,9 @@ export function useCreateBlitzOrder() {
     changeCustomerType,
     changeCompany,
     changeIndividual,
+    isLastStep,
+    goTo,
+    back,
     submit,
   };
 }
