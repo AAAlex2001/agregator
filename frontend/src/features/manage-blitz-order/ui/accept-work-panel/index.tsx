@@ -37,6 +37,7 @@ export function AcceptWorkPanel({ order, onChange }: BlitzStepProps) {
         documents={conclusion}
       />
       <Button
+        size="field"
         isLoading={isPending}
         onClick={accept}
       >

@@ -54,6 +54,7 @@ export function AcceptPanel({ order, onChange }: BlitzStepProps) {
         </Field>
       )}
       <Button
+        size="field"
         isLoading={isPending}
         disabled={needsKind && !contractKind}
         onClick={accept}

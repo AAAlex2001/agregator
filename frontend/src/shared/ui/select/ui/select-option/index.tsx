@@ -55,6 +55,24 @@ export function SelectOptionButton({
             <span className={styles.optionBottom}>{option.hint}</span>
           )}
         </span>
+        {!multiple && isSelected && (
+          <svg
+            className={styles.check}
+            width="18"
+            height="18"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden
+          >
+            <path
+              d="M3 8.4 6.3 11.6 13 4.8"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
       </button>
     </li>
   );

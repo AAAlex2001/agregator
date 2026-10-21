@@ -10,21 +10,10 @@
   gap: 14px;
 }
 
-.badge {
-  align-self: flex-start;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: var(--color-orange-bg-soft);
-  color: var(--color-warning-text);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
 .offers {
   display: grid;
   grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
   gap: 12px;
   margin: 8px 0 0;
   padding: 0;

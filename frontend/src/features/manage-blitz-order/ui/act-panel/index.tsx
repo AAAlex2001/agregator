@@ -12,6 +12,7 @@ export function ActPanel({ order }: BlitzStepProps) {
         + `${blitzWording(order.service).resultTitle} — в разделе «Файлы».`}
     >
       <Button
+        size="field"
         variant="outline"
         href={blitzActUrl(order.id)}
       >

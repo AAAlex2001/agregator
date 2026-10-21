@@ -29,12 +29,14 @@ export function CounterAnswerPanel({ order, onChange }: BlitzStepProps) {
     >
       <div className={styles.actions}>
         <Button
+          size="field"
           isLoading={isPending}
           onClick={() => answer(true)}
         >
           Согласен на {formatRub(counter)}
         </Button>
         <Button
+          size="field"
           variant="outline"
           disabled={isPending}
           onClick={() => answer(false)}

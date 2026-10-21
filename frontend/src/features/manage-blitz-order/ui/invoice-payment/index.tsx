@@ -61,6 +61,7 @@ export function InvoicePayment({ order, onChange }: BlitzStepProps) {
   if (!invoice) {
     return (
       <Button
+        size="field"
         isLoading={isPending}
         onClick={issue}
       >
@@ -101,6 +102,7 @@ export function InvoicePayment({ order, onChange }: BlitzStepProps) {
             onAdd={proof.addFiles}
           />
           <Button
+            size="field"
             isLoading={isPending}
             onClick={() => report(invoice.id)}
           >

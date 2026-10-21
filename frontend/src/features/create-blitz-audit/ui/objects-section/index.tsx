@@ -87,6 +87,7 @@ export function ObjectsSection({ state, catalog, dispatch }: ObjectsSectionProps
           {isSelected && (
             <div className={styles.add}>
               <Button
+                size="field"
                 variant="outline"
                 onClick={() => dispatch({ type: "object/add" })}
               >

@@ -1,39 +1,36 @@
 import type { UserRole } from "@/entities/user";
 import {
-  DiplomaIcon,
   NewspaperIcon,
-  NormsIcon,
   ReviewIcon,
-  SafetyIcon,
+  TabBlitzAuditIcon,
+  TabBlitzExpertIcon,
   TabChatIcon,
+  TabCommissionIcon,
   TabNotificationIcon,
   TabOrdersIcon,
   TabProfileIcon,
   TabSupportIcon,
 } from "@/shared/ui/icons";
-import type { SidebarSection } from "../model/types";
+import type { SidebarItem, SidebarSection } from "../model/types";
 
-/** Отдельные сервисы платформы: экспертиза, аудит СУПБ и конкурсный отбор экспертов. */
-const SERVICES_SECTION: SidebarSection = {
-  label: "Сервисы",
-  items: [
-    {
-      href: "/blitz",
-      label: "Блиц-эксперт",
-      icon: SafetyIcon,
-    },
-    {
-      href: "/blitz-audit",
-      label: "Блиц-аудит",
-      icon: NormsIcon,
-    },
-    {
-      href: "/commission",
-      label: "Конкурсная комиссия",
-      icon: DiplomaIcon,
-    },
-  ],
-};
+/** Сервисы платформы в разделе работы: экспертиза, аудит СУПБ и конкурсный отбор экспертов. */
+const SERVICE_ITEMS: SidebarItem[] = [
+  {
+    href: "/blitz",
+    label: "Блиц-эксперт",
+    icon: TabBlitzExpertIcon,
+  },
+  {
+    href: "/blitz-audit",
+    label: "Блиц-аудит",
+    icon: TabBlitzAuditIcon,
+  },
+  {
+    href: "/commission",
+    label: "Конкурсная комиссия",
+    icon: TabCommissionIcon,
+  },
+];
 
 /** Разделы общения для исполнителя и заказчика. */
 const COMMUNICATION_SECTION: SidebarSection = {
@@ -86,9 +83,9 @@ const EXPERT_SECTIONS: SidebarSection[] = [
         icon: TabOrdersIcon,
         activePaths: ["/expert/orders", "/responses", "/archive"],
       },
+      ...SERVICE_ITEMS,
     ],
   },
-  SERVICES_SECTION,
   COMMUNICATION_SECTION,
   ACCOUNT_SECTION,
 ];
@@ -109,9 +106,9 @@ const CUSTOMER_SECTIONS: SidebarSection[] = [
           "/customer/reports",
         ],
       },
+      ...SERVICE_ITEMS,
     ],
   },
-  SERVICES_SECTION,
   COMMUNICATION_SECTION,
   ACCOUNT_SECTION,
 ];

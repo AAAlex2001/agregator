@@ -58,6 +58,7 @@ export function AttestationPicker({
       />
       <Button
         variant="outline"
+        size="field"
         disabled={!isReady}
         onClick={onAdd}
       >

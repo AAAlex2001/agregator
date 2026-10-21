@@ -34,12 +34,14 @@ export function CardPayment({ order, onChange }: BlitzStepProps) {
   return (
     <div className={styles.actions}>
       <Button
+        size="field"
         isLoading={isRedirecting}
         onClick={() => void pay()}
       >
         Оплатить картой
       </Button>
       <Button
+        size="field"
         variant="outline"
         isLoading={isPending}
         onClick={check}

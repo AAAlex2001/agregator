@@ -144,6 +144,7 @@ export function PlanPanel({ order, onChange }: BlitzStepProps) {
       </Field>
       <div className={styles.actions}>
         <Button
+          size="field"
           isLoading={isPending}
           onClick={send}
         >

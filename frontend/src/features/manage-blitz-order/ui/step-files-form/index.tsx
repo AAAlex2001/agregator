@@ -82,6 +82,7 @@ export function StepFilesForm({
         onAdd={attachments.addFiles}
       />
       <Button
+        size="field"
         isLoading={isPending}
         disabled={isEmpty}
         onClick={() => void submit()}

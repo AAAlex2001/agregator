@@ -110,6 +110,7 @@ export function CommissionForm() {
 
       <Button
         type="submit"
+        size="field"
         isLoading={state.isSubmitting}
         disabled={!form.canSubmit}
       >

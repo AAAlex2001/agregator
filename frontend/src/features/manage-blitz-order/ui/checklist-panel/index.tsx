@@ -58,6 +58,7 @@ export function ChecklistPanel({ order, onChange }: BlitzStepProps) {
       )}
       <div className={styles.actions}>
         <Button
+          size="field"
           isLoading={isPending}
           disabled={checklist.entries.length === 0}
           onClick={() => void upload()}
@@ -65,6 +66,7 @@ export function ChecklistPanel({ order, onChange }: BlitzStepProps) {
           Загрузить документы
         </Button>
         <Button
+          size="field"
           variant="outline"
           href={blitzDocumentsReportUrl(order.id)}
         >

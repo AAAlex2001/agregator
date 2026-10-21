@@ -36,6 +36,7 @@ export function CancelButton({ order, onChange }: BlitzStepProps) {
   return (
     <>
       <Button
+        size="field"
         variant="transparent"
         onClick={() => setIsOpen(true)}
       >
@@ -61,6 +62,7 @@ export function CancelButton({ order, onChange }: BlitzStepProps) {
           </Field>
           <div className={styles.actions}>
             <Button
+              size="field"
               variant="outline"
               disabled={isPending}
               onClick={() => setIsOpen(false)}
@@ -68,6 +70,7 @@ export function CancelButton({ order, onChange }: BlitzStepProps) {
               Не отменять
             </Button>
             <Button
+              size="field"
               isLoading={isPending}
               disabled={reason.trim().length < 3}
               onClick={() => void cancel()}

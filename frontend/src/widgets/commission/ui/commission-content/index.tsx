@@ -13,7 +13,6 @@ export function CommissionContent() {
   return (
     <div className={styles.content}>
       <section className={styles.hero}>
-        <span className={styles.badge}>Конкурсный отбор</span>
         <Title
           as="h1"
           text="Примем эксперта в команду"

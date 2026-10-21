@@ -58,6 +58,7 @@ export function AuditTakePanel({ order, onChange }: BlitzStepProps) {
       {order.price !== null && (
         <div className={styles.actions}>
           <Button
+            size="field"
             isLoading={isPending}
             onClick={accept}
           >
@@ -80,6 +81,7 @@ export function AuditTakePanel({ order, onChange }: BlitzStepProps) {
           </Field>
           <div className={styles.actions}>
             <Button
+              size="field"
               variant="outline"
               isLoading={isPending}
               disabled={!(parseBlitzPrice(price) > 0)}

@@ -54,6 +54,7 @@ export function PlanReviewPanel({ order, onChange }: BlitzStepProps) {
       )}
       <div className={styles.actions}>
         <Button
+          size="field"
           isLoading={isPending}
           onClick={approve}
         >
@@ -72,6 +73,7 @@ export function PlanReviewPanel({ order, onChange }: BlitzStepProps) {
         </Field>
         <div className={styles.actions}>
           <Button
+            size="field"
             variant="outline"
             disabled={isPending || comment.trim().length < 3}
             onClick={requestChanges}

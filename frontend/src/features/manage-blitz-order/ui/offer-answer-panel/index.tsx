@@ -50,12 +50,14 @@ export function OfferAnswerPanel({ order, onChange }: BlitzStepProps) {
     >
       <div className={styles.actions}>
         <Button
+          size="field"
           isLoading={isPending}
           onClick={() => answer("accept")}
         >
           Принять {formatRub(offer)}
         </Button>
         <Button
+          size="field"
           variant="outline"
           disabled={isPending}
           onClick={() => answer("decline")}
@@ -82,6 +84,7 @@ export function OfferAnswerPanel({ order, onChange }: BlitzStepProps) {
           </Field>
           <div className={styles.actions}>
             <Button
+              size="field"
               variant="outline"
               isLoading={isPending}
               disabled={!(counter > 0 && counter < offer)}

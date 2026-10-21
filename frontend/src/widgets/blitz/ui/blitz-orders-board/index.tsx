@@ -64,7 +64,14 @@ export function BlitzOrdersBoard({ service }: BlitzOrdersBoardProps) {
           />
           <Subtitle text={texts.subtitle} />
         </div>
-        {!isExpert && <Button href={texts.createHref}>{texts.createLabel}</Button>}
+        {!isExpert && (
+          <Button
+            size="field"
+            href={texts.createHref}
+          >
+            {texts.createLabel}
+          </Button>
+        )}
       </div>
 
       <Tabs

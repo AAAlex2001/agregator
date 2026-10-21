@@ -87,12 +87,14 @@ export function CreateBlitzOrderForm() {
       <div className={styles.actions}>
         <Button
           variant="outline"
+          size="field"
           href="/blitz"
         >
           Отмена
         </Button>
         <Button
           type="submit"
+          size="field"
           isLoading={state.isSubmitting}
         >
           Отправить заявку

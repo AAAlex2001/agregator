@@ -54,9 +54,15 @@ export function WorkPanel({ order, onChange }: BlitzStepProps) {
       text={wording.workHint}
     >
       <div className={styles.ready}>
-        <Button onClick={() => setIsConfirmOpen(true)}>{wording.resultReady}</Button>
+        <Button
+          size="field"
+          onClick={() => setIsConfirmOpen(true)}
+        >
+          {wording.resultReady}
+        </Button>
         {isAudit && (
           <Button
+            size="field"
             variant="outline"
             href={blitzDocumentsReportUrl(order.id)}
           >

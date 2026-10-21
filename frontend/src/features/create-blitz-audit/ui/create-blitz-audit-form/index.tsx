@@ -97,12 +97,14 @@ export function CreateBlitzAuditForm() {
       <div className={styles.actions}>
         <Button
           variant="outline"
+          size="field"
           href="/blitz-audit"
         >
           Отмена
         </Button>
         <Button
           type="submit"
+          size="field"
           isLoading={state.isSubmitting}
         >
           Отправить заявку

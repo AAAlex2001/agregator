@@ -28,7 +28,7 @@ type ButtonVariant =
 interface ButtonProps {
   children: ReactNode;
   variant?: ButtonVariant;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "field";
   type?: "button" | "submit" | "reset";
   className?: string;
   fullWidth?: boolean;

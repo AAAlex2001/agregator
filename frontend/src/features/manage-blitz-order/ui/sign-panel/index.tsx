@@ -60,6 +60,7 @@ export function SignPanel({ order, onChange }: BlitzStepProps) {
       </Checkbox>
       <div className={styles.actions}>
         <Button
+          size="field"
           isLoading={isPending}
           disabled={!isAgreed}
           onClick={sign}

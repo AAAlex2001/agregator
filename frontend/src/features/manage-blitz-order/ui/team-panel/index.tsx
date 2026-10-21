@@ -61,6 +61,7 @@ export function TeamPanel({ order, onChange }: BlitzStepProps) {
       )}
       <div className={styles.actions}>
         <Button
+          size="field"
           variant="outline"
           isLoading={isPending}
           disabled={!isChanged}
