@@ -1,27 +1,5 @@
-import { countOrderFormFiles } from "./order-form-files";
 import type { OrderFormValues } from "./order-form-types";
 import type { OrderDocumentsRequest, OrderRequest } from "./order-request";
-
-/** Возвращает первое незаполненное обязательное условие заказа. */
-export function getOrderFormError(values: OrderFormValues): string {
-  if (!values.startDate) {
-    return "Укажите срок начала выполнения работ";
-  }
-
-  if (!values.deadline) {
-    return "Укажите срок окончания выполнения работ";
-  }
-
-  if (!values.requiresExpert && !values.requiresLicense) {
-    return "Выберите, что требуется: исполнитель и/или лицензия";
-  }
-
-  if (values.workType === "DESIGN" && countOrderFormFiles(values) === 0) {
-    return "Приложите задание на проектирование";
-  }
-
-  return "";
-}
 
 /** Подготавливает условия для API, переводя бюджет из рублей в копейки. */
 export function getOrderRequest(values: OrderFormValues): OrderRequest {

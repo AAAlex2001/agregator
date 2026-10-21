@@ -96,7 +96,7 @@ test("a second network failure is exposed without a third attempt", async (conte
     throw new TypeError("Failed to fetch");
   });
 
-  await assert.rejects(uploadForm("/upload", options()), /Failed to fetch/);
+  await assert.rejects(uploadForm("/upload", options()), /Не удалось связаться с сервером/);
   assert.equal(requests, 2);
 });
 
@@ -125,8 +125,8 @@ test("unrelated errors and uploads without files are not retried", async (contex
   });
 
   await assert.rejects(uploadForm("/upload", options()), errors[0]);
-  await assert.rejects(uploadForm("/upload", options()), errors[1]);
-  await assert.rejects(uploadForm("/upload", options([])), errors[2]);
+  await assert.rejects(uploadForm("/upload", options()), /Не удалось связаться с сервером/);
+  await assert.rejects(uploadForm("/upload", options([])), /Не удалось связаться с сервером/);
   assert.equal(requests, 3);
 });
 

@@ -1,58 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import type { FormEvent } from "react";
 import {
   createOrder,
   getOrderDocumentsRequest,
-  getOrderFormError,
   getOrderRequest,
-  useOrderForm,
+  useOrderFormSubmit,
 } from "@/entities/order";
-import { useNotifications } from "@/shared/ui/notifications";
 
-/** Проверяет заполненный черновик и создаёт заказ с его документами. */
+/** Создаёт заказ с документами на последнем шаге формы. */
 export function useCreateOrder(onSaved: () => void) {
-  const { values } = useOrderForm();
-  const { showError, showSuccess } = useNotifications();
-  const [isSaving, setIsSaving] = useState(false);
+  return useOrderFormSubmit(async (values) => {
+    await createOrder(getOrderRequest(values), getOrderDocumentsRequest(values));
 
-  /** Сохраняет новый заказ; при ошибке оставляет заполненные поля для повтора. */
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (isSaving) {
-      return;
-    }
-
-    const errorMessage = getOrderFormError(values);
-
-    if (errorMessage) {
-      showError(errorMessage);
-      return;
-    }
-
-    setIsSaving(true);
-
-    try {
-      await createOrder(
-        getOrderRequest(values),
-        getOrderDocumentsRequest(values),
-      );
-
-      showSuccess("Заказ создан");
-      onSaved();
-    } catch (error) {
-      showError(
-        error instanceof Error ? error.message : "Не удалось сохранить заказ",
-      );
-    } finally {
-      setIsSaving(false);
-    }
-  }
-
-  return {
-    isSaving,
-    submit,
-  };
+    return "Заказ создан";
+  }, onSaved);
 }

@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import Response
@@ -16,6 +17,7 @@ from app.blitz.routes import router as blitz_router
 from app.commission.internal_routes import router as commission_internal_router
 from app.commission.routes import router as commission_router
 from app.core.errors import AppError, app_error_handler
+from app.core.validation import validation_error_handler
 from app.poster.channels.routes import router as poster_channels_router
 from app.poster.delivery.routes import router as poster_delivery_router
 from app.poster.delivery.tasks import run_delivery_loop
@@ -113,6 +115,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
 app.add_exception_handler(AppError, app_error_handler)
+app.add_exception_handler(RequestValidationError, validation_error_handler)
 
 
 cors_origins_env = os.getenv("CORS_ORIGINS", "https://plus-resurs.com,http://localhost:3000")

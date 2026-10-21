@@ -11,12 +11,21 @@ import {
   useBlitzFiles,
 } from "@/entities/blitz-order";
 import type { BlitzCustomerType, BlitzDeadline, BlitzTariff } from "@/entities/blitz-order";
+import { toStepError, withStep } from "@/shared/lib/step-error";
+import { useSteps } from "@/shared/lib/use-steps";
 import { useNotifications } from "@/shared/ui/notifications";
+import { ORDER_FIELD_PLACES } from "../config/fields";
 import { ORDER_STEPS } from "../config/steps";
+import type { OrderStep } from "../config/steps";
 import { toBlitzOrderPayload } from "./payload";
 import { createBlitzOrderReducer, INITIAL_CREATE_BLITZ_ORDER_STATE } from "./reducer";
 import { firstOrderProblem, orderStepProblem } from "./steps";
 import type { CompanyField, ExpertRequirement, IndividualField, OrderTextField } from "./types";
+
+/** Название шага по ключу. */
+function titleOf(step: OrderStep): string {
+  return ORDER_STEPS.find((item) => item.key === step)?.title ?? "";
+}
 
 /** Черновик заявки по шагам, справочник, тарифы, файлы и отправка. */
 export function useCreateBlitzOrder() {
@@ -25,6 +34,7 @@ export function useCreateBlitzOrder() {
   const { catalog, error: catalogError } = useBlitzCatalog();
   const documentation = useBlitzFiles();
   const companyCard = useBlitzFiles(1);
+  const steps = useSteps(ORDER_STEPS.length);
   const { showError, showSuccess } = useNotifications();
   const router = useRouter();
 
@@ -102,30 +112,9 @@ export function useCreateBlitzOrder() {
     dispatch({ type: "individual/change", field, value });
   }
 
-  /** Отправляет заявку и открывает её. */
-  const isLastStep = state.step === ORDER_STEPS.length - 1;
-
-  /** Открывает шаг и показывает его с начала страницы. */
-  function openStep(step: number) {
-    dispatch({ type: "step/go", step });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  /** Возвращает к уже пройденному шагу. */
-  function goTo(step: number) {
-    if (step < state.step) {
-      openStep(step);
-    }
-  }
-
-  /** Шаг назад. */
-  function back() {
-    goTo(state.step - 1);
-  }
-
   /** Проверяет текущий шаг и открывает следующий. */
   function next() {
-    const step = ORDER_STEPS[state.step].key;
+    const step = ORDER_STEPS[steps.step].key;
     const problem = orderStepProblem(step, state, documentation.files.length);
 
     if (problem) {
@@ -133,22 +122,22 @@ export function useCreateBlitzOrder() {
       return;
     }
 
-    openStep(state.step + 1);
+    steps.forward();
   }
 
   /** На последнем шаге отправляет заявку, на остальных — переходит дальше. */
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!isLastStep) {
+    if (!steps.isLast) {
       next();
       return;
     }
 
     const failure = firstOrderProblem(state, documentation.files.length);
     if (failure) {
-      showError(failure.problem);
-      openStep(failure.step);
+      showError(withStep(ORDER_STEPS[failure.step].title, failure.problem));
+      steps.open(failure.step);
       return;
     }
 
@@ -162,7 +151,18 @@ export function useCreateBlitzOrder() {
       router.push(`/blitz/orders/${order.id}`);
     } catch (error) {
       dispatch({ type: "submit/error" });
-      showError(error instanceof Error ? error.message : "Не удалось отправить заявку");
+      const located = toStepError(
+        error,
+        ORDER_FIELD_PLACES,
+        titleOf,
+        "Не удалось отправить заявку",
+      );
+
+      showError(located.message);
+
+      if (located.step) {
+        steps.open(ORDER_STEPS.findIndex((item) => item.key === located.step));
+      }
     }
   }
 
@@ -181,9 +181,7 @@ export function useCreateBlitzOrder() {
     changeCustomerType,
     changeCompany,
     changeIndividual,
-    isLastStep,
-    goTo,
-    back,
+    steps,
     submit,
   };
 }

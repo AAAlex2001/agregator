@@ -44,7 +44,6 @@ export const INITIAL_CREATE_BLITZ_AUDIT_STATE: CreateBlitzAuditState = {
   customerType: "legal",
   company: EMPTY_BLITZ_COMPANY,
   comment: "",
-  step: 0,
   isSubmitting: false,
 };
 
@@ -159,11 +158,6 @@ export function createBlitzAuditReducer(
         ...state,
         customerType: action.requisites.customer_type === "entrepreneur" ? "entrepreneur" : "legal",
         company: action.requisites.company ?? state.company,
-      };
-    case "step/go":
-      return {
-        ...state,
-        step: action.step,
       };
     case "submit/start":
       return {

@@ -63,7 +63,6 @@ export interface CreateBlitzAuditState {
   customerType: AuditCustomerType;
   company: BlitzCompany;
   comment: string;
-  step: number;
   isSubmitting: boolean;
 }
 
@@ -154,10 +153,6 @@ export type CreateBlitzAuditAction =
   | {
       type: "requisites/fill";
       requisites: BlitzRequisites;
-    }
-  | {
-      type: "step/go";
-      step: number;
     }
   | {
       type: "submit/start";

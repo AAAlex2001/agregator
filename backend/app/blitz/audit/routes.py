@@ -1,7 +1,6 @@
 """Аудит СУПБ в кабинете: заявка, торг по цене, группа, План и документы по перечню."""
 
 from fastapi import APIRouter, Depends, File, Form, Response, UploadFile
-from pydantic import Json
 
 from app.auth.sessions.dependencies import require_user
 from app.blitz.audit.checklist import AUDIT_DOCUMENTS
@@ -48,6 +47,7 @@ from app.blitz.orders.services.presenter import details, is_party
 from app.blitz.pricing.dependencies import get_tariff_repository
 from app.blitz.pricing.services.repo import TariffRepository
 from app.core.clock import now
+from app.core.forms import json_form
 from models.account import Account
 
 router = APIRouter(tags=["blitz-audit"])
@@ -66,7 +66,7 @@ async def get_audit_catalog(
 
 @router.post("/audit", status_code=201)
 async def create_audit(
-    payload: Json[AuditCreateSchema] = Form(...),
+    payload: AuditCreateSchema = Depends(json_form(AuditCreateSchema)),
     files: list[UploadFile] = File(default=[]),
     items: list[int] = Form(default=[]),
     company_card: UploadFile | None = File(None),

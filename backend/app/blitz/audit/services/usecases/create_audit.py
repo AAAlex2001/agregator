@@ -50,10 +50,10 @@ def extra_files(
     """Отдельные файлы, нужные этой заявке. Без доверенности или СТО — InvalidOrderError."""
 
     if details.applicant.by_proxy and attachments.power_of_attorney is None:
-        raise InvalidOrderError("Приложите доверенность заявителя")
+        raise InvalidOrderError("Приложите доверенность заявителя", "power_of_attorney")
 
     if details.params.use_sto and attachments.sto_file is None:
-        raise InvalidOrderError("Приложите файл СТО")
+        raise InvalidOrderError("Приложите файл СТО", "sto_file")
 
     candidates = [
         (DocumentKind.COMPANY_CARD, attachments.company_card, True),

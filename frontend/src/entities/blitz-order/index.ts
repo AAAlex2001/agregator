@@ -36,7 +36,7 @@ export {
   BLITZ_RESULT_LABELS,
   BLITZ_STAGE_LABELS,
 } from "./config/labels";
-export { blitzCompanyProblem } from "./model/company";
+export { blitzCompanyPlaces, blitzCompanyProblem } from "./model/company";
 export { blitzPriceLabel, parseBlitzPrice } from "./model/price";
 export {
   blitzOrderPath,

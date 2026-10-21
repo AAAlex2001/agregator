@@ -272,10 +272,10 @@ def test_category_comes_from_hazard_class() -> None:
 
 
 def test_passport_is_normalized() -> None:
-    assert normalize_passport("45 06-123456") == "4506 123456"
+    assert normalize_passport("45 06-123456", "individual.passport_number") == "4506 123456"
 
     with pytest.raises(InvalidOrderError):
-        normalize_passport("123")
+        normalize_passport("123", "individual.passport_number")
 
 
 def test_expert_fits_by_area_object_and_category() -> None:

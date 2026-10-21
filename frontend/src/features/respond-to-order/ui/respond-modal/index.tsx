@@ -4,11 +4,10 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import type { OrderListItem } from "@/entities/order";
 import { Modal } from "@/shared/ui/modal";
-import type { RespondCallbacks, RespondStep } from "../../model/types";
+import type { RespondCallbacks } from "../../model/types";
 import { useRespondForm } from "../../model/use-respond-form";
-import { ConfirmationStep } from "../confirmation-step";
-import { OfferStep } from "../offer-step";
 import { OrderDetailsStep } from "../order-details-step";
+import { RespondWizard } from "../respond-wizard";
 import styles from "./style.module.scss";
 
 /** Выбранный заказ, обсуждение и переходы по результату отклика. */
@@ -18,7 +17,7 @@ interface RespondModalProps extends RespondCallbacks {
   onClose: () => void;
 }
 
-/** Проводит исполнителя от просмотра заказа до отправки предложения. */
+/** Сначала заказ и обсуждение, по «Откликнуться» — отклик по шагам; черновик живёт с окном. */
 export function RespondModal({
   order,
   questions,
@@ -26,23 +25,8 @@ export function RespondModal({
   onResponded,
   onSubscriptionRequired,
 }: RespondModalProps) {
-  const [step, setStep] = useState<RespondStep>("details");
+  const [isResponding, setIsResponding] = useState(false);
   const form = useRespondForm(order, { onResponded, onSubscriptionRequired });
-
-  /** Возвращает просмотр условий заказа. */
-  function showOrderDetails() {
-    setStep("details");
-  }
-
-  /** Открывает подтверждение условий перед заполнением предложения. */
-  function showConfirmation() {
-    setStep("confirmation");
-  }
-
-  /** Открывает поля предложения, сохраняя уже введённые данные. */
-  function showOffer() {
-    setStep("offer");
-  }
 
   return (
     <Modal
@@ -52,27 +36,17 @@ export function RespondModal({
       isBusy={form.isSubmitting}
       dialogClassName={styles.dialog}
     >
-      {step === "details" && (
+      {isResponding ? (
+        <RespondWizard
+          order={order}
+          form={form}
+          onCancel={() => setIsResponding(false)}
+        />
+      ) : (
         <OrderDetailsStep
           order={order}
           questions={questions}
-          onRespond={showConfirmation}
-        />
-      )}
-
-      {step === "confirmation" && (
-        <ConfirmationStep
-          order={order}
-          onBack={showOrderDetails}
-          onContinue={showOffer}
-        />
-      )}
-
-      {step === "offer" && (
-        <OfferStep
-          order={order}
-          form={form}
-          onBack={showConfirmation}
+          onRespond={() => setIsResponding(true)}
         />
       )}
     </Modal>

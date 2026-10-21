@@ -1,39 +1,42 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { OrderFormActions } from "@/entities/order";
+import { useOrderFormSteps } from "@/entities/order";
+import { StepActions } from "@/shared/ui/step-actions";
 import { useCreateOrder } from "../../model/use-create-order";
 
-/** Поля нового заказа и переходы после действий формы. */
+/** Шаг нового заказа и переходы после действий формы. */
 interface CreateOrderFormProps {
   children: ReactNode;
   className?: string;
   onSaved: () => void;
   onCancel: () => void;
-  onCopy: () => void;
 }
 
-/** Отправляет форму создания заказа с полями, которые передал экран. */
+/** Форма нового заказа по шагам: поля текущего шага передаёт экран. */
 export function CreateOrderForm({
   children,
   className,
   onSaved,
   onCancel,
-  onCopy,
 }: CreateOrderFormProps) {
   const { isSaving, submit } = useCreateOrder(onSaved);
+  const steps = useOrderFormSteps();
 
   return (
     <form
       className={className}
+      noValidate
       onSubmit={submit}
     >
       {children}
-      <OrderFormActions
-        submitText="Создать заказ"
-        isSaving={isSaving}
+      <StepActions
+        isFirst={steps.isFirst}
+        isLast={steps.isLast}
+        isSubmitting={isSaving}
+        submitLabel="Создать заказ"
         onCancel={onCancel}
-        onCopy={onCopy}
+        onBack={steps.back}
       />
     </form>
   );

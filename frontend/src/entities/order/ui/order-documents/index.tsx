@@ -8,44 +8,43 @@ interface OrderDocumentsProps {
   documents: Documents;
 }
 
-/** Показывает группы документов в исходном порядке, включая пустые группы. */
+/** Группы документов в исходном порядке; у пустой группы — контур плитки с прочерком. */
 export function OrderDocuments({ documents }: OrderDocumentsProps) {
   const groups = [
-    {
-      label: "Техническое задание",
-      files: documents.technical,
-    },
-    {
-      label: "Проект договора",
-      files: documents.contract,
-    },
-    {
-      label: "Карточка предприятия",
-      files: documents.company,
-    },
-    {
-      label: "Иное",
-      files: documents.other,
-    },
+    { label: "Техническое задание", files: documents.technical },
+    { label: "Проект договора", files: documents.contract },
+    { label: "Карточка предприятия", files: documents.company },
+    { label: "Иное", files: documents.other },
   ];
 
   return (
     <div className={styles.block}>
       <span className={styles.heading}>Документы заказчика</span>
-      <div className={styles.row}>
+      <div className={styles.groups}>
         {groups.map((group) => (
-          <FileGallery
+          <div
             key={group.label}
-            items={group.files.map((path) => ({
-              id: path,
-              name: getFileDisplayName(path),
-              url: resolveFileUrl(path),
-            }))}
-            label={group.label}
-            emptyText="—"
-            blockClassName={styles.column}
-            labelClassName={styles.caption}
-          />
+            className={styles.group}
+          >
+            {group.files.length > 0 ? (
+              <FileGallery
+                items={group.files.map((path) => ({
+                  id: path,
+                  name: getFileDisplayName(path),
+                  url: resolveFileUrl(path),
+                }))}
+                blockClassName={styles.files}
+              />
+            ) : (
+              <span
+                className={styles.emptyTile}
+                aria-label={`${group.label}: нет файла`}
+              >
+                —
+              </span>
+            )}
+            <span className={styles.caption}>{group.label}</span>
+          </div>
         ))}
       </div>
     </div>

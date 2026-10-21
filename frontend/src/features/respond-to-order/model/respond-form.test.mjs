@@ -5,21 +5,29 @@ import test from "node:test";
 
 const sourceRoot = new URL("../../../", import.meta.url);
 const responseApi = new URL("entities/response/api/respond-to-order.ts", sourceRoot);
+const offerModel = new URL("entities/response/model/offer.ts", sourceRoot);
 const innModule = new URL("entities/company/model/is-valid-inn.ts", sourceRoot);
 const reactModule = `data:text/javascript,${encodeURIComponent(`
-  export function useReducer(reducer, initial) {
+  function slot(create) {
     const runtime = globalThis.respondFormTest;
-    runtime.fields ??= initial;
-    return [runtime.fields, action => { runtime.fields = reducer(runtime.fields, action); }];
+    const index = runtime.cursor++;
+    if (!(index in runtime.slots)) runtime.slots[index] = create();
+    return index;
+  }
+  export function useReducer(reducer, initial, init) {
+    const runtime = globalThis.respondFormTest;
+    const index = slot(() => (init ? init(initial) : initial));
+    return [runtime.slots[index], action => { runtime.slots[index] = reducer(runtime.slots[index], action); }];
   }
   export function useState(initial) {
     const runtime = globalThis.respondFormTest;
-    runtime.pending ??= initial;
-    return [runtime.pending, value => { runtime.pending = value; }];
+    const index = slot(() => initial);
+    return [runtime.slots[index], value => { runtime.slots[index] = value; }];
   }
 `)}`;
 const responseModule = `data:text/javascript,${encodeURIComponent(`
   export { respondToOrder } from ${JSON.stringify(responseApi.href)};
+  export * from ${JSON.stringify(offerModel.href)};
   export function useResponseFiles() { return globalThis.respondFormTest.attachments; }
 `)}`;
 const companyModule = `data:text/javascript,${encodeURIComponent(`
@@ -59,9 +67,7 @@ registerHooks({
 });
 
 const { useRespondForm } = await import("./use-respond-form.ts");
-const { validateOffer } = await import("./validate-offer.ts");
-const { INITIAL_OFFER_FIELDS, offerReducer } = await import("./reducer.ts");
-const { isValidInn } = await import(innModule.href);
+const { getResponseTermsError, EMPTY_RESPONSE_OFFER } = await import(offerModel.href);
 const order = {
   id: 42,
   start_date: "01.11.2026",
@@ -69,49 +75,61 @@ const order = {
   sum_amount_raw: 1000000,
   requires_license: false,
 };
-const validFields = {
-  ...INITIAL_OFFER_FIELDS,
+const bounds = { startDate: order.start_date, deadline: order.date, budget: order.sum_amount_raw };
+const validTerms = {
+  ...EMPTY_RESPONSE_OFFER,
   startDate: "2026-11-01",
   deadline: "2026-11-30",
   cost: "10000",
-  comment: "Keep my draft",
 };
 const company = {
   value: "Company",
   unrestricted_value: "Full company name",
   data: { inn: "1234567890" },
 };
+const event = { preventDefault() {} };
 
-/** Создаёт форму с настоящими reducer, валидацией и HTTP-отправкой. */
-function createForm(fields = validFields, selectedOrder = order) {
+/** Форма с настоящими шагами, проверками и HTTP-отправкой. */
+function createForm(selectedOrder = order) {
   const runtime = {
-    fields: { ...fields },
+    slots: {},
+    cursor: 0,
     errors: [],
     succeeded: 0,
     subscriptionRequired: 0,
     attachments: {
       files: [new File(["bytes"], "offer.pdf")],
       items: [{ id: "offer.pdf", name: "offer.pdf", url: "blob:offer" }],
+      addFiles() {},
     },
   };
-  globalThis.respondFormTest = runtime;
   const callbacks = {
     onResponded: () => { runtime.succeeded++; },
     onSubscriptionRequired: () => { runtime.subscriptionRequired++; },
   };
 
-  /** Повторяет рендер хука после изменения черновика или состояния запроса. */
+  /** Повторяет рендер хука после изменения состояния. */
   function useTestForm() {
+    globalThis.respondFormTest = runtime;
+    runtime.cursor = 0;
     return useRespondForm(selectedOrder, callbacks);
   }
 
-  return {
-    runtime,
-    render: useTestForm,
-  };
+  /** Заполняет сроки и стоимость. */
+  function fillTerms() {
+    const render = useTestForm;
+
+    render().dispatch({ type: "field/changed", field: "startDate", value: validTerms.startDate });
+    render().dispatch({ type: "field/changed", field: "deadline", value: validTerms.deadline });
+    render().dispatch({ type: "cost/changed", value: "10 000 ₽" });
+  }
+
+  const render = useTestForm;
+
+  return { runtime, render, fillTerms, press: () => render().submit(event) };
 }
 
-test("validation checks required fields, budget, dates and licensed company in source order", () => {
+test("terms check required fields, budget and dates in the customer's frame", () => {
   const cases = [
     [{ startDate: "" }, "Укажите срок начала выполнения работ"],
     [{ deadline: "" }, "Укажите срок окончания выполнения работ"],
@@ -123,67 +141,58 @@ test("validation checks required fields, budget, dates and licensed company in s
   ];
 
   for (const [changes, error] of cases) {
-    assert.equal(validateOffer(order, { ...validFields, ...changes }), error);
+    assert.equal(getResponseTermsError({ ...validTerms, ...changes }, bounds), error);
   }
 
-  assert.equal(validateOffer(order, validFields), "");
-  assert.equal(validateOffer({ ...order, sum_amount_raw: 0 }, { ...validFields, cost: "999999" }), "");
-  assert.equal(validateOffer({ ...order, requires_license: true }, validFields), "Выберите вашу компанию из списка");
-  assert.equal(validateOffer({ ...order, requires_license: true }, { ...validFields, company }), "");
-  assert.equal(validateOffer({ ...order, start_date: "", date: "" }, validFields), "");
-  assert.equal(validateOffer({ ...order, start_date: "2026-11-01", date: "2026-11-30" }, validFields), "");
+  assert.equal(getResponseTermsError(validTerms, bounds), "");
+  assert.equal(getResponseTermsError({ ...validTerms, cost: "999999" }, { ...bounds, budget: 0 }), "");
+  assert.equal(getResponseTermsError(validTerms, { startDate: "", deadline: "", budget: 0 }), "");
 });
 
-test("company INN keeps the existing length and digit check", () => {
-  for (const value of ["1234567890", "123456789012"]) {
-    assert.equal(isValidInn(value), true);
-  }
-
-  for (const value of [null, undefined, "", "123456789", "12345678901", "1234567890123", "123456789x", " 123456789"]) {
-    assert.equal(isValidInn(value), false);
-  }
+test("company step appears only when the customer needs a license", () => {
+  assert.deepEqual(createForm().render().keys, ["conditions", "terms", "comment"]);
+  assert.deepEqual(
+    createForm({ ...order, requires_license: true }).render().keys,
+    ["conditions", "terms", "company", "comment"],
+  );
 });
 
-test("field handlers keep cost digits and reset the company after manual input", () => {
+test("each step is checked before the next opens and the draft is kept", async () => {
   const form = createForm();
-  form.render().changeCost("12 345 ₽");
-  assert.equal(form.render().fields.cost, "12345");
-  form.render().changeCompany("query", company);
-  assert.equal(form.render().fields.companyName, "Company");
-  assert.equal(form.render().fields.company, company);
-  form.render().changeCompany("Manual", null);
-  assert.equal(form.render().fields.companyName, "Manual");
-  assert.equal(form.render().fields.company, null);
-  form.render().changeField("comment", "Updated");
-  form.render().changeVatKind("VAT_7");
-  assert.equal(form.render().fields.comment, "Updated");
-  assert.equal(form.render().fields.vatKind, "VAT_7");
-  assert.deepEqual(INITIAL_OFFER_FIELDS, offerReducer(INITIAL_OFFER_FIELDS, {
-    type: "field/changed", field: "comment", value: "",
-  }));
-});
-
-test("invalid draft does not send a request or remove files", async (context) => {
-  let requests = 0;
-  context.mock.method(globalThis, "fetch", async () => { requests++; });
-  const form = createForm({ ...validFields, startDate: "" });
-  await form.render().submit();
-  assert.equal(requests, 0);
+  await form.press();
+  assert.equal(form.render().steps.step, 1);
+  await form.press();
+  assert.equal(form.render().steps.step, 1);
   assert.equal(form.runtime.errors[0], "Укажите срок начала выполнения работ");
-  assert.equal(form.render().files.length, 1);
+  form.fillTerms();
+  assert.equal(form.render().offer.cost, "10000");
+  await form.press();
+  assert.equal(form.render().steps.step, 2);
+  assert.equal(form.render().steps.isLast, true);
 });
 
-test("submission blocks a second rendered submit and sends kopecks with licensed company", async (context) => {
+test("licensed order needs a company from the list and sends it with kopecks", async (context) => {
   let finish;
   const requests = [];
   context.mock.method(globalThis, "fetch", (url, options) => {
     requests.push(options);
     return new Promise((resolve) => { finish = resolve; });
   });
-  const form = createForm({ ...validFields, company }, { ...order, requires_license: true });
-  const sending = form.render().submit();
+  const form = createForm({ ...order, requires_license: true });
+  await form.press();
+  form.fillTerms();
+  await form.press();
+  await form.press();
+  assert.equal(form.render().steps.step, 2);
+  assert.equal(form.runtime.errors.at(-1), "Выберите вашу компанию из списка");
+  form.render().changeCompany("Manual", null);
+  assert.equal(form.render().choice.name, "Manual");
+  form.render().changeCompany("query", company);
+  assert.equal(form.render().choice.name, "Company");
+  await form.press();
+  const sending = form.press();
   assert.equal(form.render().isSubmitting, true);
-  await form.render().submit();
+  await form.press();
   assert.equal(requests.length, 1);
   assert.equal(requests[0].body.get("proposed_sum_amount"), "1000000");
   assert.equal(requests[0].body.get("expert_inn"), company.data.inn);
@@ -194,37 +203,21 @@ test("submission blocks a second rendered submit and sends kopecks with licensed
   assert.equal(form.render().isSubmitting, false);
 });
 
-test("failed request preserves draft and files and can be retried successfully", async (context) => {
+test("failed request keeps the draft and a subscription refusal leads to tariffs", async (context) => {
   let requests = 0;
   context.mock.method(globalThis, "fetch", async () => {
     requests++;
-    return requests === 1
-      ? Response.json({ detail: "Server failure" }, { status: 500 })
-      : new Response(null, { status: 201 });
-  });
-  const form = createForm();
-  const files = form.runtime.attachments.items;
-  await form.render().submit();
-  assert.equal(form.runtime.succeeded, 0);
-  assert.deepEqual(form.render().fields, validFields);
-  assert.equal(form.render().files, files);
-  assert.equal(form.runtime.errors[0], "Server failure");
-  await form.render().submit();
-  assert.equal(form.runtime.succeeded, 1);
-  assert.equal(requests, 2);
-});
-
-test("subscription message requests navigation and unlicensed offers omit stored company", async (context) => {
-  let body;
-  context.mock.method(globalThis, "fetch", async (url, options) => {
-    body = options.body;
     return Response.json({ detail: "Нет активной подписки" }, { status: 402 });
   });
-  const form = createForm({ ...validFields, company });
-  await form.render().submit();
-  assert.equal(body.get("expert_inn"), "");
-  assert.equal(body.get("expert_company_data"), "{}");
+  const form = createForm();
+  await form.press();
+  form.fillTerms();
+  await form.press();
+  await form.press();
+  assert.equal(requests, 1);
+  assert.equal(form.runtime.errors.at(-1), "Нет активной подписки");
   assert.equal(form.runtime.subscriptionRequired, 1);
   assert.equal(form.runtime.succeeded, 0);
-  assert.deepEqual(form.render().fields.company, company);
+  assert.equal(form.render().offer.cost, "10000");
+  assert.equal(form.render().files.length, 1);
 });

@@ -1,81 +1,119 @@
 "use client";
 
-import { useReducer } from "react";
-import { updateResponse, useResponseFiles } from "@/entities/response";
-import type { ResponseItem, VatKind } from "@/entities/response";
+import { useReducer, useState } from "react";
+import type { FormEvent } from "react";
+import {
+  getResponseTermsError,
+  responseOfferReducer,
+  toResponseOfferRequest,
+  updateResponse,
+  useResponseFiles,
+} from "@/entities/response";
+import type { ResponseItem, ResponseOffer } from "@/entities/response";
 import { getFileDisplayName, resolveFileUrl } from "@/shared/lib/file-url";
+import { toStepError, withStep } from "@/shared/lib/step-error";
+import { useSteps } from "@/shared/lib/use-steps";
 import type { FileGalleryItem } from "@/shared/ui/file-gallery";
 import { useNotifications } from "@/shared/ui/notifications";
-import { createEditResponseState, editResponseReducer } from "./reducer";
-import type { EditResponseTextField } from "./types";
+import { EDIT_RESPONSE_FIELD_PLACES } from "../config/fields";
+import { EDIT_RESPONSE_STEPS } from "../config/steps";
+import type { EditResponseStep } from "../config/steps";
 
-/** Хранит черновик предложения и сохраняет новые условия отклика. */
+/** Название шага по ключу. */
+function titleOf(step: EditResponseStep): string {
+  return EDIT_RESPONSE_STEPS.find((item) => item.key === step)?.title ?? "";
+}
+
+/** Сохранённое предложение как черновик. */
+function offerOf(response: ResponseItem): ResponseOffer {
+  return {
+    startDate: response.proposed_start_date_raw,
+    deadline: response.proposed_deadline_raw,
+    cost: response.proposed_sum_amount_raw > 0
+      ? String(response.proposed_sum_amount_raw / 100)
+      : "",
+    vatKind: response.vat_kind,
+    comment: response.comment,
+  };
+}
+
+/** Изменение предложения по шагам с теми же проверками сроков, что и при отклике. */
 export function useEditResponse(response: ResponseItem, onSaved: () => void) {
-  const [state, dispatch] = useReducer(
-    editResponseReducer,
-    response,
-    createEditResponseState,
-  );
+  const [offer, dispatch] = useReducer(responseOfferReducer, response, offerOf);
+  const [keepFiles, setKeepFiles] = useState(response.response_files);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const attachments = useResponseFiles();
+  const steps = useSteps(EDIT_RESPONSE_STEPS.length, "dialog");
   const { showError } = useNotifications();
-  const canSubmit = state.deadline.trim() !== "" && Number(state.cost) > 0;
+  const bounds = { startDate: response.order_start_date, deadline: response.order_date, budget: 0 };
 
-  const keptFiles: FileGalleryItem[] = state.keepFiles.map((path) => ({
+  const keptFiles: FileGalleryItem[] = keepFiles.map((path) => ({
     id: path,
     name: getFileDisplayName(path),
     url: resolveFileUrl(path),
-    onRemove: () => dispatch({ type: "file/remove", path }),
+    onRemove: () => setKeepFiles(keepFiles.filter((item) => item !== path)),
   }));
 
-  /** Сохраняет дату или комментарий предложения. */
-  function changeField(field: EditResponseTextField, value: string) {
-    dispatch({ type: "field/change", field, value });
-  }
-
-  /** Обновляет стоимость работ в рублях. */
-  function changeCost(value: string) {
-    dispatch({ type: "cost/change", value });
-  }
-
-  /** Выбирает ставку НДС для предлагаемой стоимости. */
-  function changeVatKind(value: VatKind) {
-    dispatch({ type: "vat/change", value });
-  }
-
-  /** Отправляет условия и файлы; при ошибке оставляет заполненный черновик. */
-  async function submit() {
-    if (state.isSubmitting || !canSubmit) {
-      return;
-    }
-
-    dispatch({ type: "submit/start" });
+  /** Сохраняет условия и файлы; при ошибке оставляет черновик. */
+  async function save() {
+    setIsSubmitting(true);
 
     try {
       await updateResponse(response.id, {
-        comment: state.comment,
-        proposed_sum_amount: Math.round(Number(state.cost) * 100),
-        proposed_start_date: state.startDate,
-        proposed_deadline: state.deadline,
-        vat_kind: state.vatKind,
-        keep_files: state.keepFiles,
+        ...toResponseOfferRequest(offer),
+        keep_files: keepFiles,
         files: attachments.files,
       });
-      dispatch({ type: "submit/success" });
       onSaved();
     } catch (error) {
-      dispatch({ type: "submit/error" });
-      showError(error instanceof Error ? error.message : "Не удалось обновить отклик");
+      const located = toStepError(
+        error,
+        EDIT_RESPONSE_FIELD_PLACES,
+        titleOf,
+        "Не удалось обновить отклик",
+      );
+
+      showError(located.message);
+
+      if (located.step) {
+        steps.open(EDIT_RESPONSE_STEPS.findIndex((item) => item.key === located.step));
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
+  /** Проверяет сроки и стоимость; дальше идёт к комментарию или сохраняет. */
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    const problem = getResponseTermsError(offer, bounds);
+
+    if (problem) {
+      showError(steps.isFirst ? problem : withStep(titleOf("terms"), problem));
+      steps.open(0);
+      return;
+    }
+
+    if (steps.isLast) {
+      await save();
+      return;
+    }
+
+    steps.forward();
+  }
+
   return {
-    state,
-    canSubmit,
+    offer,
+    dispatch,
     files: [...keptFiles, ...attachments.items],
     addFiles: attachments.addFiles,
-    changeField,
-    changeCost,
-    changeVatKind,
+    steps,
+    isSubmitting,
     submit,
   };
 }

@@ -21,6 +21,11 @@ const reactModule = `data:text/javascript,${encodeURIComponent(`
   export function useEffect(effect) {
     globalThis.orderFormProviderTest.effect ??= effect;
   }
+  export function useState(initial) {
+    const runtime = globalThis.orderFormProviderTest;
+    runtime.step ??= initial;
+    return [runtime.step, value => { runtime.step = value; }];
+  }
 `)}`;
 const jsxModule = `data:text/javascript,${encodeURIComponent(`
   export function jsx(type, props, key) { return { type, props, key }; }

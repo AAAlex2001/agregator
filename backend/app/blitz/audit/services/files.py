@@ -15,11 +15,11 @@ def check_items(uploads: list[UploadFile], items: list[int]) -> None:
     """У каждого файла номер пункта перечня. Иначе InvalidOrderError."""
 
     if len(uploads) != len(items):
-        raise InvalidOrderError("Для каждого файла нужен номер пункта перечня")
+        raise InvalidOrderError("Для каждого файла нужен номер пункта перечня", "items")
 
     for number in items:
         if not 1 <= number <= len(AUDIT_DOCUMENTS):
-            raise InvalidOrderError(f"В перечне нет пункта {number}")
+            raise InvalidOrderError(f"В перечне нет пункта {number}", "items")
 
 
 @asynccontextmanager

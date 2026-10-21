@@ -13,7 +13,7 @@ def chosen_files(files: list[UploadFile]) -> list[UploadFile]:
     uploads = [file for file in files if file.filename]
 
     if len(uploads) > MAX_FILES:
-        raise InvalidOrderError(f"Можно приложить не больше {MAX_FILES} файлов за раз")
+        raise InvalidOrderError(f"Можно приложить не больше {MAX_FILES} файлов за раз", "files")
 
     return uploads
 
@@ -24,6 +24,6 @@ def required_files(files: list[UploadFile], message: str) -> list[UploadFile]:
     uploads = chosen_files(files)
 
     if not uploads:
-        raise InvalidOrderError(message)
+        raise InvalidOrderError(message, "files")
 
     return uploads

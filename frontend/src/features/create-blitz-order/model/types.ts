@@ -39,7 +39,6 @@ export interface CreateBlitzOrderState {
   company: BlitzCompany;
   individual: BlitzIndividual;
   comment: string;
-  step: number;
   isSubmitting: boolean;
 }
 
@@ -84,10 +83,6 @@ export type CreateBlitzOrderAction =
   | {
       type: "requisites/fill";
       requisites: BlitzRequisites;
-    }
-  | {
-      type: "step/go";
-      step: number;
     }
   | {
       type: "submit/start";

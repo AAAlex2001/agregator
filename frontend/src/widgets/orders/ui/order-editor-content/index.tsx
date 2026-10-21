@@ -46,6 +46,7 @@ export function OrderEditorContent({
       directions={directions}
       title={showHeading ? title : undefined}
       onShowHelp={showHelp}
+      onCopy={onCopy}
     />
   );
 
@@ -62,7 +63,6 @@ export function OrderEditorContent({
             orderId={orderId}
             className={styles.form}
             onCancel={onCancel}
-            onCopy={onCopy}
             onSaved={onSaved}
           >
             {fields}
@@ -71,7 +71,6 @@ export function OrderEditorContent({
           <CreateOrderForm
             className={styles.form}
             onCancel={onCancel}
-            onCopy={onCopy}
             onSaved={onSaved}
           >
             {fields}

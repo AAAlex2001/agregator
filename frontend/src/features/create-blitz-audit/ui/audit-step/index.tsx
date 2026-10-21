@@ -22,7 +22,7 @@ interface AuditStepProps {
 export function AuditStep({ form, catalog }: AuditStepProps) {
   const { state, dispatch } = form;
 
-  switch (AUDIT_STEPS[state.step].key) {
+  switch (AUDIT_STEPS[form.steps.step].key) {
     case "applicant":
       return (
         <ApplicantSection

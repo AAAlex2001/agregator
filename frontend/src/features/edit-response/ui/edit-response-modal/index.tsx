@@ -1,13 +1,16 @@
 "use client";
 
-import type { ChangeEvent } from "react";
 import { OrderSummaryPanel } from "@/entities/order";
-import { getResponseStatusBadge, ResponseFilesField, VatKindField } from "@/entities/response";
+import {
+  getResponseStatusBadge,
+  ResponseCommentFields,
+  ResponseTermsFields,
+} from "@/entities/response";
 import type { ResponseItem } from "@/entities/response";
-import { Button } from "@/shared/ui/button";
-import { CalendarInput } from "@/shared/ui/calendar-input";
 import { Modal } from "@/shared/ui/modal";
-import { TextInput } from "@/shared/ui/text-input";
+import { StepActions } from "@/shared/ui/step-actions";
+import { StepProgress } from "@/shared/ui/step-progress";
+import { EDIT_RESPONSE_STEPS } from "../../config/steps";
 import { useEditResponse } from "../../model/use-edit-response";
 import styles from "./style.module.scss";
 
@@ -18,150 +21,86 @@ interface EditResponseModalProps {
   onSaved: () => void;
 }
 
-/** Форма новых сроков, стоимости, комментария и файлов предложения. */
+/** Названия шагов для шкалы. */
+const STEP_TITLES = EDIT_RESPONSE_STEPS.map((step) => ({ title: step.title }));
+
+/** Изменение предложения по шагам: сроки и стоимость, затем комментарий и файлы. */
 export function EditResponseModal({ response, onClose, onSaved }: EditResponseModalProps) {
   const form = useEditResponse(response, onSaved);
   const status = getResponseStatusBadge(response, "EXPERT");
-
-  /** Сохраняет выбранный срок начала работ. */
-  function changeStartDate(value: string) {
-    form.changeField("startDate", value);
-  }
-
-  /** Сохраняет выбранный срок окончания работ. */
-  function changeDeadline(value: string) {
-    form.changeField("deadline", value);
-  }
-
-  /** Передаёт введённую стоимость для очистки от посторонних символов. */
-  function changeCost(event: ChangeEvent<HTMLInputElement>) {
-    form.changeCost(event.target.value);
-  }
-
-  /** Сохраняет пояснение исполнителя к предложению. */
-  function changeComment(event: ChangeEvent<HTMLTextAreaElement>) {
-    form.changeField("comment", event.target.value);
-  }
+  const step = EDIT_RESPONSE_STEPS[form.steps.step];
 
   return (
     <Modal
       open
       onClose={onClose}
       size="lg"
-      isBusy={form.state.isSubmitting}
+      isBusy={form.isSubmitting}
       dialogClassName={styles.dialog}
     >
-      <div className={styles.headerRow}>
-        <span className={styles.headerTitle}>Изменение предложения</span>
-        <div className={styles.statusRow}>
-          <span className={styles.dateText}>Отклик от {response.date}</span>
-          <span
-            className={styles.statusBadge}
-            style={{
-              color: status.color,
-              background: status.background,
-            }}
-          >
-            {status.text}
-          </span>
+      <form
+        className={styles.wizard}
+        noValidate
+        onSubmit={form.submit}
+      >
+        <div className={styles.headerRow}>
+          <h2 className={styles.headerTitle}>Изменение предложения</h2>
+          <div className={styles.statusRow}>
+            <span className={styles.dateText}>Отклик от {response.date}</span>
+            <span
+              className={styles.statusBadge}
+              style={{ color: status.color, background: status.background }}
+            >
+              {status.text}
+            </span>
+          </div>
         </div>
-      </div>
-
-      <OrderSummaryPanel
-        order={{
-          title: response.order_title,
-          company: response.customer_company,
-          customer_name: response.customer_name,
-          customer_inn: response.customer_inn,
-          start_date: response.order_start_date,
-          date: response.order_date,
-          sum: response.order_sum || response.proposed_sum,
-          badges: response.badges,
-        }}
-      />
-
-      <div className={styles.formRow}>
-        <div className={styles.field}>
-          <span className={styles.label}>Срок начала выполнения работ</span>
-          <CalendarInput
-            active
-            value={form.state.startDate}
-            onChange={changeStartDate}
-            placeholder="Выберите дату"
+        <StepProgress
+          steps={STEP_TITLES}
+          current={form.steps.step}
+          title={`Шаг ${form.steps.step + 1} из ${STEP_TITLES.length} · ${step.title}`}
+          caption={form.steps.isLast
+            ? "Последний шаг: проверьте и сохраните"
+            : "Далее: Комментарий и файлы"}
+          listTitle="Шаги изменения"
+          onSelect={form.steps.goTo}
+        />
+        {step.key === "terms" ? (
+          <>
+            <OrderSummaryPanel
+              order={{
+                title: response.order_title,
+                company: response.customer_company,
+                customer_name: response.customer_name,
+                customer_inn: response.customer_inn,
+                start_date: response.order_start_date,
+                date: response.order_date,
+                sum: response.order_sum || response.proposed_sum,
+                badges: response.badges,
+              }}
+            />
+            <ResponseTermsFields
+              offer={form.offer}
+              dispatch={form.dispatch}
+            />
+          </>
+        ) : (
+          <ResponseCommentFields
+            comment={form.offer.comment}
+            files={form.files}
+            dispatch={form.dispatch}
+            onAddFiles={form.addFiles}
           />
-        </div>
-        <div className={styles.field}>
-          <span className={styles.label}>Срок окончания выполнения работ</span>
-          <CalendarInput
-            active
-            value={form.state.deadline}
-            onChange={changeDeadline}
-            placeholder="Выберите дату"
-          />
-        </div>
-      </div>
-
-      <div className={styles.field}>
-        <span className={styles.label}>Ваша оценка стоимости работ</span>
-        <TextInput
-          active
-          inputMode="numeric"
-          value={form.state.cost}
-          onChange={changeCost}
-          placeholder="Сумма в рублях"
+        )}
+        <StepActions
+          isFirst={form.steps.isFirst}
+          isLast={form.steps.isLast}
+          isSubmitting={form.isSubmitting}
+          submitLabel="Сохранить"
+          onCancel={onClose}
+          onBack={form.steps.back}
         />
-      </div>
-
-      <div className={styles.field}>
-        <span className={styles.label}>НДС</span>
-        <VatKindField
-          value={form.state.vatKind}
-          baseAmount={Number(form.state.cost) || 0}
-          onChange={form.changeVatKind}
-        />
-      </div>
-
-      <span className={styles.formHint}>
-        Указанная вами сумма является ориентировочной. Точная стоимость будет
-        согласована с заказчиком после изучения технического задания.
-      </span>
-
-      <div className={styles.field}>
-        <span className={styles.label}>Комментарий для заказчика</span>
-        <textarea
-          className={styles.textarea}
-          value={form.state.comment}
-          onChange={changeComment}
-          placeholder="Напишите комментарий для заказчика..."
-          maxLength={5000}
-        />
-      </div>
-
-      <ResponseFilesField
-        items={form.files}
-        onAdd={form.addFiles}
-      />
-
-      <div className={styles.actionRow}>
-        <Button
-          variant="outline"
-          size="sm"
-          fullWidth
-          onClick={onClose}
-        >
-          Отменить
-        </Button>
-        <Button
-          variant="primary"
-          size="sm"
-          fullWidth
-          disabled={!form.canSubmit}
-          isLoading={form.state.isSubmitting}
-          onClick={form.submit}
-        >
-          Сохранить
-        </Button>
-      </div>
+      </form>
     </Modal>
   );
 }

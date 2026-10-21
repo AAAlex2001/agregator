@@ -2,8 +2,7 @@
 
 from datetime import date
 
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
-from pydantic import Json
+from fastapi import APIRouter, Depends, File, Query, UploadFile
 
 from app.auth.sessions.dependencies import require_user
 from app.blitz.orders.dependencies import (
@@ -34,6 +33,7 @@ from app.blitz.orders.services.usecases.accept_order import AcceptOrderUseCase
 from app.blitz.orders.services.usecases.cancel_order import CancelOrderUseCase
 from app.blitz.orders.services.usecases.create_order import CreateOrderUseCase
 from app.blitz.orders.services.validators import require_customer, require_expert
+from app.core.forms import json_form
 from models.account import Account
 
 router = APIRouter(tags=["blitz"])
@@ -66,7 +66,7 @@ async def get_last_requisites(
 
 @router.post("/orders", status_code=201)
 async def create_order(
-    payload: Json[OrderCreateSchema] = Form(...),
+    payload: OrderCreateSchema = Depends(json_form(OrderCreateSchema)),
     files: list[UploadFile] = File(default=[]),
     company_card: UploadFile | None = File(None),
     user: Account = Depends(require_user),

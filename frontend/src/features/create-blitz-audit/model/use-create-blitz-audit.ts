@@ -12,11 +12,20 @@ import {
   useChecklistFiles,
 } from "@/entities/blitz-order";
 import type { BlitzAuditAttachments } from "@/entities/blitz-order";
+import { toStepError, withStep } from "@/shared/lib/step-error";
+import { useSteps } from "@/shared/lib/use-steps";
 import { useNotifications } from "@/shared/ui/notifications";
+import { AUDIT_FIELD_PLACES } from "../config/fields";
 import { AUDIT_STEPS } from "../config/steps";
+import type { AuditStep } from "../config/steps";
 import { asksSto, toBlitzAuditPayload } from "./payload";
 import { createBlitzAuditReducer, INITIAL_CREATE_BLITZ_AUDIT_STATE } from "./reducer";
 import { auditStepProblem, firstAuditProblem } from "./steps";
+
+/** Название шага по ключу. */
+function titleOf(step: AuditStep): string {
+  return AUDIT_STEPS.find((item) => item.key === step)?.title ?? "";
+}
 
 /** Черновик заявки на аудит по шагам, справочник, файлы и отправка. */
 export function useCreateBlitzAudit() {
@@ -27,6 +36,7 @@ export function useCreateBlitzAudit() {
   const opoCertificate = useBlitzFiles(1, BLITZ_AUDIT_FILE_MAX_SIZE);
   const powerOfAttorney = useBlitzFiles(1, BLITZ_AUDIT_FILE_MAX_SIZE);
   const stoFile = useBlitzFiles(1, BLITZ_AUDIT_FILE_MAX_SIZE);
+  const steps = useSteps(AUDIT_STEPS.length);
   const { showError, showSuccess } = useNotifications();
   const router = useRouter();
 
@@ -56,44 +66,25 @@ export function useCreateBlitzAudit() {
     };
   }
 
-  const isLastStep = state.step === AUDIT_STEPS.length - 1;
   const minPrice = catalog?.min_price ?? 0;
-
-  /** Открывает шаг и показывает его с начала страницы. */
-  function openStep(step: number) {
-    dispatch({ type: "step/go", step });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  /** Возвращает к уже пройденному шагу. */
-  function goTo(step: number) {
-    if (step < state.step) {
-      openStep(step);
-    }
-  }
-
-  /** Шаг назад. */
-  function back() {
-    goTo(state.step - 1);
-  }
 
   /** Проверяет текущий шаг и открывает следующий. */
   function next() {
-    const problem = auditStepProblem(AUDIT_STEPS[state.step].key, state, attachments(), minPrice);
+    const problem = auditStepProblem(AUDIT_STEPS[steps.step].key, state, attachments(), minPrice);
 
     if (problem) {
       showError(problem);
       return;
     }
 
-    openStep(state.step + 1);
+    steps.forward();
   }
 
   /** На последнем шаге отправляет заявку, на остальных — переходит дальше. */
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!isLastStep) {
+    if (!steps.isLast) {
       next();
       return;
     }
@@ -101,8 +92,8 @@ export function useCreateBlitzAudit() {
     const files = attachments();
     const failure = firstAuditProblem(state, files, minPrice);
     if (failure) {
-      showError(failure.problem);
-      openStep(failure.step);
+      showError(withStep(AUDIT_STEPS[failure.step].title, failure.problem));
+      steps.open(failure.step);
       return;
     }
 
@@ -119,7 +110,18 @@ export function useCreateBlitzAudit() {
       router.push(`/blitz-audit/orders/${order.id}`);
     } catch (error) {
       dispatch({ type: "submit/error" });
-      showError(error instanceof Error ? error.message : "Не удалось отправить заявку");
+      const located = toStepError(
+        error,
+        AUDIT_FIELD_PLACES,
+        titleOf,
+        "Не удалось отправить заявку",
+      );
+
+      showError(located.message);
+
+      if (located.step) {
+        steps.open(AUDIT_STEPS.findIndex((item) => item.key === located.step));
+      }
     }
   }
 
@@ -133,9 +135,7 @@ export function useCreateBlitzAudit() {
     opoCertificate,
     powerOfAttorney,
     stoFile,
-    isLastStep,
-    goTo,
-    back,
+    steps,
     submit,
   };
 }

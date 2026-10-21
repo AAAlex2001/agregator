@@ -8,6 +8,13 @@ export { deleteRejectedResponses } from "./api/delete-rejected-responses";
 export { CUSTOMER_RESPONSE_TABS, EXPERT_RESPONSE_TABS } from "./config/tabs";
 export { useResponses } from "./model/use-responses";
 export { useResponseFiles } from "./model/use-response-files";
+export {
+  EMPTY_RESPONSE_OFFER,
+  getResponseTermsError,
+  responseOfferReducer,
+  toResponseOfferRequest,
+} from "./model/offer";
+export type { ResponseOffer, ResponseOfferBounds } from "./model/offer";
 export { toResponseTab } from "./model/tab";
 export { getResponseStatusBadge } from "./model/response-status";
 export { formatResponseCount } from "./model/response-count";
@@ -19,9 +26,9 @@ export {
   isResponseCommentVisible,
 } from "./model/response-card";
 export { ResponseCardSkeleton } from "./ui/response-card-skeleton";
-export { ResponseFilesField } from "./ui/response-files-field";
+export { ResponseCommentFields } from "./ui/response-comment-fields";
+export { ResponseTermsFields } from "./ui/response-terms-fields";
 export { ResponseFiles } from "./ui/response-files";
-export { VatKindField } from "./ui/vat-kind-field";
 export type {
   ResponseItem,
   ResponseQuery,

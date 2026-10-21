@@ -119,14 +119,18 @@ def build_company(data: CompanyInSchema | None) -> OrderCompany | None:
     return OrderCompany(
         full_name=data.full_name.strip(),
         name=data.name.strip(),
-        inn=normalize_inn(data.inn),
-        kpp=normalize_kpp(data.kpp),
-        ogrn=normalize_ogrn(data.ogrn),
+        inn=normalize_inn(data.inn, "company.inn"),
+        kpp=normalize_kpp(data.kpp, "company.kpp"),
+        ogrn=normalize_ogrn(data.ogrn, "company.ogrn"),
         address=data.address.strip(),
         bank=data.bank.strip(),
-        bic=normalize_bic(data.bic),
-        account=normalize_account(data.account, "Расчётный счёт"),
-        corr_account=normalize_account(data.corr_account, "Корреспондентский счёт"),
+        bic=normalize_bic(data.bic, "company.bic"),
+        account=normalize_account(data.account, "Расчётный счёт", "company.account"),
+        corr_account=normalize_account(
+            data.corr_account,
+            "Корреспондентский счёт",
+            "company.corr_account",
+        ),
         signer_position=data.signer_position.strip(),
         signer_name=data.signer_name.strip(),
         signer_genitive=data.signer_genitive.strip(),
@@ -142,7 +146,7 @@ def build_individual(data: IndividualInSchema | None) -> OrderIndividual | None:
 
     return OrderIndividual(
         full_name=data.full_name.strip(),
-        passport_number=normalize_passport(data.passport_number),
+        passport_number=normalize_passport(data.passport_number, "individual.passport_number"),
         passport_issued_by=data.passport_issued_by.strip(),
         passport_issued_at=data.passport_issued_at,
         address=data.address.strip(),

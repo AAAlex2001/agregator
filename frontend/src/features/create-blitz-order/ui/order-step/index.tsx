@@ -19,7 +19,7 @@ interface OrderStepProps {
 export function OrderStep({ form, catalog }: OrderStepProps) {
   const { state } = form;
 
-  switch (ORDER_STEPS[state.step].key) {
+  switch (ORDER_STEPS[form.steps.step].key) {
     case "subject":
       return (
         <SubjectSection

@@ -51,9 +51,13 @@ const {
 } = await import("./order-preview.ts");
 const {
   getOrderDocumentsRequest,
-  getOrderFormError,
   getOrderRequest,
 } = await import("./order-form-request.ts");
+const {
+  findOrderFormProblem,
+  getOrderFormSteps,
+  getOrderStepError,
+} = await import("./order-form-steps.ts");
 
 const customer = {
   first_name: "Иван",
@@ -223,21 +227,45 @@ test("oversized additions retain current files and preserve the existing replace
   assert.match(form.errors[0], /не должен превышать 100 МБ/);
 });
 
-test("validation follows existing priority and request conversion keeps kopecks and raw documents", () => {
+test("validation goes step by step and request conversion keeps kopecks and raw documents", () => {
   const form = createForm();
-  assert.match(getOrderFormError(form.values), /срок начала/);
-  form.dispatch({ type: "field/changed", field: "startDate", value: "2026-10-21" });
-  assert.match(getOrderFormError(form.values), /срок окончания/);
-  form.dispatch({ type: "field/changed", field: "deadline", value: "2026-10-30" });
-  assert.match(getOrderFormError(form.values), /исполнитель и\/или лицензия/);
-  form.dispatch({ type: "direction/changed", workType: "DESIGN" });
-  assert.match(getOrderFormError(form.values), /задание на проектирование/);
-  form.useFormActions().addFile("technical", new File(["task"], "task.pdf"));
+  assert.equal(form.values.requiresExpert, true);
+  assert.equal(getOrderStepError("work", form.values), "");
+  assert.deepEqual(findOrderFormProblem(form.values), {
+    step: "main",
+    message: "Укажите название заказа",
+  });
   form.dispatch({ type: "field/changed", field: "title", value: "  Название  " });
+  assert.match(findOrderFormProblem(form.values).message, /срок начала/);
+  form.dispatch({ type: "field/changed", field: "startDate", value: "2026-10-21" });
+  assert.match(findOrderFormProblem(form.values).message, /срок окончания/);
+  form.dispatch({ type: "field/changed", field: "deadline", value: "2026-10-30" });
+  form.dispatch({ type: "direction/changed", workType: "DESIGN" });
+  assert.deepEqual(findOrderFormProblem(form.values), {
+    step: "documents",
+    message: "Приложите задание на проектирование",
+  });
+  form.useFormActions().addFile("technical", new File(["task"], "task.pdf"));
   form.dispatch({ type: "field/changed", field: "budget", value: "1234.5" });
-  assert.equal(getOrderFormError(form.values), "");
+  assert.equal(findOrderFormProblem(form.values), null);
   assert.equal(getOrderRequest(form.values).sum_amount, 123450);
   assert.equal(getOrderRequest(form.values).title, "Название");
+});
+
+test("expertise asks for executor or license and keeps the attestation step", () => {
+  const form = createForm();
+  form.dispatch({ type: "direction/changed", workType: "EXPERTISE" });
+  form.dispatch({ type: "expert/changed", isRequired: false });
+  form.dispatch({ type: "license/changed", isRequired: false });
+  assert.match(getOrderStepError("work", form.values), /исполнитель и\/или лицензия/);
+  assert.deepEqual(getOrderFormSteps(form.values), [
+    "work",
+    "main",
+    "details",
+    "experts",
+    "documents",
+    "comment",
+  ]);
 });
 
 test("replacement releases its preview and removal releases every occurrence of the same File", () => {

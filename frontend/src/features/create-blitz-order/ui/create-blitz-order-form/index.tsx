@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/shared/ui/button";
 import { Loader } from "@/shared/ui/loader";
+import { StepActions } from "@/shared/ui/step-actions";
 import { StepProgress } from "@/shared/ui/step-progress";
 import { ORDER_STEPS } from "../../config/steps";
 import { useCreateBlitzOrder } from "../../model/use-create-blitz-order";
@@ -38,15 +38,17 @@ export function CreateBlitzOrderForm() {
     );
   }
 
+  const stepTitle = ORDER_STEPS[form.steps.step].title;
+
   return (
     <div className={styles.wizard}>
       <StepProgress
         steps={PROGRESS_STEPS}
-        current={state.step}
-        title={`Шаг ${state.step + 1} из ${PROGRESS_STEPS.length}`}
-        caption={nextCaption(state.step)}
+        current={form.steps.step}
+        title={`Шаг ${form.steps.step + 1} из ${PROGRESS_STEPS.length} · ${stepTitle}`}
+        caption={nextCaption(form.steps.step)}
         listTitle="Шаги заявки"
-        onSelect={form.goTo}
+        onSelect={form.steps.goTo}
       />
       <form
         className={styles.form}
@@ -57,32 +59,14 @@ export function CreateBlitzOrderForm() {
           form={form}
           catalog={catalog}
         />
-        <div className={styles.actions}>
-          {state.step === 0 ? (
-            <Button
-              variant="outline"
-              size="field"
-              href="/blitz"
-            >
-              Отмена
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              size="field"
-              onClick={form.back}
-            >
-              Назад
-            </Button>
-          )}
-          <Button
-            type="submit"
-            size="field"
-            isLoading={state.isSubmitting}
-          >
-            {form.isLastStep ? "Отправить заявку" : "Далее"}
-          </Button>
-        </div>
+        <StepActions
+          isFirst={form.steps.isFirst}
+          isLast={form.steps.isLast}
+          isSubmitting={state.isSubmitting}
+          submitLabel="Отправить заявку"
+          cancelHref="/blitz"
+          onBack={form.steps.back}
+        />
       </form>
     </div>
   );

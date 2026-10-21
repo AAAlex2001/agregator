@@ -1,35 +1,30 @@
 "use client";
 
-import {
-  OrderCommentField,
-  OrderFilesField,
-  OrderMainFields,
-  OrderRequirementsField,
-  OrderWorkTypeField,
-  useOrderForm,
-} from "@/entities/order";
+import { getOrderStepTitle, useOrderForm, useOrderFormSteps } from "@/entities/order";
+import { StepProgress } from "@/shared/ui/step-progress";
 import { Title } from "@/shared/ui/title";
-import { OrderBadgesField } from "../order-badges-field";
-import { OrderDirectionFields } from "../order-direction-fields";
-import { OrderEditorPreview } from "../order-editor-preview";
-import { OrderExpertsMap } from "../order-experts-map";
+import { OrderEditorStep } from "../order-editor-step";
 import styles from "./style.module.scss";
 
-/** Направления заказчика, необязательный заголовок и открытие справки. */
+/** Направления заказчика, необязательный заголовок, справка и копирование. */
 interface OrderEditorFieldsProps {
   directions: string[];
   title?: string;
   onShowHelp: () => void;
+  onCopy: () => void;
 }
 
-/** Собирает условия, карту и документы заказа в прежнем порядке формы. */
+/** Заголовок, шкала шагов заказа и поля текущего шага. */
 export function OrderEditorFields({
   directions,
   title,
   onShowHelp,
+  onCopy,
 }: OrderEditorFieldsProps) {
   const { values } = useOrderForm();
-  const isExpertise = values.workType === "EXPERTISE";
+  const steps = useOrderFormSteps();
+  const titles = steps.keys.map((step) => ({ title: getOrderStepTitle(step, values) }));
+  const next = titles[steps.step + 1];
 
   return (
     <>
@@ -39,17 +34,19 @@ export function OrderEditorFields({
           text={title}
         />
       )}
-      <OrderMainFields />
-      <OrderWorkTypeField directions={directions} />
-      {isExpertise && <OrderRequirementsField />}
-      {values.details && <OrderDirectionFields />}
-      <OrderExpertsMap />
-      {isExpertise && <OrderBadgesField onShowHelp={onShowHelp} />}
-      <OrderCommentField />
-      <OrderFilesField />
-      <div className={styles.previewInline}>
-        <OrderEditorPreview />
-      </div>
+      <StepProgress
+        steps={titles}
+        current={steps.step}
+        title={`Шаг ${steps.step + 1} из ${titles.length} · ${titles[steps.step].title}`}
+        caption={next ? `Далее: ${next.title}` : "Последний шаг: проверьте заказ и сохраните"}
+        listTitle="Шаги заказа"
+        onSelect={steps.goTo}
+      />
+      <OrderEditorStep
+        directions={directions}
+        onShowHelp={onShowHelp}
+        onCopy={onCopy}
+      />
     </>
   );
 }

@@ -6,11 +6,3 @@
   line-height: 24px;
   color: var(--color-text-primary);
 }
-
-.previewInline {
-  width: 100%;
-
-  @media (min-width: 1440px) {
-    display: none;
-  }
-}

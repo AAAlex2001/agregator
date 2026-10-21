@@ -45,7 +45,7 @@ export function createOrderFormValues({
       : "",
     comment: template?.comment ?? "",
     workType,
-    requiresExpert: template?.requires_expert ?? false,
+    requiresExpert: template?.requires_expert ?? workType !== "EXPERTISE",
     requiresLicense: template?.requires_license ?? false,
     badgeCodes,
     details: details ? { ...details, ...template?.details } : null,
