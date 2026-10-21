@@ -39,7 +39,7 @@ export function ExpertResponseActions({
           size="sm"
           href={`/responses/${response.id}/edit`}
         >
-          Изменить предложение
+          Изменить
         </Button>
         {share}
         <WithdrawResponseButton
