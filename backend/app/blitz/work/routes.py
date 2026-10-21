@@ -63,13 +63,13 @@ async def mark_conclusion_ready(
 
 @router.post("/orders/{order_id}/conclusion")
 async def send_conclusion(
-    result: ConclusionResult = Form(...),
+    result: ConclusionResult | None = Form(None),
     files: list[UploadFile] = File(default=[]),
     order: BlitzOrder = Depends(get_locked_order),
     user: Account = Depends(require_user),
     usecase: SendConclusionUseCase = Depends(get_send_conclusion_usecase),
 ) -> OrderSchema:
-    """Эксперт отправляет подписанное заключение."""
+    """Исполнитель отправляет подписанное заключение или отчёт об аудите."""
 
     return details(await usecase.execute(user, order, result, files), user)
 

@@ -18,7 +18,9 @@ export function PriceHistory({ order }: PriceHistoryProps) {
           className={styles.change}
         >
           <span className={styles.prices}>
-            {formatRub(change.old_price)} → {formatRub(change.new_price)}
+            {change.old_price === null ? "Без цены" : formatRub(change.old_price)}
+            {" → "}
+            {formatRub(change.new_price)}
           </span>
           <span className={styles.reason}>{change.reason}</span>
           <span className={styles.date}>{formatWithTime(change.created_at)}</span>

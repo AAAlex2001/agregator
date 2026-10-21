@@ -8,6 +8,7 @@ from pydantic import Json
 from app.auth.sessions.dependencies import require_user
 from app.blitz.orders.dependencies import (
     get_accept_order_usecase,
+    get_audit_lead,
     get_cancel_order_usecase,
     get_create_order_usecase,
     get_locked_order,
@@ -87,12 +88,13 @@ async def list_my_orders(
 
     require_customer(user)
 
-    return [summary(order) for order in await orders.list_for_customer(user.id)]
+    return [summary(order, user) for order in await orders.list_for_customer(user.id)]
 
 
 @router.get("/orders/incoming")
 async def list_incoming_orders(
     user: Account = Depends(require_user),
+    audit_lead: bool = Depends(get_audit_lead),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> list[OrderSummarySchema]:
     """Новые заявки, которые эксперт может взять по своим удостоверениям."""
@@ -100,7 +102,9 @@ async def list_incoming_orders(
     require_expert(user)
     today = date.today()
 
-    return [summary(order) for order in await orders.list_unassigned() if can_take(order, user, today)]
+    incoming = await orders.list_unassigned()
+
+    return [summary(order, user) for order in incoming if can_take(order, user, today, audit_lead)]
 
 
 @router.get("/orders/assigned")
@@ -112,7 +116,7 @@ async def list_assigned_orders(
 
     require_expert(user)
 
-    return [summary(order) for order in await orders.list_for_expert(user.id)]
+    return [summary(order, user) for order in await orders.list_for_expert(user.id)]
 
 
 @router.get("/orders/{order_id}")
@@ -130,11 +134,12 @@ async def accept_order(
     data: AcceptOrderSchema,
     order: BlitzOrder = Depends(get_locked_order),
     user: Account = Depends(require_user),
+    audit_lead: bool = Depends(get_audit_lead),
     usecase: AcceptOrderUseCase = Depends(get_accept_order_usecase),
 ) -> OrderSchema:
-    """Эксперт готов провести экспертизу по цене заказчика."""
+    """Эксперт или руководитель аудиторской группы готов провести работу по цене заказчика."""
 
-    return details(await usecase.execute(user, order, data.contract_kind), user)
+    return details(await usecase.execute(user, order, data.contract_kind, audit_lead), user)
 
 
 @router.post("/orders/{order_id}/cancel")

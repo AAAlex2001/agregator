@@ -1,10 +1,15 @@
 import { blitzOrderPath } from "@/shared/lib/admin-paths";
 import { formatDateTime } from "@/shared/lib/date";
-import { formatRub } from "@/shared/lib/money";
 import Badge from "@/shared/ui/badge";
 import List from "@/shared/ui/list";
 import ListRow from "@/shared/ui/list-row";
-import { BLITZ_STATUS_LABELS, BLITZ_STATUS_TONES, type BlitzOrder } from "../../model/types";
+import {
+  BLITZ_SERVICE_LABELS,
+  BLITZ_STATUS_LABELS,
+  BLITZ_STATUS_TONES,
+  blitzPriceLabel,
+  type BlitzOrder,
+} from "../../model/types";
 import styles from "./style.module.scss";
 
 type OrdersTableProps = {
@@ -21,12 +26,12 @@ const OrdersTable = ({ orders }: OrdersTableProps) => (
         <span className={styles.subject}>
           <span className={styles.title}>{order.object_name}</span>
           <span className={styles.meta}>
-            {order.company?.name ?? order.customer_name}
-            {order.expert_name ? ` · эксперт ${order.expert_name}` : " · без эксперта"}
+            {BLITZ_SERVICE_LABELS[order.service]} · {order.company?.name ?? order.customer_name}
+            {order.expert_name ? ` · исполнитель ${order.expert_name}` : " · без исполнителя"}
           </span>
         </span>
 
-        <span className={styles.price}>{formatRub(order.price)}</span>
+        <span className={styles.price}>{blitzPriceLabel(order.price)}</span>
 
         <span className={styles.status}>
           <Badge tone={BLITZ_STATUS_TONES[order.status]}>{BLITZ_STATUS_LABELS[order.status]}</Badge>

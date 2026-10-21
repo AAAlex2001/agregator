@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { blitzPaperUrl, postBlitzAction } from "@/entities/blitz-order";
-import { formatRub } from "@/shared/lib/format-rub";
+import {
+  blitzPaperUrl,
+  blitzPriceLabel,
+  blitzWording,
+  postBlitzAction,
+} from "@/entities/blitz-order";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { useBlitzAction } from "../../model/use-blitz-action";
@@ -15,6 +19,7 @@ import styles from "./style.module.scss";
 export function SignPanel({ order, onChange }: BlitzStepProps) {
   const [isAgreed, setIsAgreed] = useState(false);
   const { isPending, run } = useBlitzAction(onChange);
+  const wording = blitzWording(order.service);
 
   /** Подписывает договор. */
   function sign() {
@@ -26,8 +31,9 @@ export function SignPanel({ order, onChange }: BlitzStepProps) {
 
   return (
     <StepNote
-      title="Эксперт готов — подпишите договор"
-      text={`${order.expert_name ?? "Эксперт"} проведёт экспертизу за ${formatRub(order.price)}. `
+      title={`${wording.executor} готов — подпишите договор`}
+      text={`${order.expert_name ?? wording.executor} проведёт ${wording.work} `
+        + `за ${blitzPriceLabel(order.price)}. `
         + "Проверьте документы: после подписи можно оплатить аванс 50 %."}
     >
       <div className={styles.papers}>

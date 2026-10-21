@@ -1,9 +1,9 @@
+import { parseBlitzPrice } from "@/entities/blitz-order";
 import type { BlitzTariff } from "@/entities/blitz-order";
 import { formatRub } from "@/shared/lib/format-rub";
 import { Field } from "@/shared/ui/field";
 import { FormSection } from "@/shared/ui/form-section";
 import { TextInput } from "@/shared/ui/text-input";
-import { parsePrice } from "../../model/payload";
 import styles from "./style.module.scss";
 
 /** Как устроена оплата. */
@@ -19,7 +19,7 @@ interface PriceSectionProps {
 
 /** Цена заказчика с подсказкой тарифа и суммой аванса. */
 export function PriceSection({ price, tariff, onChange }: PriceSectionProps) {
-  const amount = parsePrice(price);
+  const amount = parseBlitzPrice(price);
   const advance = Math.round(amount * 50) / 100;
 
   return (

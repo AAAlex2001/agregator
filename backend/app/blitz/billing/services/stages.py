@@ -2,13 +2,14 @@
 
 Каждая поступившая оплата зачитывается в paid_amount, даже если пришла по старой ссылке.
 Остаток — цена минус оплаченное: если администратор поменял цену после аванса, сумма к оплате
-пересчитается сама. Заявка сдвигается, когда оплачен текущий этап.
+пересчитается сама. Заявка сдвигается, когда оплачен текущий этап: экспертиза — в работу,
+аудит — к Плану аудита.
 """
 
 from decimal import ROUND_HALF_UP, Decimal
 
 from app.blitz.billing.models import PaymentStage
-from app.blitz.orders.models import Actor, BlitzOrder, OrderStatus
+from app.blitz.orders.models import Actor, BlitzOrder, OrderStatus, ServiceKind
 from app.core.money import format_rub
 
 KOPECK = Decimal("0.01")
@@ -40,7 +41,8 @@ def advance_of(price: Decimal) -> Decimal:
 def amount_due(order: BlitzOrder, stage: PaymentStage) -> Decimal:
     """Сколько заплатить за этап с учётом уже оплаченного."""
 
-    target = advance_of(order.price) if stage == PaymentStage.ADVANCE else order.price
+    price = order.price or ZERO
+    target = advance_of(price) if stage == PaymentStage.ADVANCE else price
 
     return max(target - order.paid_amount, ZERO)
 
@@ -55,6 +57,10 @@ def accept_payment(order: BlitzOrder, stage: PaymentStage, amount: Decimal) -> s
 
     if current_stage(order) != stage or amount_due(order, stage) > ZERO:
         return None
+
+    if stage == PaymentStage.ADVANCE and order.service == ServiceKind.AUDIT:
+        order.move_to(OrderStatus.PLAN, Actor.SYSTEM, f"Аванс {format_rub(amount)} оплачен")
+        return "Заказчик оплатил аванс: сформируйте группу и отправьте План аудита"
 
     if stage == PaymentStage.ADVANCE:
         order.move_to(OrderStatus.IN_PROGRESS, Actor.SYSTEM, f"Аванс {format_rub(amount)} оплачен")

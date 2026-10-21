@@ -10,6 +10,12 @@ import { WorkPanel } from "../work-panel";
 /** Ход эксперта: взять заявку, работа и замечания, отправка заключения — или чего ждём. */
 export function ExpertActions({ order, onChange }: BlitzStepProps) {
   switch (order.status) {
+    case "consultation":
+    case "offer":
+    case "counter":
+    case "plan":
+    case "plan_review":
+      return null;
     case "new":
       return (
         <AcceptPanel

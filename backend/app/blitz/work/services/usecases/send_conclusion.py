@@ -1,4 +1,4 @@
-"""Эксперт отправляет подписанное ЭЦП заключение."""
+"""Исполнитель отправляет подписанное ЭЦП заключение или отчёт об аудите."""
 
 from fastapi import UploadFile
 
@@ -6,16 +6,30 @@ from app.blitz.documents.models import DocumentKind
 from app.blitz.documents.services.storage import SIGNED_EXTENSIONS, OrderFiles
 from app.blitz.documents.services.validators import required_files
 from app.blitz.notifications import BlitzNotifier
-from app.blitz.orders.models import Actor, BlitzOrder, ConclusionResult, OrderStatus
+from app.blitz.orders.models import Actor, BlitzOrder, ConclusionResult, OrderStatus, ServiceKind
+from app.blitz.orders.services.exceptions import InvalidOrderError
 from app.blitz.orders.services.repo import OrderRepository
 from app.blitz.orders.services.rules import require_assigned, require_status
+from app.blitz.orders.services.wording import wording_for
 from models.account import Account
 
 RESULT_TITLES = {ConclusionResult.POSITIVE: "положительное", ConclusionResult.NEGATIVE: "отрицательное"}
 
 
+def sent_note(order: BlitzOrder, result: ConclusionResult | None) -> str:
+    """Запись в истории: исход заключения или отправленный отчёт."""
+
+    if result is None:
+        return f"{wording_for(order).result.capitalize()} отправлен"
+
+    return f"Заключение {RESULT_TITLES[result]}"
+
+
 class SendConclusionUseCase:
-    """Файлы заключения и исход. ЭЦП ставится средством подписи эксперта до загрузки."""
+    """Файлы результата. ЭЦП ставится средством подписи исполнителя до загрузки.
+
+    У экспертизы обязателен исход заключения, у аудита его нет.
+    """
 
     def __init__(self, orders: OrderRepository, files: OrderFiles, notifier: BlitzNotifier) -> None:
         self.orders = orders
@@ -26,16 +40,20 @@ class SendConclusionUseCase:
         self,
         expert: Account,
         order: BlitzOrder,
-        result: ConclusionResult,
+        result: ConclusionResult | None,
         uploads: list[UploadFile],
     ) -> BlitzOrder:
-        """Только после оплаты остатка. Без файла — InvalidOrderError."""
+        """Только после оплаты остатка. Без файла или исхода экспертизы — InvalidOrderError."""
 
         require_assigned(order, expert)
-        require_status(order, OrderStatus.PAID, "Заключение отправляют после оплаты остатка")
+        wording = wording_for(order)
+        require_status(order, OrderStatus.PAID, "Результат отправляют после оплаты остатка")
 
-        files = required_files(uploads, "Приложите файл заключения")
-        title = RESULT_TITLES[result]
+        if result is None and order.service != ServiceKind.AUDIT:
+            raise InvalidOrderError("Укажите, положительное заключение или отрицательное")
+
+        files = required_files(uploads, f"Приложите файл: {wording.result}")
+        note = sent_note(order, result)
 
         async with self.files.saved(
             order.id,
@@ -46,13 +64,14 @@ class SendConclusionUseCase:
         ) as documents:
             order.documents.extend(documents)
             order.result = result
-            order.move_to(OrderStatus.SENT, Actor.EXPERT, f"Заключение {title}")
+            order.move_to(OrderStatus.SENT, Actor.EXPERT, note)
             await self.orders.save()
 
+        outcome = f" ({RESULT_TITLES[result]})" if result else ""
         await self.notifier.notify(
             order.customer,
             order,
-            f"Эксперт отправил заключение ({title}). Скачайте его и примите работу",
+            f"{wording.executor} отправил {wording.result}{outcome}. Скачайте его и примите работу",
         )
 
         return order

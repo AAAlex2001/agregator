@@ -13,6 +13,12 @@ import { StepNote } from "../step-note";
 /** Ход заказчика: подпись, оплата, исправления, приёмка — или пояснение, чего ждём. */
 export function CustomerActions({ order, onChange }: BlitzStepProps) {
   switch (order.status) {
+    case "consultation":
+    case "offer":
+    case "counter":
+    case "plan":
+    case "plan_review":
+      return null;
     case "expert_ready":
       return (
         <SignPanel

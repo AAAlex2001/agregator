@@ -1,3 +1,4 @@
+import { EMPTY_BLITZ_COMPANY } from "@/entities/blitz-order";
 import type { CreateBlitzOrderAction, CreateBlitzOrderState } from "./types";
 
 /** Пустой черновик заявки организации. */
@@ -12,22 +13,7 @@ export const INITIAL_CREATE_BLITZ_ORDER_STATE: CreateBlitzOrderState = {
   deadline: "any",
   price: "",
   customerType: "legal",
-  company: {
-    full_name: "",
-    name: "",
-    inn: "",
-    kpp: "",
-    ogrn: "",
-    address: "",
-    bank: "",
-    bic: "",
-    account: "",
-    corr_account: "",
-    signer_position: "",
-    signer_name: "",
-    signer_genitive: "",
-    signer_basis: "Устава",
-  },
+  company: EMPTY_BLITZ_COMPANY,
   individual: {
     full_name: "",
     passport_number: "",

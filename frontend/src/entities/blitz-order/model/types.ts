@@ -1,8 +1,15 @@
-/** Путь заявки от подачи до приёмки работы. */
+import type { BlitzAuditDetails, BlitzAuditPlan, BlitzTeamMember } from "./audit-types";
+
+/** Путь заявки от подачи до приёмки работы. Консультация, торг и План — только у аудита. */
 export type BlitzStatus =
   | "new"
+  | "consultation"
+  | "offer"
+  | "counter"
   | "expert_ready"
   | "contract"
+  | "plan"
+  | "plan_review"
   | "in_progress"
   | "remarks"
   | "conclusion_ready"
@@ -10,6 +17,9 @@ export type BlitzStatus =
   | "sent"
   | "accepted"
   | "canceled";
+
+/** Сервис: экспертиза промышленной безопасности или аудит СУПБ. */
+export type BlitzService = "expertise" | "audit";
 
 /** Кто заказчик: организация и ИП платят по счёту, физлицо — картой. */
 export type BlitzCustomerType = "legal" | "entrepreneur" | "individual";
@@ -39,7 +49,12 @@ export type BlitzDocumentKind =
   | "revision"
   | "conclusion"
   | "payment_order"
-  | "guarantee_letter";
+  | "guarantee_letter"
+  | "audit_item"
+  | "opo_certificate"
+  | "power_of_attorney"
+  | "sto"
+  | "audit_plan";
 
 /** Кто сменил статус. */
 export type BlitzActor = "customer" | "expert" | "admin" | "system";
@@ -81,6 +96,7 @@ export interface BlitzDocument {
   name: string;
   size: number;
   remark_id: number | null;
+  item_number: number | null;
   created_at: string;
 }
 
@@ -102,9 +118,9 @@ export interface BlitzStatusChange {
   created_at: string;
 }
 
-/** Смена цены администратором. */
+/** Смена цены администратором. Прежней цены нет, если заказчик аудита её не указывал. */
 export interface BlitzPriceChange {
-  old_price: number;
+  old_price: number | null;
   new_price: number;
   reason: string;
   created_at: string;
@@ -125,13 +141,13 @@ export interface BlitzInvoice {
 /** Заявка в списке. */
 export interface BlitzOrderSummary {
   id: number;
-  service: string;
+  service: BlitzService;
   status: BlitzStatus;
   object_name: string;
   object_code: string | null;
   area_code: string | null;
   deadline: BlitzDeadline;
-  price: number;
+  price: number | null;
   customer_type: BlitzCustomerType;
   expert_name: string | null;
   created_at: string;
@@ -157,6 +173,12 @@ export interface BlitzOrder extends BlitzOrderSummary {
   history: BlitzStatusChange[];
   price_changes: BlitzPriceChange[];
   invoices: BlitzInvoice[];
+  offer_price: number | null;
+  counter_price: number | null;
+  audit_details: BlitzAuditDetails | null;
+  audit_plan: BlitzAuditPlan | null;
+  plan_comment: string | null;
+  team: BlitzTeamMember[];
 }
 
 /** Вариант выбора из справочника. */

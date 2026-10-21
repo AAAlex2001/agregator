@@ -1,13 +1,12 @@
 "use client";
 
-import { BlitzFilePicker } from "@/entities/blitz-order";
+import { BlitzCompanyFields, BlitzFilePicker } from "@/entities/blitz-order";
 import type { BlitzCustomerType } from "@/entities/blitz-order";
 import type { FileGalleryItem } from "@/shared/ui/file-gallery";
 import { FormSection } from "@/shared/ui/form-section";
 import { Tabs } from "@/shared/ui/tabs";
 import { CUSTOMER_TYPE_TABS } from "../../config/options";
 import type { CompanyField, CreateBlitzOrderState, IndividualField } from "../../model/types";
-import { CompanyFields } from "../company-fields";
 import { IndividualFields } from "../individual-fields";
 
 /** Типы заказчика в порядке вкладок. */
@@ -53,7 +52,7 @@ export function CustomerSection({
         />
       ) : (
         <>
-          <CompanyFields
+          <BlitzCompanyFields
             company={state.company}
             onChange={onCompanyChange}
           />

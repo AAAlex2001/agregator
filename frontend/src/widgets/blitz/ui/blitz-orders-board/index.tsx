@@ -14,8 +14,8 @@ import type { BoardTab } from "../../config/board";
 import styles from "./style.module.scss";
 
 /** Что такое Блиц-эксперт. */
-const BOARD_SUBTITLE = "Экспертиза промышленной безопасности: "
-  + "договор, оплата и заключение в одном окне";
+const BOARD_SUBTITLE = "Экспертиза промышленной безопасности и аудит СУПБ: "
+  + "договор, оплата и результат в одном окне";
 
 /** Сколько заготовок показать при загрузке. */
 const SKELETONS = [1, 2, 3, 4];
@@ -62,7 +62,17 @@ export function BlitzOrdersBoard() {
           />
           <Subtitle text={BOARD_SUBTITLE} />
         </div>
-        {!isExpert && <Button href="/blitz/new">Новая заявка</Button>}
+        {!isExpert && (
+          <div className={styles.actions}>
+            <Button
+              variant="outline"
+              href="/blitz/audit/new"
+            >
+              Аудит СУПБ
+            </Button>
+            <Button href="/blitz/new">Экспертиза</Button>
+          </div>
+        )}
       </div>
 
       <Tabs

@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { postBlitzAction, uploadBlitzStep } from "@/entities/blitz-order";
+import {
+  blitzDocumentsReportUrl,
+  blitzWording,
+  postBlitzAction,
+  uploadBlitzStep,
+} from "@/entities/blitz-order";
 import type { BlitzUpload } from "@/entities/blitz-order";
 import { Button } from "@/shared/ui/button";
 import { ConfirmModal } from "@/shared/ui/confirm-modal";
@@ -11,18 +16,12 @@ import { StepFilesForm } from "../step-files-form";
 import { StepNote } from "../step-note";
 import styles from "./style.module.scss";
 
-/** Что делать эксперту во время работы. */
-const WORK_HINT = "Если документацию нужно исправить — отправьте замечания. "
-  + "Когда заключение готово, сообщите заказчику: он оплатит остаток.";
-
-/** Что будет после «заключение готово». */
-const READY_HINT = "Заказчик получит уведомление и оплатит остаток. "
-  + "После оплаты вы отправите подписанное заключение.";
-
-/** Эксперт работает: выдаёт замечания или сообщает, что заключение готово. */
+/** Исполнитель работает: выдаёт замечания или сообщает, что результат готов. */
 export function WorkPanel({ order, onChange }: BlitzStepProps) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const { isPending, run } = useBlitzAction(onChange);
+  const wording = blitzWording(order.service);
+  const isAudit = order.service === "audit";
 
   /** Отправляет замечания заказчику. */
   function sendRemarks({ text, files }: BlitzUpload): Promise<boolean> {
@@ -37,7 +36,7 @@ export function WorkPanel({ order, onChange }: BlitzStepProps) {
     );
   }
 
-  /** Сообщает, что заключение готово, и закрывает окно. */
+  /** Сообщает, что результат готов, и закрывает окно. */
   async function markReady() {
     const isDone = await run(
       () => postBlitzAction(order.id, "conclusion-ready", {}, "Не удалось отметить готовность"),
@@ -51,15 +50,23 @@ export function WorkPanel({ order, onChange }: BlitzStepProps) {
 
   return (
     <StepNote
-      title="Экспертиза в работе"
-      text={WORK_HINT}
+      title={wording.workTitle}
+      text={wording.workHint}
     >
       <div className={styles.ready}>
-        <Button onClick={() => setIsConfirmOpen(true)}>Заключение готово</Button>
+        <Button onClick={() => setIsConfirmOpen(true)}>{wording.resultReady}</Button>
+        {isAudit && (
+          <Button
+            variant="outline"
+            href={blitzDocumentsReportUrl(order.id)}
+          >
+            Отчёт о представленных документах
+          </Button>
+        )}
       </div>
       <StepFilesForm
         textLabel="Замечания"
-        textPlaceholder="Что исправить в документации"
+        textPlaceholder={`Что исправить или дополнить: ${wording.documents}`}
         filesLabel="Файлы замечаний"
         submitLabel="Отправить замечания"
         isPending={isPending}
@@ -68,8 +75,8 @@ export function WorkPanel({ order, onChange }: BlitzStepProps) {
       />
       <ConfirmModal
         open={isConfirmOpen}
-        title="Заключение готово?"
-        description={READY_HINT}
+        title={`${wording.resultReady}?`}
+        description={wording.readyHint}
         confirmLabel="Да, готово"
         isBusy={isPending}
         onConfirm={() => void markReady()}

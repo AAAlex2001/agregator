@@ -8,7 +8,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 from enum import StrEnum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import (
     CheckConstraint,
@@ -21,6 +21,7 @@ from sqlalchemy import (
     String,
     Text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base import Base
@@ -28,6 +29,7 @@ from app.core.clock import now
 from models.account import Account
 
 if TYPE_CHECKING:
+    from app.blitz.audit.models import AuditTeamMember
     from app.blitz.billing.models import Invoice
     from app.blitz.documents.models import OrderDocument
     from app.blitz.pricing.models import PriceChange
@@ -49,11 +51,20 @@ class OrderStatus(StrEnum):
     remarks — замечания, ждём исправленную документацию; conclusion_ready — заключение готово,
     ждём остаток; paid — оплачено полностью, эксперт отправляет заключение;
     sent — заключение у заказчика; accepted — работа принята; canceled — заявка отменена.
+
+    Только у аудита: consultation — заказчику нужна консультация, заявку сначала видит менеджер;
+    offer — руководитель группы предложил цену; counter — заказчик предложил свою, ниже;
+    plan — аванс оплачен, готовится План аудита; plan_review — План ждёт согласования.
     """
 
     NEW = "new"
+    CONSULTATION = "consultation"
+    OFFER = "offer"
+    COUNTER = "counter"
     EXPERT_READY = "expert_ready"
     CONTRACT = "contract"
+    PLAN = "plan"
+    PLAN_REVIEW = "plan_review"
     IN_PROGRESS = "in_progress"
     REMARKS = "remarks"
     CONCLUSION_READY = "conclusion_ready"
@@ -96,6 +107,10 @@ class BlitzOrder(Base):
 
     paid_amount — сколько уже оплачено картой и по счетам: остаток считается от него,
     поэтому смена цены после аванса не ломает расчёт.
+
+    У аудита цены может не быть, пока руководитель группы и заказчик не договорятся:
+    offer_price и counter_price — предложения сторон, audit_details — анкета заявки,
+    audit_plan — последняя версия Плана, plan_comment — просьба заказчика его поправить.
     """
 
     __tablename__ = "blitz_orders"
@@ -122,8 +137,14 @@ class BlitzOrder(Base):
     result: Mapped[str | None] = mapped_column(String(16))
     cancel_reason: Mapped[str | None] = mapped_column(Text)
 
-    price: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    price: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
     paid_amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal(0), server_default="0")
+    offer_price: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    counter_price: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+
+    audit_details: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    audit_plan: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    plan_comment: Mapped[str | None] = mapped_column(Text)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now, onupdate=now)
@@ -160,6 +181,11 @@ class BlitzOrder(Base):
         cascade="all, delete-orphan",
         order_by="Invoice.id",
     )
+    team: Mapped[list["AuditTeamMember"]] = relationship(
+        lazy="selectin",
+        cascade="all, delete-orphan",
+        order_by="AuditTeamMember.account_id",
+    )
     price_changes: Mapped[list["PriceChange"]] = relationship(
         lazy="selectin",
         cascade="all, delete-orphan",
@@ -167,7 +193,7 @@ class BlitzOrder(Base):
     )
 
     __table_args__ = (
-        CheckConstraint("price > 0", name="ck_blitz_orders_price_positive"),
+        CheckConstraint("price IS NULL OR price > 0", name="ck_blitz_orders_price_positive"),
         CheckConstraint("paid_amount >= 0", name="ck_blitz_orders_paid_amount"),
     )
 

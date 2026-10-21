@@ -1,6 +1,7 @@
 """Заказчик подаёт заявку: что проверить, цена, реквизиты и документация."""
 
 from datetime import date
+from decimal import Decimal
 
 from fastapi import UploadFile
 
@@ -84,11 +85,11 @@ class CreateOrderUseCase:
         ):
             order.documents.extend([*docs, *card_docs])
             await self.orders.add(order)
-            await self.notify(order)
+            await self.notify(order, data.price)
 
         return order
 
-    async def notify(self, order: BlitzOrder) -> None:
+    async def notify(self, order: BlitzOrder, price: Decimal) -> None:
         """Экспертам с подходящими удостоверениями и администраторам."""
 
         today = date.today()
@@ -97,8 +98,7 @@ class CreateOrderUseCase:
             for expert in await self.orders.list_experts_with_certificates()
             if expert_fits(expert, order, today)
         ]
-        price = format_rub(order.price)
-        message = f"Новая заявка на экспертизу «{order.object_name}». Цена заказчика — {price}"
+        message = f"Новая заявка на экспертизу «{order.object_name}». Цена заказчика — {format_rub(price)}"
 
         await self.notifier.notify_all(experts, order, message)
         self.notifier.notify_admins(order, f"{message}. Подходящих экспертов: {len(experts)}")

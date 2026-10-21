@@ -1,0 +1,19 @@
+.actions {
+  display: flex;
+
+  > * {
+    width: 100%;
+  }
+}
+
+.error {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-error);
+}
+
+@media (min-width: 768px) {
+  .actions > * {
+    width: auto;
+  }
+}

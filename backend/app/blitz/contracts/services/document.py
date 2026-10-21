@@ -1,4 +1,4 @@
-"""Договор и соглашение о конфиденциальности из шаблонов Word.
+"""Договор и соглашение о конфиденциальности из шаблонов Word. У аудита свой договор и префикс номера.
 
 В шаблонах вместо пропусков стоят метки вида {{customer_inn}}, каждая целиком внутри одного
 фрагмента текста — замена не ломает оформление. Оба документа ссылаются на один номер договора.
@@ -15,7 +15,7 @@ from docx.document import Document as WordDocument
 from docx.text.paragraph import Paragraph
 
 from app.blitz.catalog import CONTRACT_SUBJECTS, DEADLINE_DAYS, ContractKind, Deadline
-from app.blitz.orders.models import COMPANY_CUSTOMERS, BlitzOrder, OrderCompany, OrderIndividual
+from app.blitz.orders.models import COMPANY_CUSTOMERS, BlitzOrder, OrderCompany, OrderIndividual, ServiceKind
 from app.core.money import amount_in_words, format_amount, number_to_words, plural, vat_included
 
 TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
@@ -60,13 +60,18 @@ def contract_problem(order: BlitzOrder) -> str | None:
     if order.contract_kind is None:
         return "Вид договора ещё не определён"
 
+    if order.price is None:
+        return "Цена ещё не согласована"
+
     return None
 
 
 def contract_number(order: BlitzOrder, signed_at: datetime) -> str:
-    """Номер договора: год подписания и номер заявки."""
+    """Номер договора: БЭ — экспертиза, БА — аудит, затем год подписания и номер заявки."""
 
-    return f"БЭ-{signed_at.year}-{order.id:04d}"
+    prefix = "БА" if order.service == ServiceKind.AUDIT else "БЭ"
+
+    return f"{prefix}-{signed_at.year}-{order.id:04d}"
 
 
 def paper_name(paper: Paper, order: BlitzOrder, signed_at: datetime) -> str:
@@ -200,6 +205,7 @@ def individual_values(individual: OrderIndividual, phone: str, email: str) -> di
 def paper_values(order: BlitzOrder, vat_rate: int, signed_at: datetime) -> dict[str, str]:
     """Значения меток. Перед вызовом заявку проверяет contract_problem."""
 
+    price = order.price or Decimal(0)
     phone = order.customer.phone or "—"
     email = order.customer.email or "—"
 
@@ -219,8 +225,8 @@ def paper_values(order: BlitzOrder, vat_rate: int, signed_at: datetime) -> dict[
         "subject": CONTRACT_SUBJECTS[ContractKind(order.contract_kind)],
         "object_name": order.object_name,
         "days": working_days(order.deadline),
-        "price": money_text(order.price),
-        "vat": vat_clause(order.price, vat_rate),
+        "price": money_text(price),
+        "vat": vat_clause(price, vat_rate),
         **party,
     }
 
@@ -253,10 +259,19 @@ def fill(document: WordDocument, values: dict[str, str]) -> None:
             run.text = text
 
 
+def template_of(paper: Paper, order: BlitzOrder) -> Path:
+    """Шаблон документа: у договора аудита свой."""
+
+    if paper == Paper.CONTRACT and order.service == ServiceKind.AUDIT:
+        return TEMPLATES / "contract_audit.docx"
+
+    return TEMPLATES / f"{paper}.docx"
+
+
 def build_paper(paper: Paper, order: BlitzOrder, vat_rate: int, signed_at: datetime) -> bytes:
     """Собрать договор или соглашение о конфиденциальности."""
 
-    document = Document(str(TEMPLATES / f"{paper}.docx"))
+    document = Document(str(template_of(paper, order)))
     fill(document, paper_values(order, vat_rate, signed_at))
 
     buffer = BytesIO()

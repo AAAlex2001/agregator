@@ -12,6 +12,7 @@ from app.blitz.billing.models import Invoice, PaymentStage
 from app.blitz.billing.services.stages import STAGE_TITLES
 from app.blitz.company import COMPANY, vat_rate
 from app.blitz.orders.models import BlitzOrder, OrderStatus
+from app.blitz.orders.services.wording import wording_for
 from app.core.money import amount_in_words, format_amount, vat_included
 
 TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
@@ -66,7 +67,7 @@ def payer_of(order: BlitzOrder) -> Payer:
 def work_subject(order: BlitzOrder) -> str:
     """Наименование работ в счёте и акте."""
 
-    return f"Экспертиза промышленной безопасности «{order.object_name}» по заявке №{order.id}"
+    return f"{wording_for(order).subject} «{order.object_name}» по заявке №{order.id}"
 
 
 async def render(template: str, context: dict[str, object]) -> bytes:
@@ -103,7 +104,7 @@ async def act_pdf(order: BlitzOrder) -> bytes:
             "signed_at": order.reached_at(OrderStatus.ACCEPTED) or order.created_at,
             "payer": payer_of(order),
             "subject": work_subject(order),
-            "totals": totals(order.price),
+            "totals": totals(order.price or Decimal(0)),
         },
     )
 

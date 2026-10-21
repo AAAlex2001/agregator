@@ -12,7 +12,9 @@ DOCUMENT_EXTENSIONS = frozenset(
     {".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png", ".zip", ".rar"},
 )
 SIGNED_EXTENSIONS = DOCUMENT_EXTENSIONS | {".sig", ".p7s"}
+AUDIT_EXTENSIONS = frozenset({".pdf", ".sig", ".p7s", ".jpg", ".jpeg", ".png", ".heic", ".mp4", ".mov"})
 MAX_FILE_SIZE_MB = 50
+AUDIT_FILE_SIZE_MB = 500
 
 
 def order_folder(order_id: int) -> str:
@@ -32,6 +34,7 @@ class OrderFiles:
         kind: DocumentKind,
         uploaded_by: int,
         extensions: frozenset[str] = DOCUMENT_EXTENSIONS,
+        max_size_mb: int = MAX_FILE_SIZE_MB,
     ) -> AsyncIterator[list[OrderDocument]]:
         """Файлы сохраняются на входе и удаляются, если блок внутри не выполнился."""
 
@@ -39,7 +42,7 @@ class OrderFiles:
 
         try:
             for upload in uploads:
-                stored = await save_private(upload, order_folder(order_id), extensions, MAX_FILE_SIZE_MB)
+                stored = await save_private(upload, order_folder(order_id), extensions, max_size_mb)
                 documents.append(
                     OrderDocument(
                         uploaded_by=uploaded_by,

@@ -1,5 +1,22 @@
 .ready {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--color-orange-soft);
+
+  > * {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .ready {
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    > * {
+      width: auto;
+    }
+  }
 }

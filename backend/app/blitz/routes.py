@@ -1,7 +1,8 @@
-"""Блиц-эксперт в кабинете: заявки, договор, работа, оплата, файлы и тарифы."""
+"""Блиц-эксперт в кабинете: заявки, аудит, договор, работа, оплата, файлы и тарифы."""
 
 from fastapi import APIRouter
 
+from app.blitz.audit.routes import router as audit_router
 from app.blitz.billing.routes import router as billing_router
 from app.blitz.contracts.routes import router as contracts_router
 from app.blitz.documents.routes import router as documents_router
@@ -16,6 +17,7 @@ router = APIRouter()
 
 for subrouter in (
     orders_router,
+    audit_router,
     contracts_router,
     work_router,
     billing_router,

@@ -55,5 +55,9 @@ export const BLITZ_INVOICES_PATH = "/blitz/invoices";
 
 export const BLITZ_TARIFFS_PATH = "/blitz/tariffs";
 
+export const BLITZ_AUDITORS_PATH = "/blitz/auditors";
+
 /** Адрес заявки Блиц-эксперта. */
 export const blitzOrderPath = (id: number) => `${BLITZ_PATH}/${id}`;
+
+export const COMMISSION_PATH = "/commission";

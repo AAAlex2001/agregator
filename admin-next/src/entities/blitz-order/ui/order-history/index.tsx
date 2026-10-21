@@ -1,7 +1,12 @@
 import { formatDateTime } from "@/shared/lib/date";
 import { formatRub } from "@/shared/lib/money";
 import Panel from "@/shared/ui/panel";
-import { BLITZ_ACTOR_LABELS, BLITZ_STATUS_LABELS, type BlitzOrder } from "../../model/types";
+import {
+  BLITZ_ACTOR_LABELS,
+  BLITZ_STATUS_LABELS,
+  blitzPriceLabel,
+  type BlitzOrder,
+} from "../../model/types";
 import styles from "./style.module.scss";
 
 type OrderHistoryProps = {
@@ -19,7 +24,7 @@ const OrderHistory = ({ order }: OrderHistoryProps) => {
     })),
     ...order.price_changes.map((change) => ({
       at: change.created_at,
-      title: `Цена: ${formatRub(change.old_price)} → ${formatRub(change.new_price)}`,
+      title: `Цена: ${blitzPriceLabel(change.old_price)} → ${formatRub(change.new_price)}`,
       meta: "Администратор",
       note: change.reason,
     })),

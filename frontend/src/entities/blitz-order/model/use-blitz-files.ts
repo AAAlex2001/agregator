@@ -8,7 +8,7 @@ import { useNotifications } from "@/shared/ui/notifications";
 import { BLITZ_FILE_LIMIT, BLITZ_FILE_MAX_SIZE } from "../config/files";
 
 /** Файлы до отправки: проверка лимитов, превью и удаление. */
-export function useBlitzFiles(limit = BLITZ_FILE_LIMIT) {
+export function useBlitzFiles(limit = BLITZ_FILE_LIMIT, maxSize = BLITZ_FILE_MAX_SIZE) {
   const [selectedFiles, setSelectedFiles] = useState<LocalFile[]>([]);
   const previews = useLocalFiles();
   const { showError } = useNotifications();
@@ -23,8 +23,8 @@ export function useBlitzFiles(limit = BLITZ_FILE_LIMIT) {
       return;
     }
 
-    if (added.some((file) => file.size > BLITZ_FILE_MAX_SIZE)) {
-      showError("Файл больше 50 МБ не поддерживается");
+    if (added.some((file) => file.size > maxSize)) {
+      showError(`Файл больше ${Math.round(maxSize / 1024 / 1024)} МБ не поддерживается`);
       return;
     }
 

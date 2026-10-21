@@ -27,13 +27,13 @@ class SignContractUseCase:
         self.notifier = notifier
 
     async def execute(self, customer: Account, order: BlitzOrder) -> BlitzOrder:
-        """Подписать может только заказчик и только когда эксперт готов."""
+        """Подписать может только заказчик и только когда исполнитель готов."""
 
         if order.customer_id != customer.id:
             raise OrderAccessError("Подписать договор может только заказчик")
 
         if order.status != OrderStatus.EXPERT_READY:
-            raise OrderStateError("Договор подписывается, когда эксперт готов провести экспертизу")
+            raise OrderStateError("Договор подписывается, когда исполнитель готов провести работу")
 
         problem = contract_problem(order)
         if problem is not None:

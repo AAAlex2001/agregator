@@ -1,0 +1,33 @@
+.paper {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-orange-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.actions {
+  display: flex;
+
+  > * {
+    width: 100%;
+  }
+}
+
+.changes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+@media (min-width: 768px) {
+  .actions > * {
+    width: auto;
+  }
+}

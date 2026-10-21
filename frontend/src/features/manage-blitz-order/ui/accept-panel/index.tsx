@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { postBlitzAction, useBlitzCatalog } from "@/entities/blitz-order";
-import { formatRub } from "@/shared/lib/format-rub";
+import { blitzPriceLabel, postBlitzAction, useBlitzCatalog } from "@/entities/blitz-order";
 import { Button } from "@/shared/ui/button";
 import { Field } from "@/shared/ui/field";
 import { Select } from "@/shared/ui/select";
@@ -36,7 +35,7 @@ export function AcceptPanel({ order, onChange }: BlitzStepProps) {
   return (
     <StepNote
       title="Возьмёте заявку?"
-      text={`Заказчик предлагает ${formatRub(order.price)}. `
+      text={`Заказчик предлагает ${blitzPriceLabel(order.price)}. `
         + "Посмотрите документацию: если цена и объём подходят, нажмите «Готов провести». "
         + "Заявку получит тот, кто ответит первым."}
     >
@@ -59,7 +58,7 @@ export function AcceptPanel({ order, onChange }: BlitzStepProps) {
         disabled={needsKind && !contractKind}
         onClick={accept}
       >
-        Готов провести за {formatRub(order.price)}
+        Готов провести за {blitzPriceLabel(order.price)}
       </Button>
     </StepNote>
   );

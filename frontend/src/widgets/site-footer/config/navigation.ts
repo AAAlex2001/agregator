@@ -59,6 +59,10 @@ export const PLATFORM_LINKS: FooterLink[] = [
     label: "Заказы и тендеры",
   },
   {
+    href: "/konkursnaya-komissiya",
+    label: "Конкурсная комиссия",
+  },
+  {
     href: "/reviews",
     label: "Отзывы",
   },

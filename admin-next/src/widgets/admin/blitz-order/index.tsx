@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import {
+  AuditSummary,
   BLITZ_STATUS_LABELS,
   BLITZ_STATUS_TONES,
   OrderDocuments,
@@ -23,13 +24,13 @@ type BlitzOrderProps = {
   orderId: number;
 };
 
-/** Статусы, в которых эксперта ещё можно назначить или заменить. */
-const ASSIGNABLE = ["new", "expert_ready"];
+/** Статусы, в которых исполнителя ещё можно назначить или заменить. */
+const ASSIGNABLE = ["new", "consultation", "offer", "counter", "expert_ready"];
 
 /** Статусы, после которых цену уже не меняют. */
 const PRICE_LOCKED = ["paid", "sent", "accepted", "canceled"];
 
-/** Карточка заявки: факты, управление статусом, экспертом и ценой, файлы, счета и история. */
+/** Карточка заявки: факты, анкета аудита, статус, исполнитель и цена, файлы, счета и история. */
 const BlitzOrder = ({ orderId }: BlitzOrderProps) => {
   const router = useRouter();
   const { order, error, applyOrder, reload } = useBlitzOrder(orderId);
@@ -57,6 +58,7 @@ const BlitzOrder = ({ orderId }: BlitzOrderProps) => {
       <div className={styles.layout}>
         <div className={styles.column}>
           <OrderSummary order={order} />
+          {order.audit_details && <AuditSummary order={order} details={order.audit_details} />}
           <OrderInvoices order={order} />
           <OrderDocuments order={order} />
         </div>

@@ -11,40 +11,47 @@ import { useExpertOptions } from "../model/use-expert-options";
 import type { BlitzCommandProps } from "../model/types";
 import styles from "./style.module.scss";
 
-/** Назначает эксперта до подписания договора. Подходящие по удостоверениям — первыми в списке. */
+/**
+ * Назначает исполнителя до подписания договора. У экспертизы подходящие по удостоверениям — первыми,
+ * аудит проводят только руководители аудиторских групп. Без цены назначить нельзя.
+ */
 export function ExpertForm({ order, onChange }: BlitzCommandProps) {
   const [expertId, setExpertId] = useState("");
   const [contractKind, setContractKind] = useState("");
   const { experts, catalog } = useExpertOptions(order.id);
   const command = useBlitzCommand(onChange);
+  const isAudit = order.service === "audit";
   const object = catalog?.objects.find((item) => item.code === order.object_code);
   const kinds = catalog?.kinds.filter((kind) => !object || object.kinds.includes(kind.code)) ?? [];
   const needsKind = !order.contract_kind && kinds.length > 1;
+  const fitLabel = (fits: boolean) => (fits ? "подходит" : "удостоверения не совпадают");
   const expertOptions = [
-    { value: "", label: "Выберите эксперта" },
+    { value: "", label: isAudit ? "Выберите руководителя группы" : "Выберите эксперта" },
     ...experts.map((expert) => ({
       value: String(expert.id),
-      label: expert.fits ? `${expert.name} — подходит` : `${expert.name} — удостоверения не совпадают`,
+      label: isAudit ? expert.name : `${expert.name} — ${fitLabel(expert.fits)}`,
     })),
   ];
 
   async function assign() {
     const done = await command.run(
       () => assignBlitzExpert(order.id, Number(expertId), contractKind),
-      "Эксперт назначен, заказчик получит договор",
+      "Исполнитель назначен, заказчик получит договор",
     );
 
     if (done) setExpertId("");
   }
 
   return (
-    <Panel title="Эксперт">
+    <Panel title={isAudit ? "Руководитель группы" : "Эксперт"}>
       <div className={styles.form}>
         <p className={styles.hint}>
-          Сейчас: {order.expert_name ?? "не назначен"}. Назначенный эксперт заменит текущего, заказчику уйдёт договор.
+          Сейчас: {order.expert_name ?? "не назначен"}. Новый исполнитель заменит текущего, заказчику уйдёт
+          договор.
+          {order.price === null && " Сначала укажите цену заявки."}
         </p>
-        <Field label="Назначить эксперта">
-          <Select value={expertId} options={expertOptions} ariaLabel="Эксперт" onChange={setExpertId} />
+        <Field label="Назначить">
+          <Select value={expertId} options={expertOptions} ariaLabel="Исполнитель" onChange={setExpertId} />
         </Field>
         {needsKind && (
           <Field label="Вид договора">
@@ -58,7 +65,7 @@ export function ExpertForm({ order, onChange }: BlitzCommandProps) {
         )}
         <Button
           loading={command.pending}
-          disabled={!expertId || (needsKind && !contractKind)}
+          disabled={!expertId || order.price === null || (needsKind && !contractKind)}
           onClick={() => void assign()}
         >
           Назначить

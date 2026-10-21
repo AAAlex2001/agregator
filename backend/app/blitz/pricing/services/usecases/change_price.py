@@ -7,8 +7,9 @@
 
 from decimal import Decimal
 
+from app.blitz.audit.options import MIN_AUDIT_PRICE
 from app.blitz.notifications import BlitzNotifier
-from app.blitz.orders.models import BlitzOrder, OrderStatus
+from app.blitz.orders.models import BlitzOrder, OrderStatus, ServiceKind
 from app.blitz.orders.services.exceptions import InvalidOrderError, OrderStateError
 from app.blitz.orders.services.repo import OrderRepository
 from app.blitz.orders.services.wording import parties
@@ -27,7 +28,7 @@ class ChangePriceUseCase:
         self.notifier = notifier
 
     async def execute(self, order: BlitzOrder, price: Decimal, reason: str) -> BlitzOrder:
-        """После полной оплаты — OrderStateError, ниже оплаченного — InvalidOrderError."""
+        """После полной оплаты — OrderStateError, ниже оплаченного или минимума аудита — InvalidOrderError."""
 
         if order.status in LOCKED:
             raise OrderStateError("Цену меняют до полной оплаты заявки")
@@ -38,6 +39,9 @@ class ChangePriceUseCase:
         if price < order.paid_amount:
             paid = format_rub(order.paid_amount)
             raise InvalidOrderError(f"Уже оплачено {paid}: цена не может быть меньше")
+
+        if order.service == ServiceKind.AUDIT and price < MIN_AUDIT_PRICE:
+            raise InvalidOrderError(f"Стоимость аудита — не менее {format_rub(MIN_AUDIT_PRICE)}")
 
         reason = reason.strip()
         old_price = order.price
@@ -52,10 +56,11 @@ class ChangePriceUseCase:
 
         await self.orders.save()
 
+        was = f"было {format_rub(old_price)}, " if old_price is not None else ""
         await self.notifier.notify_all(
             parties(order),
             order,
-            f"Цена заявки изменена: было {format_rub(old_price)}, стало {format_rub(price)}. {reason}",
+            f"Цена заявки изменена: {was}стало {format_rub(price)}. {reason}",
         )
 
         return order

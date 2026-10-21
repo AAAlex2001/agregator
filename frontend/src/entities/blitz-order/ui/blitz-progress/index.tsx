@@ -1,28 +1,30 @@
 import cn from "classnames";
-import { BLITZ_STEP_LABELS, BLITZ_STEPS } from "../../config/labels";
-import { blitzStepIndex } from "../../model/status";
-import type { BlitzStatus } from "../../model/types";
+import { BLITZ_STEP_LABELS } from "../../config/labels";
+import { blitzStepIndex, blitzSteps } from "../../model/status";
+import type { BlitzService, BlitzStatus } from "../../model/types";
 import styles from "./style.module.scss";
 
-/** Текущий статус заявки. */
+/** Текущий статус заявки и сервис: у аудита есть шаг Плана. */
 interface BlitzProgressProps {
   status: BlitzStatus;
+  service: BlitzService;
 }
 
 /** Шаги заявки полосой: пройденные, текущий и будущие. У отменённой заявки полосы нет. */
-export function BlitzProgress({ status }: BlitzProgressProps) {
+export function BlitzProgress({ status, service }: BlitzProgressProps) {
   if (status === "canceled") {
     return null;
   }
 
-  const current = blitzStepIndex(status);
+  const steps = blitzSteps(service);
+  const current = blitzStepIndex(status, service);
 
   return (
     <ol
       className={styles.steps}
-      aria-label={`Шаг ${current + 1} из ${BLITZ_STEPS.length}`}
+      aria-label={`Шаг ${current + 1} из ${steps.length}`}
     >
-      {BLITZ_STEPS.map((step, index) => (
+      {steps.map((step, index) => (
         <li
           key={step}
           className={cn(styles.step, {

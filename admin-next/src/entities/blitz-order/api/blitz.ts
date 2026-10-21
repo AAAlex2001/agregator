@@ -8,6 +8,7 @@ import type {
   BlitzStatus,
   BlitzTariff,
   BlitzTariffCell,
+  BlitzTeamMember,
 } from "../model/types";
 
 /** Заявки, новые первыми. Пустой список статусов — все. */
@@ -109,6 +110,20 @@ export const fetchBlitzTariffs = async (signal: AbortSignal): Promise<BlitzTarif
 /** Сохранить сетку тарифов целиком. Пустая цена удаляет тариф. */
 export const saveBlitzTariffs = async (items: BlitzTariffCell[]): Promise<BlitzTariff[]> => {
   const response = await adminFetch("/blitz/tariffs", jsonBody("PUT", { items }));
+
+  return response.json();
+};
+
+/** Эксперты с анкетой аудитора и признак руководителя группы. */
+export const fetchBlitzAuditors = async (signal: AbortSignal): Promise<BlitzTeamMember[]> => {
+  const response = await adminFetch("/blitz/auditors", { signal });
+
+  return response.json();
+};
+
+/** Назначить аудитора руководителем группы или снять с этой роли. */
+export const setBlitzAuditLead = async (accountId: number, lead: boolean): Promise<BlitzTeamMember> => {
+  const response = await adminFetch(`/blitz/auditors/${accountId}/lead`, jsonBody("PUT", { lead }));
 
   return response.json();
 };

@@ -8,7 +8,15 @@ from app.blitz.orders.services.wording import parties
 from app.core.clock import now
 from models.account import Account
 
-CUSTOMER_CANCELABLE = frozenset({OrderStatus.NEW, OrderStatus.EXPERT_READY})
+CUSTOMER_CANCELABLE = frozenset(
+    {
+        OrderStatus.NEW,
+        OrderStatus.CONSULTATION,
+        OrderStatus.OFFER,
+        OrderStatus.COUNTER,
+        OrderStatus.EXPERT_READY,
+    },
+)
 
 
 class CancelOrderUseCase:

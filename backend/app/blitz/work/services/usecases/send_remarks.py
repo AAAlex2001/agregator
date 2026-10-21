@@ -1,4 +1,4 @@
-"""Эксперт возвращает документацию с замечаниями."""
+"""Исполнитель возвращает документы с замечаниями."""
 
 from fastapi import UploadFile
 
@@ -10,6 +10,7 @@ from app.blitz.orders.models import Actor, BlitzOrder, OrderStatus
 from app.blitz.orders.services.exceptions import InvalidOrderError
 from app.blitz.orders.services.repo import OrderRepository
 from app.blitz.orders.services.rules import require_assigned, require_status
+from app.blitz.orders.services.wording import wording_for
 from app.blitz.work.models import OrderRemark
 from app.core.clock import now
 from models.account import Account
@@ -33,7 +34,7 @@ class SendRemarksUseCase:
         """Ни текста, ни файлов — InvalidOrderError."""
 
         require_assigned(order, expert)
-        require_status(order, OrderStatus.IN_PROGRESS, "Замечания выдаются, пока эксперт работает")
+        require_status(order, OrderStatus.IN_PROGRESS, "Замечания выдаются, пока идёт работа")
 
         text = text.strip()
         files = chosen_files(uploads)
@@ -52,7 +53,7 @@ class SendRemarksUseCase:
         await self.notifier.notify(
             order.customer,
             order,
-            "Эксперт прислал замечания. Исправьте документацию и отправьте её повторно",
+            f"{wording_for(order).executor} прислал замечания. Исправьте документы и отправьте их повторно",
         )
 
         return order

@@ -1,8 +1,9 @@
 """Запросы к заявкам Блиц-эксперта. Коммит делает сессия запроса."""
 
-from sqlalchemy import Select, func, select, text
+from sqlalchemy import Select, exists, func, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.blitz.audit.models import AuditTeamMember
 from app.blitz.orders.models import BlitzOrder, OrderStatus
 from models.account import Account, UserRole
 from models.expert import Expert
@@ -41,9 +42,17 @@ class OrderRepository:
         return list(await self.db.scalars(stmt))
 
     async def list_for_expert(self, expert_id: int) -> list[BlitzOrder]:
-        """Заявки, которые эксперт взял, новые первыми."""
+        """Заявки, которые эксперт взял или где он в аудиторской группе, новые первыми."""
 
-        stmt = select(BlitzOrder).where(BlitzOrder.expert_id == expert_id).order_by(*NEWEST_FIRST)
+        in_team = exists().where(
+            AuditTeamMember.order_id == BlitzOrder.id,
+            AuditTeamMember.account_id == expert_id,
+        )
+        stmt = (
+            select(BlitzOrder)
+            .where(or_(BlitzOrder.expert_id == expert_id, in_team))
+            .order_by(*NEWEST_FIRST)
+        )
 
         return list(await self.db.scalars(stmt))
 

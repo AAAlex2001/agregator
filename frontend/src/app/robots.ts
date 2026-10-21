@@ -14,6 +14,7 @@ const INDEXABLE_PATHS = [
   "/rtn",
   "/rtn/ask",
   "/zepb-registry",
+  "/konkursnaya-komissiya",
   "/expert-contacts",
   "/training/defectoscopist-certification",
   "/requisites",

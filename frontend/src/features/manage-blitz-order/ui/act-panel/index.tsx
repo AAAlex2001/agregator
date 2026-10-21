@@ -1,4 +1,4 @@
-import { blitzActUrl } from "@/entities/blitz-order";
+import { blitzActUrl, blitzWording } from "@/entities/blitz-order";
 import { Button } from "@/shared/ui/button";
 import type { BlitzStepProps } from "../../model/types";
 import { StepNote } from "../step-note";
@@ -8,7 +8,8 @@ export function ActPanel({ order }: BlitzStepProps) {
   return (
     <StepNote
       title="Работа принята"
-      text="Акт сдачи-приёмки составлен по приёмке в кабинете. Заключение — в разделе «Файлы»."
+      text={"Акт сдачи-приёмки составлен по приёмке в кабинете. "
+        + `${blitzWording(order.service).resultTitle} — в разделе «Файлы».`}
     >
       <Button
         variant="outline"

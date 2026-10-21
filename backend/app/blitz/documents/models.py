@@ -22,10 +22,17 @@ class DocumentKind(StrEnum):
     CONCLUSION = "conclusion"
     PAYMENT_ORDER = "payment_order"
     GUARANTEE_LETTER = "guarantee_letter"
+    AUDIT_ITEM = "audit_item"
+    OPO_CERTIFICATE = "opo_certificate"
+    POWER_OF_ATTORNEY = "power_of_attorney"
+    STO = "sto"
+    AUDIT_PLAN = "audit_plan"
 
 
 class OrderDocument(Base):
-    """Файл заявки. remark_id связывает файлы замечаний и исправлений с их раундом."""
+    """Файл заявки. remark_id связывает файлы замечаний и исправлений с их раундом,
+    item_number — документ аудита с пунктом перечня.
+    """
 
     __tablename__ = "blitz_documents"
 

@@ -16,6 +16,11 @@ export function blitzInvoiceUrl(orderId: number, invoiceId: number): string {
   return `${API_URL}/blitz/orders/${orderId}/invoices/${invoiceId}/pdf`;
 }
 
+/** Адрес отчёта о представленных документах аудита. */
+export function blitzDocumentsReportUrl(orderId: number): string {
+  return `${API_URL}/blitz/orders/${orderId}/documents-report`;
+}
+
 /** Адрес акта в PDF. */
 export function blitzActUrl(orderId: number): string {
   return `${API_URL}/blitz/orders/${orderId}/act`;

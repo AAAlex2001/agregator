@@ -25,13 +25,13 @@ class Tariff(Base):
 
 
 class PriceChange(Base):
-    """Смена цены заявки: было, стало и почему."""
+    """Смена цены заявки: было, стало и почему. Было пусто — заказчик аудита цену не указывал."""
 
     __tablename__ = "blitz_price_changes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     order_id: Mapped[int] = mapped_column(ForeignKey("blitz_orders.id", ondelete="CASCADE"), index=True)
-    old_price: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    old_price: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
     new_price: Mapped[Decimal] = mapped_column(Numeric(12, 2))
     reason: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)

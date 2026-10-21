@@ -4,15 +4,17 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, Query, Response
 
+from app.blitz.audit.services.repo import AuditRepository
 from app.blitz.orders.dependencies import (
     get_admin_order,
     get_assign_expert_usecase,
+    get_audit_repository,
     get_cancel_order_usecase,
     get_delete_order_usecase,
     get_order_repository,
     get_set_order_status_usecase,
 )
-from app.blitz.orders.models import BlitzOrder, OrderStatus
+from app.blitz.orders.models import BlitzOrder, OrderStatus, ServiceKind
 from app.blitz.orders.schemas import (
     AssignExpertSchema,
     CancelOrderSchema,
@@ -57,8 +59,15 @@ async def get_order(order: BlitzOrder = Depends(get_admin_order)) -> OrderSchema
 async def list_fitting_experts(
     order: BlitzOrder = Depends(get_admin_order),
     orders: OrderRepository = Depends(get_order_repository),
+    audits: AuditRepository = Depends(get_audit_repository),
 ) -> list[ExpertOptionSchema]:
-    """Эксперты для назначения: сначала те, чьи удостоверения подходят под заявку."""
+    """Исполнители для назначения: сначала подходящие. Аудит проводят только руководители групп."""
+
+    if order.service == ServiceKind.AUDIT:
+        leads = await audits.list_leads()
+        options = [ExpertOptionSchema(id=lead.id, name=lead.display_name, fits=True) for lead in leads]
+
+        return sorted(options, key=lambda option: option.name)
 
     today = date.today()
     experts = await orders.list_experts_with_certificates()
@@ -87,7 +96,7 @@ async def assign_expert(
     order: BlitzOrder = Depends(get_admin_order),
     usecase: AssignExpertUseCase = Depends(get_assign_expert_usecase),
 ) -> OrderSchema:
-    """Назначить эксперта до подписания договора."""
+    """Назначить исполнителя до подписания договора."""
 
     return details(await usecase.execute(order, data.expert_id, data.contract_kind), None)
 

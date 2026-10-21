@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
-import { BlitzFilePicker, BLITZ_FILE_ACCEPT, useBlitzFiles } from "@/entities/blitz-order";
+import {
+  BLITZ_FILE_ACCEPT,
+  BLITZ_FILE_LIMIT,
+  BLITZ_FILE_MAX_SIZE,
+  BlitzFilePicker,
+  useBlitzFiles,
+} from "@/entities/blitz-order";
 import type { BlitzUpload } from "@/entities/blitz-order";
 import { Button } from "@/shared/ui/button";
 import { Field } from "@/shared/ui/field";
@@ -18,6 +24,8 @@ interface StepFilesFormProps {
   isPending: boolean;
   needsFiles: boolean;
   accept?: string;
+  maxSize?: number;
+  hint?: string;
   extra?: ReactNode;
   onSubmit: (upload: BlitzUpload) => Promise<boolean>;
 }
@@ -31,11 +39,13 @@ export function StepFilesForm({
   isPending,
   needsFiles,
   accept = BLITZ_FILE_ACCEPT,
+  maxSize = BLITZ_FILE_MAX_SIZE,
+  hint,
   extra,
   onSubmit,
 }: StepFilesFormProps) {
   const [text, setText] = useState("");
-  const attachments = useBlitzFiles();
+  const attachments = useBlitzFiles(BLITZ_FILE_LIMIT, maxSize);
   const hasFiles = attachments.files.length > 0;
   const isEmpty = needsFiles ? !hasFiles : !text.trim() && !hasFiles;
 
@@ -65,6 +75,7 @@ export function StepFilesForm({
       )}
       <BlitzFilePicker
         label={filesLabel}
+        hint={hint}
         items={attachments.items}
         isFull={attachments.isFull}
         accept={accept}

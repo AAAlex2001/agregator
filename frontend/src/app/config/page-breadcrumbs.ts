@@ -14,6 +14,10 @@ const SERVICE_PAGES: PageTitle[] = [
     label: "Аудит СУПБ",
   },
   {
+    path: "konkursnaya-komissiya",
+    label: "Конкурсная комиссия",
+  },
+  {
     path: "tehnicheskoe-diagnostirovanie",
     label: "Техническое диагностирование",
   },
@@ -126,6 +130,13 @@ const CABINET_PAGES: PageTitle[] = [
 /** Страницы без цепочки: главные и настройки профиля. */
 const ROOT_PAGES = ["/", "/landing", "/settings"];
 
+/** Вложенные страницы Блиц-эксперта и их последнее звено. */
+const BLITZ_PAGES = [
+  { pattern: /^\/blitz\/new$/, label: "Новая заявка" },
+  { pattern: /^\/blitz\/audit\/new$/, label: "Новый аудит СУПБ" },
+  { pattern: /^\/blitz\/orders\/[^/]+$/, label: "Заявка" },
+];
+
 /** Страницы, которые выводят цепочку внутри своего содержимого. */
 const OWN_BREADCRUMB_PAGES = [
   "/reviews",
@@ -184,7 +195,9 @@ export function getPageBreadcrumbs(pathname: string): BreadcrumbItem[] | null {
     ];
   }
 
-  if (path === "/blitz/new" || /^\/blitz\/orders\/[^/]+$/.test(path)) {
+  const blitzPage = BLITZ_PAGES.find((page) => page.pattern.test(path));
+
+  if (blitzPage) {
     return [
       PROFILE,
       {
@@ -192,7 +205,7 @@ export function getPageBreadcrumbs(pathname: string): BreadcrumbItem[] | null {
         href: "/blitz",
       },
       {
-        label: path === "/blitz/new" ? "Новая заявка" : "Заявка",
+        label: blitzPage.label,
       },
     ];
   }

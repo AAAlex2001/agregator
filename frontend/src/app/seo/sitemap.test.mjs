@@ -112,7 +112,7 @@ test("sitemap retains every public section, pagination limits, dates and author 
   const urls = entries.map((entry) => entry.url);
   assert.equal(dynamic, "force-dynamic");
   assert.equal(revalidate, 300);
-  assert.equal(entries.length, 221);
+  assert.equal(entries.length, 222);
   assert.equal(urls[0], SITE_URL);
   assert.equal(urls.includes(`${SITE_URL}/rtn/ask`), true);
   assert.equal(urls.includes(`${SITE_URL}/news?page=2`), true);

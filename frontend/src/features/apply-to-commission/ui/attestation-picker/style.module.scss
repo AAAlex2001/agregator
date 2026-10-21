@@ -1,0 +1,20 @@
+.picker {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+
+  > button {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .picker {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1fr) auto;
+    align-items: center;
+
+    > button {
+      width: auto;
+    }
+  }
+}

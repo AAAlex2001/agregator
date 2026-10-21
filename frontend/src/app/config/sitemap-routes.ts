@@ -98,6 +98,11 @@ export const SITEMAP_ROUTES: SitemapRoute[] = [
     priority: 0.8,
   },
   {
+    path: "/konkursnaya-komissiya",
+    changeFrequency: "monthly",
+    priority: 0.7,
+  },
+  {
     path: "/expert-contacts",
     changeFrequency: "weekly",
     priority: 0.8,

@@ -25,6 +25,16 @@
   gap: 6px;
 }
 
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  > * {
+    width: 100%;
+  }
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -42,6 +52,15 @@
     flex-direction: row;
     align-items: flex-end;
     justify-content: space-between;
+  }
+
+  .actions {
+    flex-direction: row;
+    flex-shrink: 0;
+
+    > * {
+      width: auto;
+    }
   }
 
   .grid {

@@ -5,13 +5,16 @@ import {
   BlitzHistory,
   BlitzProgress,
   BlitzStatusBadge,
+  blitzPriceLabel,
   useBlitzOrder,
 } from "@/entities/blitz-order";
 import { useUser } from "@/entities/user";
 import { BlitzOrderActions } from "@/features/manage-blitz-order";
-import { formatRub } from "@/shared/lib/format-rub";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { Loader } from "@/shared/ui/loader";
+import { AuditDetails } from "../audit-details";
+import { AuditPlan } from "../audit-plan";
+import { AuditTeam } from "../audit-team";
 import { OrderFacts } from "../order-facts";
 import { OrderInvoices } from "../order-invoices";
 import { OrderPanel } from "../order-panel";
@@ -25,7 +28,7 @@ interface BlitzOrderViewProps {
   afterPayment: boolean;
 }
 
-/** Страница заявки: статус, прогресс, что сделать сейчас, замечания, файлы, счета и история. */
+/** Страница заявки: статус, прогресс, что сделать сейчас, анкета аудита, файлы, счета и история. */
 export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
   const { order, error, isLoading, applyOrder } = useBlitzOrder(orderId, afterPayment);
   const { user } = useUser();
@@ -56,15 +59,21 @@ export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
     <div className={styles.page}>
       <header className={styles.head}>
         <div className={styles.titleRow}>
-          <span className={styles.number}>Заявка №{order.id}</span>
+          <span className={styles.number}>
+            {order.service === "audit" ? "Аудит СУПБ" : "Заявка"} №{order.id}
+          </span>
           <BlitzStatusBadge
             status={order.status}
+            service={order.service}
             isExpert={isExpert}
           />
         </div>
         <h1 className={styles.title}>{order.object_name}</h1>
-        <span className={styles.price}>{formatRub(order.price)}</span>
-        <BlitzProgress status={order.status} />
+        <span className={styles.price}>{blitzPriceLabel(order.price)}</span>
+        <BlitzProgress
+          status={order.status}
+          service={order.service}
+        />
       </header>
 
       <div className={styles.layout}>
@@ -72,14 +81,25 @@ export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
           <BlitzOrderActions
             order={order}
             isExpert={isExpert}
+            viewerId={user?.id}
             onChange={applyOrder}
           />
+          {order.audit_plan && (
+            <OrderPanel title="План аудита">
+              <AuditPlan plan={order.audit_plan} />
+            </OrderPanel>
+          )}
           {order.remarks.length > 0 && (
             <OrderPanel title="Замечания">
               <RemarksThread
                 orderId={order.id}
                 remarks={order.remarks}
               />
+            </OrderPanel>
+          )}
+          {order.audit_details && (
+            <OrderPanel title="Анкета аудита">
+              <AuditDetails details={order.audit_details} />
             </OrderPanel>
           )}
           <OrderPanel title="Файлы">
@@ -102,6 +122,11 @@ export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
           <OrderPanel title="Сведения">
             <OrderFacts order={order} />
           </OrderPanel>
+          {order.team.length > 0 && (
+            <OrderPanel title="Аудиторская группа">
+              <AuditTeam team={order.team} />
+            </OrderPanel>
+          )}
           {order.price_changes.length > 0 && (
             <OrderPanel title="Изменения цены">
               <PriceHistory order={order} />
@@ -110,6 +135,7 @@ export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
           <OrderPanel title="История">
             <BlitzHistory
               history={order.history}
+              service={order.service}
               isExpert={isExpert}
             />
           </OrderPanel>

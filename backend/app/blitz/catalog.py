@@ -20,6 +20,7 @@ class ContractKind(StrEnum):
     DECLARATION = "declaration"
     TECHNICAL_DEVICE = "technical_device"
     BUILDING = "building"
+    AUDIT = "audit"
 
 
 class Deadline(StrEnum):
@@ -137,6 +138,7 @@ CONTRACT_SUBJECTS = {
     ContractKind.DECLARATION: "декларации промышленной безопасности",
     ContractKind.TECHNICAL_DEVICE: "технического устройства, применяемого на ОПО",
     ContractKind.BUILDING: "здания (сооружения) на ОПО",
+    ContractKind.AUDIT: "опасных производственных объектов",
 }
 
 CONTRACT_TITLES = {
@@ -148,6 +150,8 @@ CONTRACT_TITLES = {
     ContractKind.TECHNICAL_DEVICE: "Техническое устройство",
     ContractKind.BUILDING: "Здание или сооружение",
 }
+
+AUDIT_TITLE = "Аудит СУПБ"
 
 DEADLINE_TITLES = {
     Deadline.TODAY: "Сегодня",
@@ -163,7 +167,7 @@ CATEGORIES = (1, 2, 3)
 
 AREA_BY_CODE = {area.code: area for area in AREAS}
 OBJECT_BY_CODE = {item.code: item for item in OBJECTS}
-ALL_KINDS = tuple(ContractKind)
+ALL_KINDS = tuple(kind for kind in ContractKind if kind != ContractKind.AUDIT)
 JOINED_OBJECTS = frozenset({"КЛ", "ТП", "КЛ/ТП"})
 
 

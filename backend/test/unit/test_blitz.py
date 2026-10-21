@@ -1,4 +1,4 @@
-"""Блиц-эксперт без базы и сети: справочник, подбор, деньги, этапы оплаты, договор, сценарии."""
+"""Блиц-эксперт и аудит без базы и сети: справочник, подбор, деньги, оплата, договор, сценарии, торг."""
 
 import asyncio
 from datetime import date
@@ -7,7 +7,14 @@ from io import BytesIO
 
 import pytest
 from docx import Document
+from pydantic import ValidationError
 
+from app.blitz.audit.schemas import AuditCreateSchema, AuditDetailsSchema
+from app.blitz.audit.services.exceptions import AuditLeadRequiredError
+from app.blitz.audit.services.usecases.answer_counter import AnswerCounterUseCase
+from app.blitz.audit.services.usecases.answer_offer import AnswerOfferUseCase
+from app.blitz.audit.services.usecases.propose_price import ProposePriceUseCase
+from app.blitz.audit.services.usecases.set_team import SetTeamUseCase
 from app.blitz.billing.models import Invoice, PaymentStage
 from app.blitz.billing.services.stages import accept_payment, advance_of, amount_due
 from app.blitz.billing.services.usecases.issue_invoice import IssueInvoiceUseCase
@@ -29,7 +36,7 @@ from app.blitz.orders.services.exceptions import (
     OrderStateError,
 )
 from app.blitz.orders.services.matching import expert_fits
-from app.blitz.orders.services.presenter import details
+from app.blitz.orders.services.presenter import HIDDEN_AUDITOR, details, summary
 from app.blitz.orders.services.usecases.accept_order import AcceptOrderUseCase
 from app.blitz.orders.services.usecases.cancel_order import CancelOrderUseCase
 from app.blitz.orders.services.usecases.set_order_status import SetOrderStatusUseCase
@@ -71,6 +78,7 @@ EXPERT = account(
     [{"area": "Э12", "object": "КЛ/ТП", "category": "2", "expires_at": "2027-01-01"}],
 )
 STRANGER = account(3, UserRole.EXPERT, [{"area": "Э1", "object": "ТУ", "category": "1"}])
+LEAD = account(5, UserRole.EXPERT)
 
 
 def company() -> OrderCompany:
@@ -124,8 +132,62 @@ def order(status: OrderStatus = OrderStatus.NEW, **fields: object) -> BlitzOrder
     result.documents = []
     result.remarks = []
     result.price_changes = []
+    result.team = []
 
     return result
+
+
+def audit_details(negotiation: str = "yes") -> dict[str, object]:
+    """Анкета аудита одного ОПО с бюджетом заказчика."""
+
+    details = AuditDetailsSchema.model_validate(
+        {
+            "applicant": {
+                "full_name": "Иванов Иван Иванович",
+                "position": "Главный инженер",
+                "organization": "ООО «Ромашка»",
+                "inn": "7707083893",
+                "phone": "+79990000000",
+                "email": "safety@romashka.ru",
+            },
+            "scope": "one",
+            "objects": [
+                {
+                    "reg_number": "А01-00001-0001",
+                    "name": "Площадка котельной",
+                    "hazard_class": "III",
+                    "address": "Москва, ул. Ленина, 1",
+                    "industry": "Теплоснабжение",
+                    "hazard_signs": ["pressure"],
+                },
+            ],
+            "stages": ["planning", "documents", "report"],
+            "params": {"kind": "basic", "use_sto": False},
+            "timing": {"kind": "month"},
+            "budget": {"mode": "custom", "negotiation": negotiation},
+        },
+    )
+
+    return details.model_dump(mode="json")
+
+
+def audit_order(status: OrderStatus = OrderStatus.NEW, **fields: object) -> BlitzOrder:
+    """Заявка организации на аудит СУПБ."""
+
+    values: dict[str, object] = {
+        "service": ServiceKind.AUDIT,
+        "object_code": None,
+        "area_code": None,
+        "expert_category": None,
+        "deadline": "any",
+        "object_name": "Площадка котельной (А01-00001-0001)",
+        "contract_kind": ContractKind.AUDIT,
+        "price": Decimal("300000.00"),
+        "audit_details": audit_details(),
+    }
+    values.update(fields)
+
+    return order(status, **values)
 
 
 class FakeOrders:
@@ -140,6 +202,22 @@ class FakeOrders:
 
     async def get_expert(self, expert_id: int) -> Account | None:
         return self.expert
+
+
+class FakeAudits:
+    """Аудиторы без базы: руководитель группы — LEAD."""
+
+    def __init__(self, auditors: list[Account] | None = None) -> None:
+        self.auditors = auditors or []
+
+    async def is_lead(self, account_id: int) -> bool:
+        return account_id == LEAD.id
+
+    async def list_leads(self) -> list[Account]:
+        return [LEAD]
+
+    async def list_auditors(self) -> list[Account]:
+        return self.auditors
 
 
 class FakeNotifier:
@@ -291,7 +369,7 @@ def test_expert_accepts_fitting_order() -> None:
     usecase = AcceptOrderUseCase(FakeOrders(), notifier)
     fresh = order()
 
-    asyncio.run(usecase.execute(EXPERT, fresh, None))
+    asyncio.run(usecase.execute(EXPERT, fresh, None, False))
 
     assert fresh.status == OrderStatus.EXPERT_READY
     assert fresh.expert is EXPERT
@@ -303,7 +381,7 @@ def test_unfitting_expert_cannot_accept() -> None:
     usecase = AcceptOrderUseCase(FakeOrders(), FakeNotifier())
 
     with pytest.raises(OrderAccessError):
-        asyncio.run(usecase.execute(STRANGER, order(), None))
+        asyncio.run(usecase.execute(STRANGER, order(), None, False))
 
 
 def test_taken_order_cannot_be_accepted_twice() -> None:
@@ -311,7 +389,7 @@ def test_taken_order_cannot_be_accepted_twice() -> None:
     taken = order(OrderStatus.EXPERT_READY)
 
     with pytest.raises(OrderStateError):
-        asyncio.run(usecase.execute(EXPERT, taken, None))
+        asyncio.run(usecase.execute(EXPERT, taken, None, False))
 
 
 def test_customer_cancels_only_before_contract() -> None:
@@ -328,7 +406,7 @@ def test_customer_cancels_only_before_contract() -> None:
 
 
 def test_admin_status_needs_expert() -> None:
-    usecase = SetOrderStatusUseCase(FakeOrders(), FakeNotifier())
+    usecase = SetOrderStatusUseCase(FakeOrders(), FakeAudits(), FakeNotifier())
 
     with pytest.raises(InvalidOrderError):
         asyncio.run(usecase.execute(order(), OrderStatus.IN_PROGRESS, None))
@@ -338,9 +416,11 @@ def test_price_change_cancels_open_invoices_and_keeps_history() -> None:
     notifier = FakeNotifier()
     contract = order(OrderStatus.CONTRACT)
     contract.expert = EXPERT
-    contract.invoices.append(Invoice(id=1, stage=PaymentStage.ADVANCE, amount=Decimal("75000.00"), created_at=now()))
+    invoice = Invoice(id=1, stage=PaymentStage.ADVANCE, amount=Decimal("75000.00"), created_at=now())
+    contract.invoices.append(invoice)
+    usecase = ChangePriceUseCase(FakeOrders(), notifier)
 
-    asyncio.run(ChangePriceUseCase(FakeOrders(), notifier).execute(contract, Decimal("180000.00"), "Добавили объём"))
+    asyncio.run(usecase.execute(contract, Decimal("180000.00"), "Добавили объём"))
 
     assert contract.price == Decimal("180000.00")
     assert contract.invoices[0].canceled_at is not None
@@ -350,9 +430,10 @@ def test_price_change_cancels_open_invoices_and_keeps_history() -> None:
 
 def test_price_cannot_go_below_paid() -> None:
     working = order(OrderStatus.IN_PROGRESS, paid_amount=Decimal("75000.00"))
+    usecase = ChangePriceUseCase(FakeOrders(), FakeNotifier())
 
     with pytest.raises(InvalidOrderError, match="Уже оплачено"):
-        asyncio.run(ChangePriceUseCase(FakeOrders(), FakeNotifier()).execute(working, Decimal("50000"), "Скидка"))
+        asyncio.run(usecase.execute(working, Decimal("50000"), "Скидка"))
 
 
 def test_invoice_is_reused_until_amount_changes() -> None:
@@ -382,3 +463,163 @@ def test_expert_choosing_order_does_not_see_requisites() -> None:
 
     assert details(fresh, STRANGER).company is None
     assert details(fresh, CUSTOMER).company is not None
+
+
+def test_audit_advance_leads_to_plan() -> None:
+    contract = audit_order(OrderStatus.CONTRACT)
+
+    message = accept_payment(contract, PaymentStage.ADVANCE, Decimal("150000.00"))
+
+    assert contract.status == OrderStatus.PLAN
+    assert message is not None
+    assert "План аудита" in message
+
+
+def test_audit_contract_has_own_template_and_number() -> None:
+    signed_at = now()
+    ready = audit_order(OrderStatus.EXPERT_READY)
+
+    document = Document(BytesIO(build_paper(Paper.CONTRACT, ready, 20, signed_at)))
+    text = "\n".join(paragraph.text for paragraph in document.paragraphs)
+
+    assert "{{" not in text
+    assert f"БА-{signed_at.year}-0007" in text
+    assert "аудита системы управления промышленной безопасностью" in text
+
+
+def test_only_lead_proposes_audit_price() -> None:
+    usecase = ProposePriceUseCase(FakeOrders(), FakeAudits(), FakeNotifier())
+    fresh = audit_order(price=None)
+
+    with pytest.raises(AuditLeadRequiredError):
+        asyncio.run(usecase.execute(STRANGER, fresh, Decimal("250000")))
+
+    asyncio.run(usecase.execute(LEAD, fresh, Decimal("250000")))
+
+    assert fresh.status == OrderStatus.OFFER
+    assert fresh.expert is LEAD
+    assert fresh.offer_price == Decimal("250000")
+
+
+def test_fixed_budget_is_not_negotiated() -> None:
+    usecase = ProposePriceUseCase(FakeOrders(), FakeAudits(), FakeNotifier())
+    fixed = audit_order(audit_details=audit_details("no"))
+
+    with pytest.raises(OrderStateError):
+        asyncio.run(usecase.execute(LEAD, fixed, Decimal("400000")))
+
+
+def test_counter_price_must_be_lower_than_offer() -> None:
+    usecase = AnswerOfferUseCase(FakeOrders(), FakeNotifier())
+    offered = audit_order(OrderStatus.OFFER, offer_price=Decimal("400000"))
+    offered.expert = LEAD
+
+    with pytest.raises(InvalidOrderError):
+        asyncio.run(usecase.execute(CUSTOMER, offered, "counter", Decimal("450000")))
+
+    asyncio.run(usecase.execute(CUSTOMER, offered, "counter", Decimal("350000")))
+
+    assert offered.status == OrderStatus.COUNTER
+    assert offered.counter_price == Decimal("350000")
+
+
+def test_accepted_offer_becomes_price() -> None:
+    offered = audit_order(OrderStatus.OFFER, price=None, offer_price=Decimal("400000"))
+    offered.expert = LEAD
+
+    asyncio.run(AnswerOfferUseCase(FakeOrders(), FakeNotifier()).execute(CUSTOMER, offered, "accept", None))
+
+    assert offered.status == OrderStatus.EXPERT_READY
+    assert offered.price == Decimal("400000")
+    assert offered.offer_price is None
+
+
+def test_declined_counter_returns_order_to_leads() -> None:
+    countered = audit_order(
+        OrderStatus.COUNTER,
+        expert_id=LEAD.id,
+        offer_price=Decimal("400000"),
+        counter_price=Decimal("350000"),
+    )
+    countered.expert = LEAD
+
+    asyncio.run(AnswerCounterUseCase(FakeOrders(), FakeNotifier()).execute(LEAD, countered, False))
+
+    assert countered.status == OrderStatus.NEW
+    assert countered.expert is None
+    assert countered.counter_price is None
+
+
+def test_team_takes_only_auditors() -> None:
+    auditor = account(6, UserRole.EXPERT)
+    contract = audit_order(OrderStatus.CONTRACT, expert_id=LEAD.id)
+    contract.expert = LEAD
+    usecase = SetTeamUseCase(FakeOrders(), FakeAudits([auditor]), FakeNotifier())
+
+    with pytest.raises(InvalidOrderError):
+        asyncio.run(usecase.execute(LEAD, contract, [STRANGER.id]))
+
+    asyncio.run(usecase.execute(LEAD, contract, [auditor.id, LEAD.id]))
+
+    assert [member.account_id for member in contract.team] == [auditor.id]
+
+
+def test_customer_sees_auditor_names_from_plan() -> None:
+    contract = audit_order(OrderStatus.CONTRACT)
+    contract.expert = LEAD
+
+    assert summary(contract, CUSTOMER).expert_name == HIDDEN_AUDITOR
+    assert details(contract, CUSTOMER).team == []
+
+    contract.audit_plan = {"version": 1}
+
+    assert summary(contract, CUSTOMER).expert_name == LEAD.display_name
+    assert details(contract, CUSTOMER).team[0].lead
+
+
+def test_consultation_opens_to_leads() -> None:
+    notifier = FakeNotifier()
+    consultation = audit_order(OrderStatus.CONSULTATION)
+
+    usecase = SetOrderStatusUseCase(FakeOrders(), FakeAudits(), notifier)
+
+    asyncio.run(usecase.execute(consultation, OrderStatus.NEW, None))
+
+    assert consultation.status == OrderStatus.NEW
+    assert LEAD.id in {recipient for recipient, message in notifier.sent}
+
+
+def test_audit_statuses_are_not_for_expertise() -> None:
+    usecase = SetOrderStatusUseCase(FakeOrders(), FakeAudits(), FakeNotifier())
+
+    with pytest.raises(InvalidOrderError):
+        asyncio.run(usecase.execute(order(), OrderStatus.CONSULTATION, None))
+
+
+def test_audit_is_ordered_by_company_with_minimum_price() -> None:
+    requisites = {
+        "full_name": "Общество с ограниченной ответственностью «Ромашка»",
+        "name": "ООО «Ромашка»",
+        "inn": "7707083893",
+        "ogrn": "1027700132195",
+        "address": "Москва, ул. Ленина, 1",
+        "bank": "ПАО Сбербанк",
+        "bic": "044525225",
+        "account": "40702810938000000001",
+        "corr_account": "30101810400000000225",
+        "signer_position": "Директор",
+        "signer_name": "Иванов Иван Иванович",
+        "signer_genitive": "директора Иванова Ивана Ивановича",
+        "signer_basis": "Устава",
+    }
+    base = {"details": audit_details(), "company": requisites}
+
+    AuditCreateSchema.model_validate({**base, "price": "100000"})
+
+    with pytest.raises(ValidationError, match="не менее"):
+        AuditCreateSchema.model_validate({**base, "price": "99000"})
+
+    with pytest.raises(ValidationError, match="организация"):
+        AuditCreateSchema.model_validate(
+            {**base, "price": "100000", "customer_type": CustomerType.INDIVIDUAL},
+        )

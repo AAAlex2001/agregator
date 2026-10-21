@@ -1,0 +1,38 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.lead {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-orange-bg-soft);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-orange-primary);
+}
+
+.areas {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}

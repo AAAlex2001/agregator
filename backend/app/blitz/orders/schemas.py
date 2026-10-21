@@ -2,7 +2,7 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Self
+from typing import Any, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -107,6 +107,7 @@ class DocumentSchema(BaseModel):
     name: str
     size: int
     remark_id: int | None
+    item_number: int | None
     created_at: datetime
 
 
@@ -139,7 +140,7 @@ class PriceChangeSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    old_price: Money
+    old_price: Money | None
     new_price: Money
     reason: str
     created_at: datetime
@@ -155,15 +156,27 @@ class OrderSummarySchema(BaseModel):
     object_code: str | None
     area_code: str | None
     deadline: str
-    price: Money
+    price: Money | None
     customer_type: CustomerType
     expert_name: str | None
     created_at: datetime
     updated_at: datetime
 
 
+class TeamMemberSchema(BaseModel):
+    """Аудитор группы: имя, области аттестации и руководитель ли он."""
+
+    id: int
+    name: str
+    areas: list[str]
+    lead: bool
+
+
 class OrderSchema(OrderSummarySchema):
-    """Заявка целиком. Реквизиты и оплату видят только заказчик и назначенный эксперт."""
+    """Заявка целиком. Реквизиты и оплату видят только заказчик и назначенный эксперт.
+
+    У аудита ещё анкета, предложения цены, План и группа аудиторов.
+    """
 
     hazard_class: int | None
     expert_category: int | None
@@ -182,6 +195,12 @@ class OrderSchema(OrderSummarySchema):
     history: list[StatusChangeSchema]
     price_changes: list[PriceChangeSchema]
     invoices: list[InvoiceSchema]
+    offer_price: Money | None
+    counter_price: Money | None
+    audit_details: dict[str, Any] | None
+    audit_plan: dict[str, Any] | None
+    plan_comment: str | None
+    team: list[TeamMemberSchema]
 
 
 class OrderPageSchema(BaseModel):
