@@ -5,6 +5,7 @@ const ORDER_PAGES = [
   "/expert/orders",
   "/responses",
   "/archive",
+  "/blitz",
 ];
 
 /** Определяет активный раздел нижней панели кабинета. */

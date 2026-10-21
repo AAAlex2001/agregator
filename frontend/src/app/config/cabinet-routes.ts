@@ -21,6 +21,7 @@ const SIDEBAR_ROUTES = [
   /^\/chat(?:\/.*)?$/,
   /^\/archive(?:\/.*)?$/,
   /^\/support(?:\/.*)?$/,
+  /^\/blitz(?:\/.*)?$/,
   /^\/notifications(?:\/.*)?$/,
 ];
 
