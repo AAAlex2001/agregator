@@ -115,6 +115,7 @@ export interface BlitzChecklistItem {
 /** Справочники анкеты аудита и перечень документов. */
 export interface BlitzAuditCatalog {
   min_price: number;
+  tariff: number | null;
   scopes: BlitzChoice[];
   hazard_classes: string[];
   hazard_signs: BlitzChoice[];

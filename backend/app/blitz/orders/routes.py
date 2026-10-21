@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from pydantic import Json
 
 from app.auth.sessions.dependencies import require_user
@@ -15,7 +15,7 @@ from app.blitz.orders.dependencies import (
     get_order_repository,
     get_viewed_order,
 )
-from app.blitz.orders.models import BlitzOrder, CustomerType
+from app.blitz.orders.models import BlitzOrder, CustomerType, ServiceKind
 from app.blitz.orders.schemas import (
     AcceptOrderSchema,
     CancelOrderSchema,
@@ -81,42 +81,45 @@ async def create_order(
 
 @router.get("/orders/my")
 async def list_my_orders(
+    service: ServiceKind = Query(ServiceKind.EXPERTISE),
     user: Account = Depends(require_user),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> list[OrderSummarySchema]:
-    """Заявки заказчика."""
+    """Заявки заказчика на экспертизу или аудит."""
 
     require_customer(user)
 
-    return [summary(order, user) for order in await orders.list_for_customer(user.id)]
+    return [summary(order, user) for order in await orders.list_for_customer(user.id, service)]
 
 
 @router.get("/orders/incoming")
 async def list_incoming_orders(
+    service: ServiceKind = Query(ServiceKind.EXPERTISE),
     user: Account = Depends(require_user),
     audit_lead: bool = Depends(get_audit_lead),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> list[OrderSummarySchema]:
-    """Новые заявки, которые эксперт может взять по своим удостоверениям."""
+    """Новые заявки, которые эксперт может взять: экспертизы — по удостоверениям, аудит — руководитель."""
 
     require_expert(user)
     today = date.today()
 
-    incoming = await orders.list_unassigned()
+    incoming = await orders.list_unassigned(service)
 
     return [summary(order, user) for order in incoming if can_take(order, user, today, audit_lead)]
 
 
 @router.get("/orders/assigned")
 async def list_assigned_orders(
+    service: ServiceKind = Query(ServiceKind.EXPERTISE),
     user: Account = Depends(require_user),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> list[OrderSummarySchema]:
-    """Заявки, которые эксперт взял в работу."""
+    """Заявки, которые эксперт взял в работу или где он в аудиторской группе."""
 
     require_expert(user)
 
-    return [summary(order, user) for order in await orders.list_for_expert(user.id)]
+    return [summary(order, user) for order in await orders.list_for_expert(user.id, service)]
 
 
 @router.get("/orders/{order_id}")

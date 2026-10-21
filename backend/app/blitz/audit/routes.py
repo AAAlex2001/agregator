@@ -45,6 +45,8 @@ from app.blitz.orders.models import BlitzOrder, ServiceKind
 from app.blitz.orders.schemas import OrderSchema, TeamMemberSchema
 from app.blitz.orders.services.exceptions import OrderNotFoundError
 from app.blitz.orders.services.presenter import details, is_party
+from app.blitz.pricing.dependencies import get_tariff_repository
+from app.blitz.pricing.services.repo import TariffRepository
 from app.core.clock import now
 from models.account import Account
 
@@ -52,10 +54,14 @@ router = APIRouter(tags=["blitz-audit"])
 
 
 @router.get("/audit/catalog")
-async def get_audit_catalog() -> AuditCatalogSchema:
-    """Справочники анкеты аудита и перечень документов."""
+async def get_audit_catalog(
+    tariffs: TariffRepository = Depends(get_tariff_repository),
+) -> AuditCatalogSchema:
+    """Справочники анкеты аудита, тариф-ориентир и перечень документов."""
 
-    return AuditCatalogSchema.build(AUDIT_DOCUMENTS)
+    tariff = await tariffs.audit()
+
+    return AuditCatalogSchema.build(AUDIT_DOCUMENTS, tariff.price if tariff else None)
 
 
 @router.post("/audit", status_code=201)

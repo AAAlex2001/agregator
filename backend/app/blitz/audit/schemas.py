@@ -293,6 +293,7 @@ class AuditCatalogSchema(BaseModel):
     """Справочники анкеты аудита и перечень документов."""
 
     min_price: int
+    tariff: int | None
     scopes: list[ChoiceSchema]
     hazard_classes: list[str]
     hazard_signs: list[ChoiceSchema]
@@ -305,11 +306,12 @@ class AuditCatalogSchema(BaseModel):
     checklist: list[ChecklistItemSchema]
 
     @classmethod
-    def build(cls, checklist: tuple[str, ...]) -> Self:
-        """Справочники из констант и перечень по порядку."""
+    def build(cls, checklist: tuple[str, ...], tariff: Decimal | None) -> Self:
+        """Справочники из констант, тариф из админки и перечень по порядку."""
 
         return cls(
             min_price=int(MIN_AUDIT_PRICE),
+            tariff=int(tariff) if tariff is not None else None,
             scopes=choices(SCOPES),
             hazard_classes=list(HAZARD_CLASSES),
             hazard_signs=choices(HAZARD_SIGNS),

@@ -88,13 +88,26 @@ export function TermsSection({ state, catalog, dispatch }: TermsSectionProps) {
           <TextInput
             value={state.price}
             inputMode="decimal"
-            placeholder="Например, 300 000"
+            placeholder={`Не менее ${formatRub(catalog.min_price)}`}
             onChange={(event) => dispatch({
               type: "field/change",
               field: "price",
               value: event.target.value,
             })}
           />
+          {catalog.tariff !== null && (
+            <button
+              type="button"
+              className={styles.tariff}
+              onClick={() => dispatch({
+                type: "field/change",
+                field: "price",
+                value: String(catalog.tariff),
+              })}
+            >
+              Ориентир по тарифу: {formatRub(catalog.tariff)} — подставить
+            </button>
+          )}
         </Field>
       ) : (
         <p className={styles.note}>

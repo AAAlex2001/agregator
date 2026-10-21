@@ -1,4 +1,4 @@
-"""Цены в админке: сетка тарифов и цена конкретной заявки."""
+"""Цены в админке: сетка тарифов экспертиз, тариф аудита и цена конкретной заявки."""
 
 from fastapi import APIRouter, Depends
 
@@ -8,12 +8,20 @@ from app.blitz.orders.schemas import CatalogSchema, OrderSchema
 from app.blitz.orders.services.presenter import details
 from app.blitz.pricing.dependencies import (
     get_change_price_usecase,
+    get_save_audit_tariff_usecase,
     get_save_tariffs_usecase,
     get_tariff_repository,
 )
-from app.blitz.pricing.schemas import ChangePriceSchema, TariffSchema, TariffsSaveSchema
+from app.blitz.pricing.schemas import (
+    AuditTariffSaveSchema,
+    AuditTariffSchema,
+    ChangePriceSchema,
+    TariffSchema,
+    TariffsSaveSchema,
+)
 from app.blitz.pricing.services.repo import TariffRepository
 from app.blitz.pricing.services.usecases.change_price import ChangePriceUseCase
+from app.blitz.pricing.services.usecases.save_audit_tariff import SaveAuditTariffUseCase
 from app.blitz.pricing.services.usecases.save_tariffs import SaveTariffsUseCase
 
 router = APIRouter(tags=["admin-blitz"])
@@ -41,6 +49,27 @@ async def save_tariffs(
     """Сохранить сетку тарифов целиком."""
 
     return [TariffSchema.model_validate(item) for item in await usecase.execute(data.items)]
+
+
+@router.get("/tariffs/audit")
+async def get_audit_tariff(tariffs: TariffRepository = Depends(get_tariff_repository)) -> AuditTariffSchema:
+    """Тариф аудита СУПБ."""
+
+    tariff = await tariffs.audit()
+
+    return AuditTariffSchema(price=tariff.price if tariff else None)
+
+
+@router.put("/tariffs/audit")
+async def save_audit_tariff(
+    data: AuditTariffSaveSchema,
+    usecase: SaveAuditTariffUseCase = Depends(get_save_audit_tariff_usecase),
+) -> AuditTariffSchema:
+    """Задать тариф аудита не ниже 100 000 ₽ или убрать его."""
+
+    tariff = await usecase.execute(data.price)
+
+    return AuditTariffSchema(price=tariff.price if tariff else None)
 
 
 @router.put("/orders/{order_id}/price")

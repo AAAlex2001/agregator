@@ -32,3 +32,12 @@
 
   color: var(--text-muted);
 }
+
+.audit {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+
+  max-width: 420px;
+}

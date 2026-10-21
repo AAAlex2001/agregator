@@ -41,7 +41,11 @@ export function ChecklistPanel({ order, onChange }: BlitzStepProps) {
       text={"Приложите документы к пунктам перечня. Аудиторы проверяют их по мере поступления; "
         + "если чего-то не хватит, придут замечания."}
     >
-      {!catalog && !error && <Loader />}
+      {!catalog && !error && (
+        <div className={styles.loader}>
+          <Loader label="" />
+        </div>
+      )}
       {error && <p className={styles.error}>{error}</p>}
       {catalog && (
         <BlitzChecklistPicker

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { formatRelative } from "@/shared/lib/format-date";
 import { BLITZ_DEADLINE_LABELS } from "../../config/labels";
 import { blitzPriceLabel } from "../../model/price";
-import { blitzWording } from "../../model/status";
+import { blitzOrderPath, blitzWording } from "../../model/status";
 import type { BlitzOrderSummary } from "../../model/types";
 import { BlitzStatusBadge } from "../blitz-status-badge";
 import styles from "./style.module.scss";
@@ -30,7 +30,7 @@ export function BlitzOrderCard({ order, isExpert }: BlitzOrderCardProps) {
 
   return (
     <Link
-      href={`/blitz/orders/${order.id}`}
+      href={blitzOrderPath(order.service, order.id)}
       className={styles.card}
     >
       <div className={styles.head}>

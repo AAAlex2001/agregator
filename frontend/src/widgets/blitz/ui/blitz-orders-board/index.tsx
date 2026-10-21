@@ -2,20 +2,21 @@
 
 import { useState } from "react";
 import { BlitzOrderCard, BlitzOrderCardSkeleton, useBlitzOrders } from "@/entities/blitz-order";
-import type { BlitzOrderScope, BlitzOrderSummary } from "@/entities/blitz-order";
+import type { BlitzOrderScope, BlitzOrderSummary, BlitzService } from "@/entities/blitz-order";
 import { useUser } from "@/entities/user";
 import { Button } from "@/shared/ui/button";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { Subtitle } from "@/shared/ui/subtitle";
 import { Tabs } from "@/shared/ui/tabs";
 import { Title } from "@/shared/ui/title";
-import { CUSTOMER_TABS, EMPTY_TEXTS, EXPERT_TABS, FINISHED_STATUSES } from "../../config/board";
+import { BOARD_TEXTS, CUSTOMER_TABS, EXPERT_TABS, FINISHED_STATUSES } from "../../config/board";
 import type { BoardTab } from "../../config/board";
 import styles from "./style.module.scss";
 
-/** Что такое Блиц-эксперт. */
-const BOARD_SUBTITLE = "Экспертиза промышленной безопасности и аудит СУПБ: "
-  + "договор, оплата и результат в одном окне";
+/** Сервис, заявки которого показывает доска. */
+interface BlitzOrdersBoardProps {
+  service: BlitzService;
+}
 
 /** Сколько заготовок показать при загрузке. */
 const SKELETONS = [1, 2, 3, 4];
@@ -42,14 +43,15 @@ function scopeOf(tab: BoardTab): BlitzOrderScope {
   return tab === "assigned" ? "assigned" : "my";
 }
 
-/** Заявки Блиц-эксперта: заказчику — свои, эксперту — новые подходящие и взятые в работу. */
-export function BlitzOrdersBoard() {
+/** Заявки сервиса: заказчику — свои, исполнителю — новые подходящие и взятые в работу. */
+export function BlitzOrdersBoard({ service }: BlitzOrdersBoardProps) {
   const { user } = useUser();
   const isExpert = user?.role === "EXPERT";
+  const texts = BOARD_TEXTS[service];
   const tabs = isExpert ? EXPERT_TABS : CUSTOMER_TABS;
   const [chosenTab, setChosenTab] = useState<BoardTab | null>(null);
   const tab = chosenTab && tabs.some((item) => item.id === chosenTab) ? chosenTab : tabs[0].id;
-  const { orders, error, isLoading } = useBlitzOrders(scopeOf(tab));
+  const { orders, error, isLoading } = useBlitzOrders(scopeOf(tab), service);
   const shown = visibleOrders(orders, tab);
 
   return (
@@ -58,21 +60,11 @@ export function BlitzOrdersBoard() {
         <div className={styles.titles}>
           <Title
             as="h1"
-            text="Блиц-эксперт"
+            text={texts.title}
           />
-          <Subtitle text={BOARD_SUBTITLE} />
+          <Subtitle text={texts.subtitle} />
         </div>
-        {!isExpert && (
-          <div className={styles.actions}>
-            <Button
-              variant="outline"
-              href="/blitz/audit/new"
-            >
-              Аудит СУПБ
-            </Button>
-            <Button href="/blitz/new">Экспертиза</Button>
-          </div>
-        )}
+        {!isExpert && <Button href={texts.createHref}>{texts.createLabel}</Button>}
       </div>
 
       <Tabs
@@ -91,10 +83,10 @@ export function BlitzOrdersBoard() {
 
       {!isLoading && !error && shown.length === 0 && (
         <EmptyState
-          title={EMPTY_TEXTS[tab].title}
-          subtitle={EMPTY_TEXTS[tab].subtitle}
+          title={texts.empty[tab].title}
+          subtitle={texts.empty[tab].subtitle}
           actionLabel={isExpert ? undefined : "Подать заявку"}
-          actionHref={isExpert ? undefined : "/blitz/new"}
+          actionHref={isExpert ? undefined : texts.createHref}
         />
       )}
 

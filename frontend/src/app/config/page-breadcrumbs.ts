@@ -118,6 +118,14 @@ const CABINET_PAGES: PageTitle[] = [
     label: "Блиц-эксперт",
   },
   {
+    path: "/blitz-audit",
+    label: "Блиц-аудит",
+  },
+  {
+    path: "/commission",
+    label: "Конкурсная комиссия",
+  },
+  {
     path: "/notifications",
     label: "Уведомления",
   },
@@ -130,11 +138,16 @@ const CABINET_PAGES: PageTitle[] = [
 /** Страницы без цепочки: главные и настройки профиля. */
 const ROOT_PAGES = ["/", "/landing", "/settings"];
 
-/** Вложенные страницы Блиц-эксперта и их последнее звено. */
+/** Разделы Блиц-эксперта и Блиц-аудита в цепочке. */
+const BLITZ_EXPERT = { label: "Блиц-эксперт", href: "/blitz" };
+const BLITZ_AUDIT = { label: "Блиц-аудит", href: "/blitz-audit" };
+
+/** Вложенные страницы сервисов: раздел и последнее звено. */
 const BLITZ_PAGES = [
-  { pattern: /^\/blitz\/new$/, label: "Новая заявка" },
-  { pattern: /^\/blitz\/audit\/new$/, label: "Новый аудит СУПБ" },
-  { pattern: /^\/blitz\/orders\/[^/]+$/, label: "Заявка" },
+  { pattern: /^\/blitz\/new$/, section: BLITZ_EXPERT, label: "Новая заявка" },
+  { pattern: /^\/blitz\/orders\/[^/]+$/, section: BLITZ_EXPERT, label: "Заявка" },
+  { pattern: /^\/blitz-audit\/new$/, section: BLITZ_AUDIT, label: "Новый аудит" },
+  { pattern: /^\/blitz-audit\/orders\/[^/]+$/, section: BLITZ_AUDIT, label: "Заявка" },
 ];
 
 /** Страницы, которые выводят цепочку внутри своего содержимого. */
@@ -200,10 +213,7 @@ export function getPageBreadcrumbs(pathname: string): BreadcrumbItem[] | null {
   if (blitzPage) {
     return [
       PROFILE,
-      {
-        label: "Блиц-эксперт",
-        href: "/blitz",
-      },
+      blitzPage.section,
       {
         label: blitzPage.label,
       },

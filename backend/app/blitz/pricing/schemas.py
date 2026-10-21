@@ -33,6 +33,18 @@ class TariffsSaveSchema(BaseModel):
     items: list[TariffCellSchema] = Field(..., max_length=500)
 
 
+class AuditTariffSchema(BaseModel):
+    """Тариф аудита СУПБ. Пусто — тариф не задан."""
+
+    price: Money | None = Field(None, description="Ориентир цены аудита, ₽")
+
+
+class AuditTariffSaveSchema(BaseModel):
+    """Новый тариф аудита. Пустая цена убирает тариф."""
+
+    price: Decimal | None = Field(None, gt=0, le=MAX_PRICE, decimal_places=2, description="Цена, ₽")
+
+
 class ChangePriceSchema(BaseModel):
     """Новая цена заявки и причина для сторон."""
 

@@ -1,6 +1,7 @@
 """Физлицо платит за этап картой через ЮKassa."""
 
 from app.blitz.billing.services.stages import STAGE_TITLES, amount_due, current_stage
+from app.blitz.notifications import order_path
 from app.blitz.orders.models import BlitzOrder, CustomerType
 from app.blitz.orders.services.exceptions import OrderStateError
 from app.blitz.orders.services.rules import require_owner
@@ -54,7 +55,7 @@ class CreateCardPaymentUseCase:
             amount=amount,
             description=description,
             email=customer.email,
-            return_url=f"{get_settings().public_base_url}/blitz/orders/{order.id}?payment=return",
+            return_url=f"{get_settings().public_base_url}{order_path(order)}?payment=return",
             idempotence_key=f"blitz-payment-{payment.id}",
         )
         payment.yookassa_id = created.id

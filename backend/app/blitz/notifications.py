@@ -7,7 +7,7 @@ from fastapi import BackgroundTasks, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.blitz.orders.models import BlitzOrder
+from app.blitz.orders.models import BlitzOrder, ServiceKind
 from app.core.config import get_settings
 from app.core.database import get_db
 from models.account import Account
@@ -34,9 +34,11 @@ def order_title(order: BlitzOrder) -> str:
 
 
 def order_path(order: BlitzOrder) -> str:
-    """Адрес заявки в кабинете."""
+    """Адрес заявки в кабинете: у экспертизы и аудита свои разделы."""
 
-    return f"/blitz/orders/{order.id}"
+    section = "blitz-audit" if order.service == ServiceKind.AUDIT else "blitz"
+
+    return f"/{section}/orders/{order.id}"
 
 
 class BlitzNotifier:

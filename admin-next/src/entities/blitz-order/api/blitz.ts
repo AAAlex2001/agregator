@@ -114,6 +114,22 @@ export const saveBlitzTariffs = async (items: BlitzTariffCell[]): Promise<BlitzT
   return response.json();
 };
 
+/** Тариф аудита СУПБ или null, если не задан. */
+export const fetchAuditTariff = async (signal: AbortSignal): Promise<number | null> => {
+  const response = await adminFetch("/blitz/tariffs/audit", { signal });
+  const tariff: { price: number | null } = await response.json();
+
+  return tariff.price;
+};
+
+/** Задать тариф аудита не ниже 100 000 ₽ или убрать его пустой ценой. */
+export const saveAuditTariff = async (price: number | null): Promise<number | null> => {
+  const response = await adminFetch("/blitz/tariffs/audit", jsonBody("PUT", { price }));
+  const tariff: { price: number | null } = await response.json();
+
+  return tariff.price;
+};
+
 /** Эксперты с анкетой аудитора и признак руководителя группы. */
 export const fetchBlitzAuditors = async (signal: AbortSignal): Promise<BlitzTeamMember[]> => {
   const response = await adminFetch("/blitz/auditors", { signal });

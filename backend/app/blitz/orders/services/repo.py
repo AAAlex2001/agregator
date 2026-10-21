@@ -4,7 +4,7 @@ from sqlalchemy import Select, exists, func, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.blitz.audit.models import AuditTeamMember
-from app.blitz.orders.models import BlitzOrder, OrderStatus
+from app.blitz.orders.models import BlitzOrder, OrderStatus, ServiceKind
 from models.account import Account, UserRole
 from models.expert import Expert
 
@@ -34,15 +34,19 @@ class OrderRepository:
 
         return await self.db.scalar(stmt)
 
-    async def list_for_customer(self, customer_id: int) -> list[BlitzOrder]:
-        """Заявки заказчика, новые первыми."""
+    async def list_for_customer(self, customer_id: int, service: ServiceKind) -> list[BlitzOrder]:
+        """Заявки заказчика по сервису, новые первыми."""
 
-        stmt = select(BlitzOrder).where(BlitzOrder.customer_id == customer_id).order_by(*NEWEST_FIRST)
+        stmt = (
+            select(BlitzOrder)
+            .where(BlitzOrder.customer_id == customer_id, BlitzOrder.service == service)
+            .order_by(*NEWEST_FIRST)
+        )
 
         return list(await self.db.scalars(stmt))
 
-    async def list_for_expert(self, expert_id: int) -> list[BlitzOrder]:
-        """Заявки, которые эксперт взял или где он в аудиторской группе, новые первыми."""
+    async def list_for_expert(self, expert_id: int, service: ServiceKind) -> list[BlitzOrder]:
+        """Заявки сервиса, которые эксперт взял или где он в аудиторской группе, новые первыми."""
 
         in_team = exists().where(
             AuditTeamMember.order_id == BlitzOrder.id,
@@ -50,18 +54,22 @@ class OrderRepository:
         )
         stmt = (
             select(BlitzOrder)
-            .where(or_(BlitzOrder.expert_id == expert_id, in_team))
+            .where(BlitzOrder.service == service, or_(BlitzOrder.expert_id == expert_id, in_team))
             .order_by(*NEWEST_FIRST)
         )
 
         return list(await self.db.scalars(stmt))
 
-    async def list_unassigned(self) -> list[BlitzOrder]:
-        """Новые заявки без эксперта: из них эксперт видит подходящие ему."""
+    async def list_unassigned(self, service: ServiceKind) -> list[BlitzOrder]:
+        """Новые заявки сервиса без исполнителя: из них эксперт видит подходящие ему."""
 
         stmt = (
             select(BlitzOrder)
-            .where(BlitzOrder.status == OrderStatus.NEW, BlitzOrder.expert_id.is_(None))
+            .where(
+                BlitzOrder.service == service,
+                BlitzOrder.status == OrderStatus.NEW,
+                BlitzOrder.expert_id.is_(None),
+            )
             .order_by(*NEWEST_FIRST)
         )
 

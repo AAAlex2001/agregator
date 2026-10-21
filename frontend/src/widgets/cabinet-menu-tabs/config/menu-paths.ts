@@ -6,6 +6,7 @@ const ORDER_PAGES = [
   "/responses",
   "/archive",
   "/blitz",
+  "/blitz-audit",
 ];
 
 /** Определяет активный раздел нижней панели кабинета. */

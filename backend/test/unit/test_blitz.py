@@ -47,7 +47,9 @@ from app.blitz.orders.services.validators import (
     resolve_kind,
     validate_codes,
 )
+from app.blitz.pricing.models import Tariff
 from app.blitz.pricing.services.usecases.change_price import ChangePriceUseCase
+from app.blitz.pricing.services.usecases.save_audit_tariff import SaveAuditTariffUseCase
 from app.core.clock import now
 from app.core.money import amount_in_words, format_amount, number_to_words, vat_included
 from models.account import Account, UserRole
@@ -623,3 +625,37 @@ def test_audit_is_ordered_by_company_with_minimum_price() -> None:
         AuditCreateSchema.model_validate(
             {**base, "price": "100000", "customer_type": CustomerType.INDIVIDUAL},
         )
+
+
+class FakeTariffs:
+    """Тариф аудита без базы."""
+
+    def __init__(self) -> None:
+        self.tariff: Tariff | None = None
+
+    async def audit(self) -> Tariff | None:
+        return self.tariff
+
+    def add(self, tariff: Tariff) -> None:
+        self.tariff = tariff
+
+    async def delete(self, tariff: Tariff) -> None:
+        self.tariff = None
+
+    async def save(self) -> None:
+        return None
+
+
+def test_audit_tariff_is_not_below_minimum() -> None:
+    tariffs = FakeTariffs()
+    usecase = SaveAuditTariffUseCase(tariffs)
+
+    with pytest.raises(InvalidOrderError, match="не менее"):
+        asyncio.run(usecase.execute(Decimal("90000")))
+
+    saved = asyncio.run(usecase.execute(Decimal("150000")))
+
+    assert saved is not None
+    assert saved.price == Decimal("150000")
+    assert asyncio.run(usecase.execute(None)) is None
+    assert tariffs.tariff is None

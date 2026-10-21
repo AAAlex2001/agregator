@@ -75,7 +75,7 @@ export function useCreateBlitzAudit() {
           ? "Заявка отправлена: менеджер свяжется с вами"
           : "Заявка отправлена руководителям аудиторских групп",
       );
-      router.push(`/blitz/orders/${order.id}`);
+      router.push(`/blitz-audit/orders/${order.id}`);
     } catch (error) {
       dispatch({ type: "submit/error" });
       showError(error instanceof Error ? error.message : "Не удалось отправить заявку");

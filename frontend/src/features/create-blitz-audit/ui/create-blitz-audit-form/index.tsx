@@ -25,7 +25,14 @@ export function CreateBlitzAuditForm() {
   }
 
   if (!catalog) {
-    return <Loader />;
+    return (
+      <div className={styles.loader}>
+        <Loader
+          label=""
+          size="lg"
+        />
+      </div>
+    );
   }
 
   return (
@@ -90,7 +97,7 @@ export function CreateBlitzAuditForm() {
       <div className={styles.actions}>
         <Button
           variant="outline"
-          href="/blitz"
+          href="/blitz-audit"
         >
           Отмена
         </Button>

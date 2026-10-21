@@ -32,7 +32,14 @@ export function CommissionForm() {
   }
 
   if (!form.catalog) {
-    return <Loader />;
+    return (
+      <div className={styles.loader}>
+        <Loader
+          label=""
+          size="lg"
+        />
+      </div>
+    );
   }
 
   return (

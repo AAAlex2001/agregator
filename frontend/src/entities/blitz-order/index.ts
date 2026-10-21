@@ -18,6 +18,7 @@ export { setBlitzTeam } from "./api/set-blitz-team";
 export { uploadBlitzChecklist } from "./api/upload-blitz-checklist";
 export { uploadBlitzStep } from "./api/upload-blitz-step";
 export { EMPTY_BLITZ_COMPANY } from "./config/company";
+export { BLITZ_SECTIONS } from "./config/sections";
 export {
   BLITZ_AUDIT_ACCEPT,
   BLITZ_AUDIT_FILE_MAX_SIZE,
@@ -37,6 +38,7 @@ export {
 } from "./config/labels";
 export { blitzPriceLabel, parseBlitzPrice } from "./model/price";
 export {
+  blitzOrderPath,
   blitzWording,
   isAuditLead,
   isNegotiable,
@@ -92,6 +94,7 @@ export type {
   BlitzRemark,
   BlitzRequisites,
   BlitzResult,
+  BlitzService,
   BlitzStatus,
   BlitzTariff,
   BlitzUpload,

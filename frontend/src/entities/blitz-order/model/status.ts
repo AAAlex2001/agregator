@@ -6,6 +6,7 @@ import {
   BLITZ_STATUS_LABELS,
   BLITZ_STEPS,
 } from "../config/labels";
+import { BLITZ_SECTIONS } from "../config/sections";
 import { BLITZ_WORDING } from "../config/wording";
 import type { BlitzOrder, BlitzService, BlitzStatus } from "./types";
 
@@ -49,6 +50,11 @@ export function blitzSteps(service: BlitzService): BlitzStatus[] {
 /** Номер текущего шага прогресса. */
 export function blitzStepIndex(status: BlitzStatus, service: BlitzService): number {
   return blitzSteps(service).findIndex((step) => step === STEP_OF_STATUS[status]);
+}
+
+/** Адрес заявки в разделе её сервиса. */
+export function blitzOrderPath(service: BlitzService, orderId: number): string {
+  return `${BLITZ_SECTIONS[service]}/orders/${orderId}`;
 }
 
 /** Формулировки под сервис заявки. */

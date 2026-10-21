@@ -4,10 +4,12 @@ import {
   BlitzDocuments,
   BlitzHistory,
   BlitzProgress,
+  BLITZ_SECTIONS,
   BlitzStatusBadge,
   blitzPriceLabel,
   useBlitzOrder,
 } from "@/entities/blitz-order";
+import type { BlitzService } from "@/entities/blitz-order";
 import { useUser } from "@/entities/user";
 import { BlitzOrderActions } from "@/features/manage-blitz-order";
 import { EmptyState } from "@/shared/ui/empty-state";
@@ -22,14 +24,15 @@ import { PriceHistory } from "../price-history";
 import { RemarksThread } from "../remarks-thread";
 import styles from "./style.module.scss";
 
-/** Номер заявки и вернулся ли заказчик со страницы оплаты. */
+/** Номер заявки, раздел, из которого её открыли, и вернулся ли заказчик со страницы оплаты. */
 interface BlitzOrderViewProps {
   orderId: number;
+  service: BlitzService;
   afterPayment: boolean;
 }
 
 /** Страница заявки: статус, прогресс, что сделать сейчас, анкета аудита, файлы, счета и история. */
-export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
+export function BlitzOrderView({ orderId, service, afterPayment }: BlitzOrderViewProps) {
   const { order, error, isLoading, applyOrder } = useBlitzOrder(orderId, afterPayment);
   const { user } = useUser();
   const isExpert = user?.role === "EXPERT";
@@ -37,7 +40,12 @@ export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
   if (isLoading) {
     return (
       <div className={styles.page}>
-        <Loader />
+        <div className={styles.loader}>
+          <Loader
+            label=""
+            size="lg"
+          />
+        </div>
       </div>
     );
   }
@@ -49,7 +57,7 @@ export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
           title="Заявка не найдена"
           subtitle={error ?? "Возможно, её отменили или она вам недоступна"}
           actionLabel="Ко всем заявкам"
-          actionHref="/blitz"
+          actionHref={BLITZ_SECTIONS[service]}
         />
       </div>
     );

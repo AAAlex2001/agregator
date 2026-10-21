@@ -6,5 +6,6 @@ export { ExpertForm } from "./manage/ui/expert-form";
 export { PriceForm } from "./manage/ui/price-form";
 export { StatusForm } from "./manage/ui/status-form";
 export { useBlitzOrder } from "./read-order/use-blitz-order";
+export { AuditTariffForm } from "./tariffs/audit-tariff-form";
 export { TariffsGrid } from "./tariffs/tariffs-grid";
 export { useBlitzTariffs } from "./tariffs/use-blitz-tariffs";

@@ -1,41 +1,12 @@
-import { CommissionForm } from "@/features/apply-to-commission";
-import { Subtitle } from "@/shared/ui/subtitle";
-import { Title } from "@/shared/ui/title";
-import { COMMISSION_OFFERS } from "../../config/offers";
+import { CommissionContent } from "../commission-content";
 import styles from "./style.module.scss";
 
-/** Что даёт отбор кандидату. */
-const SUBTITLE = "Конкурсная комиссия отбирает аттестованных экспертов промышленной безопасности "
-  + "для работы над заявками платформы: заключения, договоры и оплата — через нас.";
-
-/** Конкурсный отбор экспертов: что предлагаем и заявка кандидата. */
+/** Конкурсный отбор экспертов на сайте. */
 export function CommissionPage() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <section className={styles.hero}>
-          <span className={styles.badge}>Конкурсный отбор</span>
-          <Title
-            as="h1"
-            text="Примем эксперта в команду"
-          />
-          <Subtitle text={SUBTITLE} />
-          <ul className={styles.offers}>
-            {COMMISSION_OFFERS.map((offer) => (
-              <li
-                key={offer.title}
-                className={styles.offer}
-              >
-                <span className={styles.offerTitle}>{offer.title}</span>
-                <span className={styles.offerText}>{offer.text}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>Заявка в конкурсную комиссию</h2>
-          <CommissionForm />
-        </section>
+        <CommissionContent />
       </div>
     </main>
   );

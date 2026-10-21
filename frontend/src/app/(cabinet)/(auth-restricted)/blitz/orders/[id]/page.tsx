@@ -23,6 +23,7 @@ export default async function BlitzOrderPage({ params, searchParams }: BlitzOrde
   return (
     <BlitzOrderView
       orderId={orderId}
+      service="expertise"
       afterPayment={payment === "return"}
     />
   );

@@ -1,0 +1,11 @@
+.page {
+  width: 100%;
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 20px var(--content-page-px, var(--page-px));
+  box-sizing: border-box;
+
+  @media (min-width: 1440px) {
+    padding-top: 24px;
+  }
+}

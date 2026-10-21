@@ -41,7 +41,11 @@ export function TeamPanel({ order, onChange }: BlitzStepProps) {
       text={"Вы — руководитель группы. Добавьте аудиторов: "
         + "их ФИО и области аттестации попадут в План."}
     >
-      {auditors === null && <Loader />}
+      {auditors === null && (
+        <div className={styles.loader}>
+          <Loader label="" />
+        </div>
+      )}
       {error && <p className={styles.error}>{error}</p>}
       {auditors !== null && (
         <Field label="Аудиторы">
