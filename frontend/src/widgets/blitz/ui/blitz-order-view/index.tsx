@@ -10,9 +10,7 @@ import {
 import { useUser } from "@/entities/user";
 import { BlitzOrderActions } from "@/features/manage-blitz-order";
 import { formatRub } from "@/shared/lib/format-rub";
-import { Button } from "@/shared/ui/button";
 import { EmptyState } from "@/shared/ui/empty-state";
-import { ArrowLeftIcon } from "@/shared/ui/icons";
 import { Loader } from "@/shared/ui/loader";
 import { OrderFacts } from "../order-facts";
 import { OrderInvoices } from "../order-invoices";
@@ -34,30 +32,28 @@ export function BlitzOrderView({ orderId, afterPayment }: BlitzOrderViewProps) {
   const isExpert = user?.role === "EXPERT";
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <div className={styles.page}>
+        <Loader />
+      </div>
+    );
   }
 
   if (error || !order) {
     return (
-      <EmptyState
-        title="Заявка не найдена"
-        subtitle={error ?? "Возможно, её отменили или она вам недоступна"}
-        actionLabel="Ко всем заявкам"
-        actionHref="/blitz"
-      />
+      <div className={styles.page}>
+        <EmptyState
+          title="Заявка не найдена"
+          subtitle={error ?? "Возможно, её отменили или она вам недоступна"}
+          actionLabel="Ко всем заявкам"
+          actionHref="/blitz"
+        />
+      </div>
     );
   }
 
   return (
     <div className={styles.page}>
-      <Button
-        href="/blitz"
-        variant="transparent"
-      >
-        <ArrowLeftIcon />
-        Все заявки
-      </Button>
-
       <header className={styles.head}>
         <div className={styles.titleRow}>
           <span className={styles.number}>Заявка №{order.id}</span>
