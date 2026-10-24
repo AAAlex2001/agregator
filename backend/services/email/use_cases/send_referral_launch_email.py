@@ -3,7 +3,7 @@
 import asyncio
 import logging
 
-from models.account import Account
+from models.account import Account, UserRole
 from schemas.email import ReferralLaunchEmailContext
 from services.email.formatting import format_pluses
 from services.email.repository import EmailRepository
@@ -33,7 +33,7 @@ class SendReferralLaunchEmailUseCase:
         self, after_email: str | None = None, news_enabled: bool = True
     ) -> list[Account]:
         "Получатели по порядку email; after_email — продолжить после последнего отправленного, news_enabled=False — те, кто отключил новостные письма."
-        return await self.repo.list_experts_for_announcement(after_email, news_enabled)
+        return await self.repo.list_announcement_recipients(UserRole.EXPERT, after_email, news_enabled)
 
     async def execute(self, after_email: str | None = None, news_enabled: bool = True) -> int:
         "Отправляет всем получателям. Возвращает число успешно отправленных писем."

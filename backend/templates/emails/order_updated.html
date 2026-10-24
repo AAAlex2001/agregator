@@ -1,88 +1,16 @@
 {% extends "base.html" %}
+{% import "_ui.html" as ui %}
 
 {% block preheader %}Заявка «{{ order_title }}», на которую вы откликнулись, изменилась{% endblock %}
 
 {% block content %}
-<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #FF8A00; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
-  Заявка изменена
-</p>
-<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
-  Здравствуйте, {{ expert_greeting }}
-</h1>
-<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
-  Заказчик внёс изменения в заявку
-  <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>,
-  на которую вы откликались. Посмотрите актуальные условия и решите, подходят ли они вам.
-</p>
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding: 22px 24px; background: #F8FAFC; border-radius: 12px;">
-      <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 1.4px;">Что изменилось</p>
-      <p style="margin: 0; font-size: 14px; line-height: 22px; color: #0F172A; white-space: pre-wrap;">{{ changes_summary }}</p>
-    </td>
-  </tr>
-</table>
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td style="height: 20px; line-height: 20px; font-size: 0;" height="20">&nbsp;</td></tr>
-</table>
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding: 22px 24px; background: #F8FAFC; border-radius: 12px;">
-      <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 1.4px;">Актуальная заявка</p>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-        {% if order.company %}
-        <tr>
-          <td class="kv-label" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Компания</td>
-          <td class="kv-value" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ order.company }}</td>
-        </tr>
-        {% endif %}
-        <tr>
-          <td class="kv-label" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Бюджет</td>
-          <td class="kv-value" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 18px; line-height: 24px; color: #0F172A; font-weight: 700; text-align: right;">{{ order.sum_amount | rubles }}</td>
-        </tr>
-        <tr class="kv-row-last">
-          <td class="kv-label" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Срок</td>
-          <td class="kv-value" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ order.deadline | date_ru }}</td>
-        </tr>
-      </table>
-      {% if order.badges %}
-      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #E2E8F0;">
-        <p style="margin: 0 0 8px 0; font-size: 12px; line-height: 16px; color: #94A3B8; font-weight: 600;">Обозначения</p>
-        <div>
-          {% for code in order.badges %}<span style="display: inline-block; padding: 4px 10px; margin: 0 6px 6px 0; background: #EEF2F6; color: #0F172A; border-radius: 6px; font-size: 13px; line-height: 18px; font-weight: 600;">{{ code }}</span>{% endfor %}
-        </div>
-      </div>
-      {% endif %}
-      {% if order.comment %}
-      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #E2E8F0;">
-        <p style="margin: 0 0 4px 0; font-size: 12px; line-height: 16px; color: #94A3B8; font-weight: 600;">Комментарий</p>
-        <p style="margin: 0; font-size: 14px; line-height: 22px; color: #0F172A; white-space: pre-wrap;">{{ order.comment }}</p>
-      </div>
-      {% endif %}
-    </td>
-  </tr>
-</table>
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td style="height: 40px; line-height: 40px; font-size: 0;" height="40">&nbsp;</td></tr>
-</table>
-
-<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td>
-      <!--[if mso]>
-      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ cta_url }}" style="height:44px;v-text-anchor:middle;width:200px;" arcsize="18%" stroke="f" fillcolor="#0F172A">
-        <w:anchorlock/>
-        <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:600;">Открыть заявку</center>
-      </v:roundrect>
-      <![endif]-->
-      <!--[if !mso]><!-->
-      <a href="{{ cta_url }}" style="display: inline-block; padding: 12px 28px; background: #0F172A; color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">Открыть заявку</a>
-      <!--<![endif]-->
-    </td>
-  </tr>
-</table>
+{{ ui.eyebrow("Заявка изменена") }}
+{{ ui.h1("Здравствуйте, " ~ expert_greeting) }}
+{% call ui.text(24) %}Заказчик внёс изменения в заявку «{{ order_title }}», на которую вы откликались. Посмотрите актуальные условия и решите, подходят ли они вам.{% endcall %}
+{% call ui.card("Что изменилось", "accent") %}
+<p style="margin: 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 16px; line-height: 25px; color: #2B2F33; white-space: pre-wrap;">{{ changes_summary }}</p>
+{% endcall %}
+{% with card_title = "Актуальная заявка" %}{% include "_order_card.html" %}{% endwith %}
+{{ ui.spacer(12) }}
+{{ ui.button("Открыть заявку", cta_url) }}
 {% endblock %}

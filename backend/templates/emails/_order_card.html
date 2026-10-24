@@ -1,0 +1,9 @@
+{# Карточка заявки: компания, бюджет, срок, обозначения и комментарий. Ожидает переменную order. #}
+{% import "_ui.html" as ui %}
+{% call ui.card(card_title | default("Заявка")) %}
+{% if order.company %}{{ ui.field("Компания", order.company) }}{% endif %}
+{{ ui.field("Бюджет", order.sum_amount | rubles, strong=True) }}
+{{ ui.field("Срок", order.deadline | date_ru) }}
+{% if order.badges %}{{ ui.badges(order.badges, "Обозначения") }}{% endif %}
+{% if order.comment %}{{ ui.field("Комментарий", order.comment, pre=True) }}{% endif %}
+{% endcall %}

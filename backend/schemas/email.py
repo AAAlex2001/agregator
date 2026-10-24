@@ -145,6 +145,11 @@ class ReferralLaunchEmailContext(BaseContext):
     unsubscribe_url: str
 
 
+class FeatureLaunchEmailContext(BaseContext):
+    "Контекст письма о новых сервисах: имя получателя."
+    recipient_greeting: str
+
+
 class NewLaborListingContext(BaseContext):
     recipient_greeting: str
     heading: str

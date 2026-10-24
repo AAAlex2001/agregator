@@ -43,7 +43,7 @@ async def test_letter_has_amounts_cta_and_one_click_unsubscribe() -> None:
 
 async def test_failed_address_does_not_stop_mailing() -> None:
     repo = MagicMock()
-    repo.list_experts_for_announcement = AsyncMock(
+    repo.list_announcement_recipients = AsyncMock(
         return_value=[
             SimpleNamespace(email="a@example.com", first_name="А"),
             SimpleNamespace(email="b@example.com", first_name=None),

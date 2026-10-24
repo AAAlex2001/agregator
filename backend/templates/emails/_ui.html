@@ -1,0 +1,181 @@
+{# Блоки писем: подключаются в шаблоне через {% import "_ui.html" as ui %}. #}
+
+{% macro eyebrow(text, color="#FF8A00") %}
+<p style="margin: 0 0 12px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 13px; line-height: 18px; font-weight: 700; color: {{ color }}; text-transform: uppercase; letter-spacing: 1px;">{{ text }}</p>
+{% endmacro %}
+
+{% macro h1(text) %}
+<h1 class="h1" style="margin: 0 0 24px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 36px; line-height: 44px; font-weight: 400; color: #2B2F33; mso-line-height-rule: exactly;">{{ text }}</h1>
+{% endmacro %}
+
+{% macro h2(text, top=40) %}
+<h2 class="h2" style="margin: {{ top }}px 0 20px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 28px; line-height: 36px; font-weight: 400; color: #2B2F33; mso-line-height-rule: exactly;">{{ text }}</h2>
+{% endmacro %}
+
+{% macro h3(text, color="#2B2F33") %}
+<h3 style="margin: 0 0 8px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 20px; line-height: 28px; font-weight: 700; color: {{ color }};">{{ text }}</h3>
+{% endmacro %}
+
+{% macro text(bottom=16) %}
+<p style="margin: 0 0 {{ bottom }}px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 17px; line-height: 27px; color: #2B2F33;">{{ caller() }}</p>
+{% endmacro %}
+
+{% macro small(bottom=12) %}
+<p style="margin: 0 0 {{ bottom }}px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 14px; line-height: 22px; color: #6B7280;">{{ caller() }}</p>
+{% endmacro %}
+
+{% macro spacer(height=24) %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: {{ height }}px; line-height: {{ height }}px; font-size: 0;" height="{{ height }}">&nbsp;</td></tr>
+</table>
+{% endmacro %}
+
+{% macro divider(top=32, bottom=32) %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="padding: {{ top }}px 0 {{ bottom }}px 0;"><div style="height: 1px; background: #E5E7EB; line-height: 1px; font-size: 0;">&nbsp;</div></td></tr>
+</table>
+{% endmacro %}
+
+{% macro note(tone="grey", bottom=24) %}
+{% set backgrounds = {"grey": "#F2F4F7", "accent": "#FFF3E0", "danger": "#FDECEC", "success": "#E8F7EE"} %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 {{ bottom }}px 0;">
+  <tr>
+    <td style="padding: 24px 28px; background: {{ backgrounds[tone] }}; border-radius: 12px; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 15px; line-height: 24px; color: #2B2F33;">
+      {{ caller() }}
+    </td>
+  </tr>
+</table>
+{% endmacro %}
+
+{% macro card(title=None, tone="grey", bottom=20) %}
+{% set backgrounds = {"grey": "#F2F4F7", "accent": "#FFF3E0"} %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 {{ bottom }}px 0;">
+  <tr>
+    <td class="card" style="padding: 28px; background: {{ backgrounds[tone] }}; border-radius: 16px; font-family: Arial, Tahoma, Verdana, sans-serif;">
+      {% if title %}
+      <p style="margin: 0 0 16px 0; font-size: 20px; line-height: 28px; font-weight: 700; color: #2B2F33;">{{ title }}</p>
+      {% endif %}
+      {{ caller() }}
+    </td>
+  </tr>
+</table>
+{% endmacro %}
+
+{% macro field(label, value=None, strong=False, pre=False) %}
+<p style="margin: 0 0 4px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 13px; line-height: 18px; color: #6B7280;">{{ label }}</p>
+<p style="margin: 0 0 16px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: {{ 22 if strong else 16 }}px; line-height: {{ 28 if strong else 24 }}px; font-weight: {{ 700 if strong else 400 }}; color: #2B2F33;{% if pre %} white-space: pre-wrap;{% endif %}">{% if caller %}{{ caller() }}{% else %}{{ value }}{% endif %}</p>
+{% endmacro %}
+
+{% macro badges(items, label=None) %}
+{% if label %}
+<p style="margin: 0 0 8px 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 13px; line-height: 18px; color: #6B7280;">{{ label }}</p>
+{% endif %}
+<div style="margin: 0 0 12px 0;">
+  {% for item in items %}<span style="display: inline-block; padding: 6px 12px; margin: 0 6px 6px 0; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 14px; line-height: 18px; color: #2B2F33;">{{ item }}</span>{% endfor %}
+</div>
+{% endmacro %}
+
+{% macro button(label, url, bottom=8) %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 {{ bottom }}px 0;">
+  <tr>
+    <td align="center" style="border-radius: 8px; background: #FF8A00;">
+      <!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ url }}" style="height:56px;v-text-anchor:middle;width:560px;" arcsize="15%" stroke="f" fillcolor="#FF8A00">
+        <w:anchorlock/>
+        <center style="color:#FFFFFF;font-family:Arial,sans-serif;font-size:17px;font-weight:bold;">{{ label }}</center>
+      </v:roundrect>
+      <![endif]-->
+      <!--[if !mso]><!-->
+      <a href="{{ url }}" target="_blank" style="display: block; padding: 18px 24px; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 17px; line-height: 20px; font-weight: 700; color: #FFFFFF; text-decoration: none; border-radius: 8px; text-align: center;">{{ label }}</a>
+      <!--<![endif]-->
+    </td>
+  </tr>
+</table>
+{% endmacro %}
+
+{% macro button_dark(label, url) %}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 !important;">
+  <tr>
+    <td style="border-radius: 8px; background: #2B2F33;">
+      <a href="{{ url }}" target="_blank" style="display: inline-block; padding: 16px 28px; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 16px; line-height: 20px; color: #FFFFFF; text-decoration: none; border-radius: 8px;">{{ label }}</a>
+    </td>
+  </tr>
+</table>
+{% endmacro %}
+
+{% macro hero(title, label=None, url=None, bottom=40) %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 {{ bottom }}px 0;">
+  <tr>
+    <td class="hero" style="padding: 36px 32px; background: #F2F4F7; border-radius: 16px; font-family: Arial, Tahoma, Verdana, sans-serif;">
+      <p class="hero-title" style="margin: 0 0 {{ 12 if caller else 24 }}px 0; font-size: 28px; line-height: 34px; font-weight: 700; color: #2B2F33;">{{ title }}</p>
+      {% if caller %}
+      <p style="margin: 0 0 24px 0; font-size: 16px; line-height: 24px; color: #4B5563;">{{ caller() }}</p>
+      {% endif %}
+      {% if label and url %}{{ button_dark(label, url) }}{% endif %}
+    </td>
+  </tr>
+</table>
+{% endmacro %}
+
+{% macro checklist(items, bottom=24) %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 {{ bottom }}px 0;">
+  {% for item in items %}
+  <tr>
+    <td width="40" style="width: 40px; padding: 0 0 16px 0; vertical-align: top;">
+      <div style="width: 26px; height: 26px; border-radius: 13px; background: #FF8A00; color: #FFFFFF; font-family: Arial, sans-serif; font-size: 15px; line-height: 26px; font-weight: 700; text-align: center;">&#10003;</div>
+    </td>
+    <td style="padding: 1px 0 16px 0; vertical-align: top; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 17px; line-height: 25px; color: #2B2F33;">{{ item }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endmacro %}
+
+{% macro steps(items, bottom=24) %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 {{ bottom }}px 0;">
+  {% for item in items %}
+  <tr>
+    <td width="40" style="width: 40px; padding: 0 0 18px 0; vertical-align: top;">
+      <div style="width: 26px; height: 26px; border-radius: 13px; background: #FF8A00; color: #FFFFFF; font-family: Arial, sans-serif; font-size: 14px; line-height: 26px; font-weight: 700; text-align: center;">{{ loop.index }}</div>
+    </td>
+    <td style="padding: 1px 0 18px 0; vertical-align: top; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 17px; line-height: 25px; color: #2B2F33;">{{ item }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endmacro %}
+
+{% macro dark(title, subtitle=None, label=None, url=None, bottom=40) %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 {{ bottom }}px 0;">
+  <tr>
+    <td class="hero" style="padding: 36px 32px; background: #2B2F33; border-radius: 16px; font-family: Arial, Tahoma, Verdana, sans-serif; color: #FFFFFF;">
+      <p class="hero-title" style="margin: 0 0 20px 0; font-size: 32px; line-height: 38px; font-weight: 400; color: #FFFFFF;">{{ title }}</p>
+      {% if subtitle %}
+      <p style="margin: 0 0 4px 0; font-size: 18px; line-height: 26px; font-weight: 700; color: #FFFFFF;">{{ subtitle }}</p>
+      {% endif %}
+      <p style="margin: 0 0 {{ 28 if label else 0 }}px 0; font-size: 17px; line-height: 26px; color: #E5E7EB;">{{ caller() }}</p>
+      {% if label and url %}{{ button(label, url, 0) }}{% endif %}
+    </td>
+  </tr>
+</table>
+{% endmacro %}
+
+{% macro links(title, items) %}
+{{ h2(title, 0) }}
+{% for item in items %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 12px 0;">
+  <tr>
+    <td style="border: 1px solid #E5E7EB; border-radius: 12px;">
+      <a href="{{ item[1] }}" target="_blank" style="display: block; padding: 24px; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 17px; line-height: 24px; color: #2B2F33; text-decoration: none;">{{ item[0] }}</a>
+    </td>
+  </tr>
+</table>
+{% endfor %}
+{% endmacro %}
+
+{% macro signature(email="expert@plus-resurs.com") %}
+<p style="margin: 32px 0 0 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 17px; line-height: 27px; color: #2B2F33;">
+  С уважением,<br>команда «Ресурс-Плюс»
+</p>
+<p style="margin: 6px 0 0 0; font-family: Arial, Tahoma, Verdana, sans-serif; font-size: 14px; line-height: 22px; color: #6B7280;">
+  <a href="mailto:{{ email }}" style="color: #6B7280; text-decoration: underline;">{{ email }}</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://plus-resurs.com" target="_blank" style="color: #6B7280; text-decoration: underline;">plus-resurs.com</a>
+</p>
+{% endmacro %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "_ui.html" as ui %}
 
 {% block preheader %}
 {% if outcome == "won" %}Уведомление о победе №{{ order_number }} «{{ order_title }}»{% else %}Заказчик выбрал другого исполнителя по заявке «{{ order_title }}»{% endif %}
@@ -6,124 +7,37 @@
 
 {% block content %}
 {% if outcome == "won" %}
-<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #047857; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
-  Уведомление о победе
-</p>
-<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
-  Добрый день, {{ expert_greeting }}!
-</h1>
-<p style="margin: 0 0 20px 0; font-size: 15px; line-height: 24px; color: #475569;">
-  Вы признаны Победителем в процедуре
-  <span style="color: #0F172A; font-weight: 600;">№{{ order_number }} «{{ order_title }}»</span>{% if customer_name %} (заказчик
-  <span style="color: #0F172A; font-weight: 500;">«{{ customer_name }}»</span>){% endif %}{% if winning_price %} с ценой
-  <span style="color: #0F172A; font-weight: 600;">{{ winning_price }}</span>{% endif %}.
-</p>
+{{ ui.eyebrow("Уведомление о победе", "#047857") }}
+{{ ui.h1("Добрый день, " ~ expert_greeting ~ "!") }}
+{% call ui.text(24) %}Вы признаны Победителем в процедуре <strong>№{{ order_number }} «{{ order_title }}»</strong>{% if customer_name %} (заказчик «{{ customer_name }}»){% endif %}{% if winning_price %} с ценой <strong>{{ winning_price }}</strong>{% endif %}.{% endcall %}
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding: 18px 22px; background: #F8FAFC; border-radius: 12px;">
-      <p style="margin: 0 0 8px 0; font-size: 13px; line-height: 18px; color: #0F172A; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">
-        Реквизиты заказчика
-      </p>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px; line-height: 22px; color: #334155;">
-        {% if customer_name %}<tr><td style="padding: 2px 0;">Организация: <span style="color: #0F172A;">{{ customer_name }}</span></td></tr>{% endif %}
-        {% if customer_inn %}<tr><td style="padding: 2px 0;">ИНН: <span style="color: #0F172A;">{{ customer_inn }}</span></td></tr>{% endif %}
-        {% if customer_contact_name %}<tr><td style="padding: 2px 0;">Контактное лицо: <span style="color: #0F172A;">{{ customer_contact_name }}</span></td></tr>{% endif %}
-        {% if customer_email %}<tr><td style="padding: 2px 0;">Email: <a href="mailto:{{ customer_email }}" style="color: #0F172A;">{{ customer_email }}</a></td></tr>{% endif %}
-        {% if customer_phone %}<tr><td style="padding: 2px 0;">Телефон: <a href="tel:{{ customer_phone }}" style="color: #0F172A;">{{ customer_phone }}</a></td></tr>{% endif %}
-      </table>
-    </td>
-  </tr>
-</table>
+{% call ui.card("Реквизиты заказчика") %}
+{% if customer_name %}{{ ui.field("Организация", customer_name) }}{% endif %}
+{% if customer_inn %}{{ ui.field("ИНН", customer_inn) }}{% endif %}
+{% if customer_contact_name %}{{ ui.field("Контактное лицо", customer_contact_name) }}{% endif %}
+{% if customer_email %}{% call ui.field("Email") %}<a href="mailto:{{ customer_email }}" style="color: #2B2F33;">{{ customer_email }}</a>{% endcall %}{% endif %}
+{% if customer_phone %}{% call ui.field("Телефон") %}<a href="tel:{{ customer_phone }}" style="color: #2B2F33;">{{ customer_phone }}</a>{% endcall %}{% endif %}
+{% endcall %}
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td style="height: 18px; line-height: 18px; font-size: 0;" height="18">&nbsp;</td></tr>
-</table>
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding: 18px 22px; background: #FFF8EB; border-radius: 12px;">
-      <p style="margin: 0 0 8px 0; font-size: 13px; line-height: 18px; color: #8a4500; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">
-        Что отправить заказчику
-      </p>
-      <ul style="margin: 0; padding-left: 18px; font-size: 14px; line-height: 22px; color: #334155;">
-        <li>Карточку вашей организации (реквизиты, ИНН/КПП).</li>
-        <li>Скан-копию лицензии и приложений к ней.</li>
-        <li>Свидетельства об аттестации экспертов.</li>
-        <li>Подписанный со своей стороны проект договора.</li>
-        <li>Контактные данные ответственного специалиста.</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td style="height: 24px; line-height: 24px; font-size: 0;" height="24">&nbsp;</td></tr>
-</table>
-
-<p style="margin: 0 0 24px 0; font-size: 15px; line-height: 24px; color: #475569;">
-  Свяжитесь с заказчиком в чате, чтобы согласовать детали и направить документы.
-</p>
+{{ ui.h2("Что отправить заказчику", 24) }}
+{{ ui.checklist([
+  "Карточку вашей организации (реквизиты, ИНН/КПП).",
+  "Скан-копию лицензии и приложений к ней.",
+  "Свидетельства об аттестации экспертов.",
+  "Подписанный со своей стороны проект договора.",
+  "Контактные данные ответственного специалиста.",
+]) }}
+{% call ui.note("accent") %}Свяжитесь с заказчиком в чате, чтобы согласовать детали и направить документы.{% endcall %}
 {% else %}
-<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #64748B; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
-  Заказчик выбрал другого эксперта
-</p>
-<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
-  Здравствуйте, {{ expert_greeting }}
-</h1>
-<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
-  По заявке
-  <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>
-  заказчик выбрал другого исполнителя. Спасибо за отклик — на платформе постоянно появляются новые заявки.
-</p>
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding: 22px 24px; background: #F8FAFC; border-radius: 12px;">
-      <p style="margin: 0; font-size: 14px; line-height: 22px; color: #334155;">
-        Комиссия за участие в торгах возвращена на ваш баланс.
-      </p>
-    </td>
-  </tr>
-</table>
+{{ ui.eyebrow("Заказчик выбрал другого эксперта", "#6B7280") }}
+{{ ui.h1("Здравствуйте, " ~ expert_greeting) }}
+{% call ui.text(24) %}По заявке «{{ order_title }}» заказчик выбрал другого исполнителя. Спасибо за отклик — на площадке постоянно появляются новые заявки.{% endcall %}
+{% call ui.note() %}Комиссия за участие в торгах возвращена на ваш баланс.{% endcall %}
 {% endif %}
 
 {% if badges %}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td style="height: 18px; line-height: 18px; font-size: 0;" height="18">&nbsp;</td></tr>
-</table>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding: 18px 22px; background: #F8FAFC; border-radius: 12px;">
-      <p style="margin: 0 0 8px 0; font-size: 13px; line-height: 18px; color: #0F172A; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">Обозначения заявки</p>
-      <div>
-        {% for code in badges %}<span style="display: inline-block; padding: 4px 10px; margin: 0 6px 6px 0; background: #EEF2F6; color: #0F172A; border-radius: 6px; font-size: 13px; line-height: 18px; font-weight: 600;">{{ code }}</span>{% endfor %}
-      </div>
-    </td>
-  </tr>
-</table>
+{% call ui.card() %}{{ ui.badges(badges, "Обозначения заявки") }}{% endcall %}
 {% endif %}
-
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td style="height: 40px; line-height: 40px; font-size: 0;" height="40">&nbsp;</td></tr>
-</table>
-
-<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td>
-      <!--[if mso]>
-      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
-                   href="{{ cta_url }}"
-                   style="height:44px;v-text-anchor:middle;width:200px;"
-                   arcsize="18%" stroke="f" fillcolor="#0F172A">
-        <w:anchorlock/>
-        <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:600;">Перейти к заявкам</center>
-      </v:roundrect>
-      <![endif]-->
-      <!--[if !mso]><!-->
-      <a href="{{ cta_url }}" style="display: inline-block; padding: 12px 28px; background: #0F172A; color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">Перейти к заявкам</a>
-      <!--<![endif]-->
-    </td>
-  </tr>
-</table>
+{{ ui.spacer(12) }}
+{{ ui.button("Перейти к заявкам", cta_url) }}
 {% endblock %}

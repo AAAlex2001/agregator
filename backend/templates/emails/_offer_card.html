@@ -1,0 +1,8 @@
+{# Карточка предложения эксперта: стоимость, срок, файлы и комментарий. Ожидает переменную response. #}
+{% import "_ui.html" as ui %}
+{% call ui.card(card_title | default("Предложение эксперта"), "accent") %}
+{{ ui.field("Стоимость", response.proposed_sum_amount | rubles, strong=True) }}
+{{ ui.field("Срок", response.proposed_deadline | date_ru) }}
+{% if response.files_count %}{{ ui.field("Файлы", "приложено " ~ response.files_count) }}{% endif %}
+{% if response.comment %}{{ ui.field("Комментарий", response.comment, pre=True) }}{% endif %}
+{% endcall %}
