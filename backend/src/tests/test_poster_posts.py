@@ -55,7 +55,11 @@ async def upload_photo(client: httpx.AsyncClient) -> int:
     return response.json()["id"]
 
 
-async def test_post_goes_to_channel_and_is_edited(user_client: UserClientFactory, guest: httpx.AsyncClient, telegram: FakeTelegram) -> None:
+async def test_post_goes_to_channel_and_is_edited(
+    user_client: UserClientFactory,
+    guest: httpx.AsyncClient,
+    telegram: FakeTelegram,
+) -> None:
     """Пост с фото уходит в канал, а после правки текст меняется и в канале."""
     author, client = await user_client("Автор")
     channel_id = await create_channel(author.id)
@@ -63,7 +67,11 @@ async def test_post_goes_to_channel_and_is_edited(user_client: UserClientFactory
 
     created = await client.post(
         "/posts",
-        json={"html": "<p>Первый <strong>пост</strong></p>", "media_ids": [media_id], "channel_ids": [channel_id]},
+        json={
+            "html": "<p>Первый <strong>пост</strong></p>",
+            "media_ids": [media_id],
+            "channel_ids": [channel_id],
+        },
     )
     assert created.status_code == 201, created.text
     post = created.json()
@@ -100,7 +108,10 @@ async def test_post_goes_to_channel_and_is_edited(user_client: UserClientFactory
     assert "менять нельзя" in changed_media.json()["detail"]
 
 
-async def test_failed_delivery_is_retried_after_save(user_client: UserClientFactory, telegram: FakeTelegram) -> None:
+async def test_failed_delivery_is_retried_after_save(
+    user_client: UserClientFactory,
+    telegram: FakeTelegram,
+) -> None:
     """Неудачная отправка снова встаёт в очередь, когда автор сохраняет пост ещё раз."""
     author, client = await user_client("Повтор")
     channel_id = await create_channel(author.id)
@@ -119,7 +130,10 @@ async def test_failed_delivery_is_retried_after_save(user_client: UserClientFact
     assert statuses == ["pending"]
 
 
-async def test_scheduled_post_is_published_by_worker(user_client: UserClientFactory, guest: httpx.AsyncClient) -> None:
+async def test_scheduled_post_is_published_by_worker(
+    user_client: UserClientFactory,
+    guest: httpx.AsyncClient,
+) -> None:
     """Отложенный пост не виден гостю, пока worker его не опубликует."""
     _, client = await user_client("Планировщик")
     later = (datetime.now(UTC) + timedelta(hours=1)).isoformat()

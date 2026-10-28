@@ -104,7 +104,8 @@ async def test_comments(user_client: UserClientFactory, guest: httpx.AsyncClient
 
     root = (await first.post(f"/posts/{post['id']}/comments", json={"text": " Вопрос "})).json()
     assert root["text"] == "Вопрос"
-    reply = await second.post(f"/posts/{post['id']}/comments", json={"text": "Ответ", "reply_to_id": root["id"]})
+    reply_data = {"text": "Ответ", "reply_to_id": root["id"]}
+    reply = await second.post(f"/posts/{post['id']}/comments", json=reply_data)
     assert reply.status_code == 201, reply.text
     assert reply.json()["parent_id"] == root["id"]
     assert reply.json()["reply_to_name"] == "Первый"
@@ -127,15 +128,21 @@ async def test_comments(user_client: UserClientFactory, guest: httpx.AsyncClient
     assert after["comments_count"] == 0
 
 
-async def test_reports_and_moderation(user_client: UserClientFactory, guest: httpx.AsyncClient, admin: httpx.AsyncClient) -> None:
+async def test_reports_and_moderation(
+    user_client: UserClientFactory,
+    guest: httpx.AsyncClient,
+    admin: httpx.AsyncClient,
+) -> None:
     """Жалоба видна модератору, скрытие поста закрывает жалобы и убирает пост с сайта."""
     _, author = await user_client("Нарушитель")
     _, reporter = await user_client("Бдительный")
     post = await publish(author, "<p>Спорно</p>")
-    comment = (await author.post(f"/posts/{post['id']}/comments", json={"text": "Спорный комментарий"})).json()
+    commented = await author.post(f"/posts/{post['id']}/comments", json={"text": "Спорный комментарий"})
+    comment = commented.json()
 
     assert (await reporter.post(f"/posts/{post['id']}/report", json={"reason": "Спам"})).status_code == 204
-    assert (await reporter.post(f"/posts/{post['id']}/report", json={"reason": "Спам ещё"})).status_code == 204
+    repeated = await reporter.post(f"/posts/{post['id']}/report", json={"reason": "Спам ещё"})
+    assert repeated.status_code == 204
     report_comment = await reporter.post(f"/posts/comments/{comment['id']}/report", json={"reason": "Грубо"})
     assert report_comment.status_code == 204
 
@@ -161,7 +168,8 @@ async def test_templates_and_ai(user_client: UserClientFactory) -> None:
     """Шаблон сохраняется, виден и удаляется, ИИ-помощник возвращает чистый текст."""
     _, client = await user_client("Шаблонщик")
 
-    saved = await client.post("/poster/templates", json={"title": "Анонс", "html": "<p>Заготовка<script>x</script></p>"})
+    template = {"title": "Анонс", "html": "<p>Заготовка<script>x</script></p>"}
+    saved = await client.post("/poster/templates", json=template)
     assert saved.status_code == 201, saved.text
     assert saved.json()["html"] == "<p>Заготовка</p>"
     assert [item["title"] for item in (await client.get("/poster/templates")).json()] == ["Анонс"]

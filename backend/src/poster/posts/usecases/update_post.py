@@ -11,10 +11,10 @@ from src.poster.posts.checks import (
     check_reply_target,
     check_target,
     choose_status,
+    load_channels,
+    load_media,
 )
 from src.poster.posts.exceptions import (
-    ChannelUnavailableError,
-    MediaNotFoundError,
     PostNotFoundError,
     RepostNotEditableError,
     SentMediaChangedError,
@@ -61,18 +61,10 @@ class UpdatePostUseCase:
         html = clean_html(data.html)
         check_text_length(html)
 
-        media = await self.media.list_free(user.id, data.media_ids, post.id)
-
-        if len(media) != len(data.media_ids):
-            raise MediaNotFoundError()
-
-        media.sort(key=lambda item: data.media_ids.index(item.id))
+        media = await load_media(self.media, user.id, data.media_ids, post.id)
         check_not_empty(html, media, data.telegram)
 
-        channels = await self.channels.list_ready(user.id, data.channel_ids)
-
-        if len(channels) != len(data.channel_ids):
-            raise ChannelUnavailableError()
+        channels = await load_channels(self.channels, user.id, data.channel_ids)
 
         sent_deliveries = await self.deliveries.list_sent(post.id)
         old_media_ids = [item.id for item in post.media]

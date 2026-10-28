@@ -21,7 +21,8 @@ BACKEND = Path(__file__).resolve().parents[2]
 load_dotenv(BACKEND / ".env.test")
 TEST_DATABASE_URL = os.getenv("SRC_TEST_DATABASE_URL", "")
 
-os.environ["DATABASE_URL"] = TEST_DATABASE_URL or "postgresql+asyncpg://user:password@localhost/not_configured"
+NOT_CONFIGURED_URL = "postgresql+asyncpg://user:password@localhost/not_configured"
+os.environ["DATABASE_URL"] = TEST_DATABASE_URL or NOT_CONFIGURED_URL
 os.environ["INTERNAL_API_TOKEN"] = "test-internal-token"
 os.environ.setdefault("EMAIL_FROM", "test@example.com")
 os.environ.setdefault("UNISENDER_GO_API_KEY", "test")
@@ -218,5 +219,7 @@ async def admin(app: FastAPI) -> AsyncIterator[httpx.AsyncClient]:
     """Клиент админки с внутренним токеном."""
     transport = httpx.ASGITransport(app=app)
 
-    async with httpx.AsyncClient(transport=transport, base_url="http://test/", headers=INTERNAL_HEADERS) as client:
+    client = httpx.AsyncClient(transport=transport, base_url="http://test/", headers=INTERNAL_HEADERS)
+
+    async with client:
         yield client

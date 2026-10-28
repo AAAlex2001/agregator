@@ -5,6 +5,7 @@
 3. Владелец таблицы: repository.py не импортирует модели другой фичи — их читают через её репозиторий.
 4. У каждой функции и класса есть подпись в одну строку.
 5. У каждого execute в сценариях есть звёздочка: аргументы передаются только по имени.
+6. Строки не длиннее 110 символов.
 """
 
 import ast
@@ -12,6 +13,7 @@ import sys
 from pathlib import Path
 
 SRC = Path(__file__).resolve().parents[1] / "src"
+MAX_LINE_LENGTH = 110
 
 FEATURE_LADDER = [
     ["core"],
@@ -106,7 +108,7 @@ def check_docstrings_and_stars(path: Path, tree: ast.Module) -> list[str]:
     errors = []
 
     for node in ast.walk(tree):
-        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        if not isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef):
             continue
 
         place = f"{path.relative_to(SRC.parent)}:{node.lineno}"
@@ -136,6 +138,10 @@ def main() -> int:
             errors.extend(check_imports(path, tree))
 
         errors.extend(check_docstrings_and_stars(path, tree))
+
+        for number, line in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
+            if len(line) > MAX_LINE_LENGTH:
+                errors.append(f"{path.relative_to(SRC.parent)}:{number}: строка длиннее {MAX_LINE_LENGTH} символов")
 
     for error in errors:
         print(error)

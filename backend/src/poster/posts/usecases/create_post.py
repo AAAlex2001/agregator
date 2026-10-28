@@ -10,8 +10,9 @@ from src.poster.posts.checks import (
     check_reply_target,
     check_target,
     choose_status,
+    load_channels,
+    load_media,
 )
-from src.poster.posts.exceptions import ChannelUnavailableError, MediaNotFoundError
 from src.poster.posts.models import Post, PostStatus
 from src.poster.posts.repository import MediaRepository, PostRepository
 from src.poster.posts.schemas import PostResponse, SavePostRequest, author_ids
@@ -44,18 +45,10 @@ class CreatePostUseCase:
         html = clean_html(data.html)
         check_text_length(html)
 
-        media = await self.media.list_free(user.id, data.media_ids, None)
-
-        if len(media) != len(data.media_ids):
-            raise MediaNotFoundError()
-
-        media.sort(key=lambda item: data.media_ids.index(item.id))
+        media = await load_media(self.media, user.id, data.media_ids, None)
         check_not_empty(html, media, data.telegram)
 
-        channels = await self.channels.list_ready(user.id, data.channel_ids)
-
-        if len(channels) != len(data.channel_ids):
-            raise ChannelUnavailableError()
+        channels = await load_channels(self.channels, user.id, data.channel_ids)
 
         if channels:
             check_fits_telegram(html, media, data.telegram)

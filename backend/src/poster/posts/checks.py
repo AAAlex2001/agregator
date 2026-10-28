@@ -1,17 +1,21 @@
 from datetime import datetime
 
+from src.poster.channels.models import PosterChannel
+from src.poster.channels.repository import ChannelRepository
 from src.poster.delivery.schemas import TelegramOptions
 from src.poster.delivery.telegram_text import length_limit, telegram_length, to_telegram_html
 from src.poster.posts.exceptions import (
     ButtonsInAlbumError,
+    ChannelUnavailableError,
     EmptyPostError,
+    MediaNotFoundError,
     NoPublicationTargetError,
     ReplyTargetError,
     ScheduleInPastError,
     TelegramTextTooLongError,
 )
 from src.poster.posts.models import PostMedia, PostStatus
-from src.poster.posts.repository import PostRepository
+from src.poster.posts.repository import MediaRepository, PostRepository
 from src.poster.posts.schemas import SavePostRequest
 from src.poster.posts.text import plain_text
 
@@ -74,3 +78,34 @@ def choose_status(current_status: str, data: SavePostRequest, now: datetime) -> 
         raise ScheduleInPastError()
 
     return PostStatus.SCHEDULED
+
+
+async def load_media(
+    media: MediaRepository,
+    owner_id: int,
+    media_ids: list[int],
+    post_id: int | None,
+) -> list[PostMedia]:
+    """Достаёт файлы из формы в том же порядке. Если какого-то нет или он чужой — ошибка."""
+    found_media = await media.list_free(owner_id, media_ids, post_id)
+
+    if len(found_media) != len(media_ids):
+        raise MediaNotFoundError()
+
+    found_media.sort(key=lambda item: media_ids.index(item.id))
+
+    return found_media
+
+
+async def load_channels(
+    channels: ChannelRepository,
+    owner_id: int,
+    channel_ids: list[int],
+) -> list[PosterChannel]:
+    """Достаёт каналы из формы. Если в какой-то из них бот не может публиковать — ошибка."""
+    found_channels = await channels.list_ready(owner_id, channel_ids)
+
+    if len(found_channels) != len(channel_ids):
+        raise ChannelUnavailableError()
+
+    return found_channels
