@@ -1,15 +1,18 @@
 """Поддержка: обращения, ответы и файлы — как их использует сайт."""
 
+import httpx
 import pytest
+from fastapi import FastAPI
 from sqlalchemy import update
 
 from src.core.database import SessionLocal
 from src.support.models import Ticket, TicketStatus
+from src.tests.conftest import UserClientFactory
 
 pytestmark = pytest.mark.asyncio(loop_scope="session")
 
 
-async def test_create_list_get_and_reply(user_client, app) -> None:
+async def test_create_list_get_and_reply(user_client: UserClientFactory, app: FastAPI) -> None:
     """Пользователь создаёт обращение с файлом, видит его в списке, открывает и отвечает."""
     _, client = await user_client("Анна")
 
@@ -42,7 +45,7 @@ async def test_create_list_get_and_reply(user_client, app) -> None:
     assert [message["text"] for message in replied.json()["messages"]] == ["Помогите", "Ещё деталь"]
 
 
-async def test_reply_rules(user_client) -> None:
+async def test_reply_rules(user_client: UserClientFactory) -> None:
     """Пустой ответ, чужое и закрытое обращение дают понятные ошибки."""
     _, owner = await user_client("Олег")
     _, stranger = await user_client("Чужой")
@@ -75,7 +78,7 @@ async def test_reply_rules(user_client) -> None:
     assert closed.status_code == 409
 
 
-async def test_guest_cannot_use_support(guest) -> None:
+async def test_guest_cannot_use_support(guest: httpx.AsyncClient) -> None:
     """Без входа обращения недоступны."""
     response = await guest.get("/support/tickets")
 

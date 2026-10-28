@@ -149,7 +149,7 @@ async def app(telegram: FakeTelegram, tmp_path_factory: pytest.TempPathFactory) 
     patch.setattr("src.poster.delivery.tasks.get_telegram", lambda: telegram)
 
     application = FastAPI()
-    application.add_exception_handler(AppError, app_error_handler)  # type: ignore[arg-type]
+    application.add_exception_handler(AppError, app_error_handler)
     application.include_router(poster_router)
     application.include_router(poster_internal_router)
     application.include_router(support_router)

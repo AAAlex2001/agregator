@@ -3,7 +3,9 @@
 from datetime import UTC, datetime, timedelta
 from io import BytesIO
 
+import httpx
 import pytest
+from fastapi import FastAPI
 from PIL import Image
 from sqlalchemy import select, update
 
@@ -13,6 +15,7 @@ from src.poster.delivery.models import PostDelivery
 from src.poster.delivery.tasks import send_ready_posts
 from src.poster.posts.models import Post, PostMedia
 from src.poster.posts.tasks import delete_unused_media, publish_scheduled_posts
+from src.tests.conftest import FakeTelegram, UserClientFactory
 
 pytestmark = pytest.mark.asyncio(loop_scope="session")
 
@@ -43,7 +46,7 @@ async def create_channel(owner_id: int) -> int:
         return channel.id
 
 
-async def upload_photo(client) -> int:
+async def upload_photo(client: httpx.AsyncClient) -> int:
     """Загружает фото в редактор и возвращает id файла."""
     response = await client.post("/posts/media", files={"file": ("photo.png", png_bytes(), "image/png")})
     assert response.status_code == 201, response.text
@@ -52,7 +55,7 @@ async def upload_photo(client) -> int:
     return response.json()["id"]
 
 
-async def test_post_goes_to_channel_and_is_edited(user_client, guest, telegram) -> None:
+async def test_post_goes_to_channel_and_is_edited(user_client: UserClientFactory, guest: httpx.AsyncClient, telegram: FakeTelegram) -> None:
     """Пост с фото уходит в канал, а после правки текст меняется и в канале."""
     author, client = await user_client("Автор")
     channel_id = await create_channel(author.id)
@@ -97,7 +100,7 @@ async def test_post_goes_to_channel_and_is_edited(user_client, guest, telegram) 
     assert "менять нельзя" in changed_media.json()["detail"]
 
 
-async def test_failed_delivery_is_retried_after_save(user_client, telegram) -> None:
+async def test_failed_delivery_is_retried_after_save(user_client: UserClientFactory, telegram: FakeTelegram) -> None:
     """Неудачная отправка снова встаёт в очередь, когда автор сохраняет пост ещё раз."""
     author, client = await user_client("Повтор")
     channel_id = await create_channel(author.id)
@@ -116,7 +119,7 @@ async def test_failed_delivery_is_retried_after_save(user_client, telegram) -> N
     assert statuses == ["pending"]
 
 
-async def test_scheduled_post_is_published_by_worker(user_client, guest) -> None:
+async def test_scheduled_post_is_published_by_worker(user_client: UserClientFactory, guest: httpx.AsyncClient) -> None:
     """Отложенный пост не виден гостю, пока worker его не опубликует."""
     _, client = await user_client("Планировщик")
     later = (datetime.now(UTC) + timedelta(hours=1)).isoformat()
@@ -138,7 +141,7 @@ async def test_scheduled_post_is_published_by_worker(user_client, guest) -> None
     assert published.json()["status"] == "published"
 
 
-async def test_post_checks(user_client) -> None:
+async def test_post_checks(user_client: UserClientFactory) -> None:
     """Пустой пост, пост в никуда и время в прошлом отклоняются."""
     _, client = await user_client("Проверка")
 
@@ -153,7 +156,7 @@ async def test_post_checks(user_client) -> None:
     assert in_past.status_code == 400
 
 
-async def test_delete_post_from_channels(user_client, telegram) -> None:
+async def test_delete_post_from_channels(user_client: UserClientFactory, telegram: FakeTelegram) -> None:
     """Удалённый пост пропадает с сайта и, если попросили, из канала."""
     author, client = await user_client("Удалятор")
     channel_id = await create_channel(author.id)
@@ -168,7 +171,7 @@ async def test_delete_post_from_channels(user_client, telegram) -> None:
     assert (await client.get(f"/posts/{post_id}")).status_code == 404
 
 
-async def test_repost_counts(user_client) -> None:
+async def test_repost_counts(user_client: UserClientFactory) -> None:
     """Репост прибавляет счётчик у оригинала, а удаление репоста — убавляет."""
     _, author = await user_client("Оригинал")
     _, reader = await user_client("Читатель")
@@ -183,7 +186,7 @@ async def test_repost_counts(user_client) -> None:
     assert (await author.get(f"/posts/{original['id']}")).json()["reposts_count"] == 0
 
 
-async def test_media_upload_delete_and_cleanup(user_client, app) -> None:
+async def test_media_upload_delete_and_cleanup(user_client: UserClientFactory, app: FastAPI) -> None:
     """Загруженный файл можно удалить, а брошенный убирает worker."""
     _, client = await user_client("Файлы")
 
@@ -206,7 +209,7 @@ async def test_media_upload_delete_and_cleanup(user_client, app) -> None:
         assert await db.get(PostMedia, abandoned_id) is None
 
 
-async def test_telegram_preview(user_client) -> None:
+async def test_telegram_preview(user_client: UserClientFactory) -> None:
     """Предпросмотр показывает разметку Telegram и лимит."""
     _, client = await user_client("Превью")
 

@@ -1,14 +1,18 @@
 """Реакции, подписки, ленты, комментарии, жалобы, шаблоны, ИИ-помощник и каналы."""
 
+from typing import Any
+
+import httpx
 import pytest
 
 from src.core.database import SessionLocal
 from src.poster.channels.models import PosterChannel
+from src.tests.conftest import FakeTelegram, UserClientFactory
 
 pytestmark = pytest.mark.asyncio(loop_scope="session")
 
 
-async def publish(client, html: str = "<p>Пост</p>") -> dict:
+async def publish(client: httpx.AsyncClient, html: str = "<p>Пост</p>") -> dict[str, Any]:
     """Публикует пост от имени клиента и возвращает его."""
     response = await client.post("/posts", json={"html": html})
     assert response.status_code == 201, response.text
@@ -16,7 +20,7 @@ async def publish(client, html: str = "<p>Пост</p>") -> dict:
     return response.json()
 
 
-async def test_likes_saves_and_views(user_client, guest) -> None:
+async def test_likes_saves_and_views(user_client: UserClientFactory, guest: httpx.AsyncClient) -> None:
     """Лайк и сохранение считаются один раз, просмотр — раз в день и не от автора."""
     _, author = await user_client("Автор")
     _, reader = await user_client("Читатель")
@@ -42,7 +46,7 @@ async def test_likes_saves_and_views(user_client, guest) -> None:
     assert (await guest.get(f"/posts/{post['id']}")).json()["views_count"] == 2
 
 
-async def test_follow_and_following_feed(user_client) -> None:
+async def test_follow_and_following_feed(user_client: UserClientFactory) -> None:
     """После подписки новые посты автора появляются в ленте подписок и в счётчике новых."""
     author_account, author = await user_client("Блогер")
     _, reader = await user_client("Подписчик")
@@ -65,7 +69,7 @@ async def test_follow_and_following_feed(user_client) -> None:
     assert (await reader.get("/posts/feed/following")).json()["total"] == 0
 
 
-async def test_feeds(user_client, guest) -> None:
+async def test_feeds(user_client: UserClientFactory, guest: httpx.AsyncClient) -> None:
     """Общая лента, страница автора, мои посты, черновики, репосты и карта сайта."""
     author_account, author = await user_client("Лента")
     _, reader = await user_client("Зритель")
@@ -91,7 +95,7 @@ async def test_feeds(user_client, guest) -> None:
     assert draft["id"] not in sitemap_ids
 
 
-async def test_comments(user_client, guest) -> None:
+async def test_comments(user_client: UserClientFactory, guest: httpx.AsyncClient) -> None:
     """Комментарии собираются в ветки, счётчик поста верный, удаление ветки убирает и ответы."""
     _, author = await user_client("Хозяин")
     _, first = await user_client("Первый")
@@ -123,7 +127,7 @@ async def test_comments(user_client, guest) -> None:
     assert after["comments_count"] == 0
 
 
-async def test_reports_and_moderation(user_client, guest, admin) -> None:
+async def test_reports_and_moderation(user_client: UserClientFactory, guest: httpx.AsyncClient, admin: httpx.AsyncClient) -> None:
     """Жалоба видна модератору, скрытие поста закрывает жалобы и убирает пост с сайта."""
     _, author = await user_client("Нарушитель")
     _, reporter = await user_client("Бдительный")
@@ -153,7 +157,7 @@ async def test_reports_and_moderation(user_client, guest, admin) -> None:
     assert (await guest.get("/internal/posts/reports")).status_code == 422
 
 
-async def test_templates_and_ai(user_client) -> None:
+async def test_templates_and_ai(user_client: UserClientFactory) -> None:
     """Шаблон сохраняется, виден и удаляется, ИИ-помощник возвращает чистый текст."""
     _, client = await user_client("Шаблонщик")
 
@@ -168,7 +172,7 @@ async def test_templates_and_ai(user_client) -> None:
     assert answer.json() == {"html": "<p>Текст от ИИ</p>"}
 
 
-async def test_channels(user_client, telegram) -> None:
+async def test_channels(user_client: UserClientFactory, telegram: FakeTelegram) -> None:
     """Свои каналы видны, обновляются у Telegram и отключаются."""
     account, client = await user_client("Каналовод")
 

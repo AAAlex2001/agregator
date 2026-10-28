@@ -18,6 +18,7 @@ FEATURE_LADDER = [
     ["accounts"],
     ["auth", "notifications"],
     ["poster", "support"],
+    ["tests"],
 ]
 
 SUBFEATURE_LADDERS = {
